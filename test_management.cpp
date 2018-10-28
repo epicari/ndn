@@ -77,9 +77,9 @@ private:
     m_face.put(*data);
 */
 
-    Interest interest(Name("/Cloud/Simulator/DA1549"));
-    interest.setInterestLifetime(2_s);
-    interest.setMustBeFresh(true);
+    Interest _interest(Name("/Cloud/Simulator/DA1549"));
+    _interest.setInterestLifetime(2_s);
+    _interest.setMustBeFresh(true);
   }
 
 
