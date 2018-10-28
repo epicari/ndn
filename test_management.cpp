@@ -40,10 +40,22 @@ public:
   void
   run()
   {
+    Interest _interest(Name("/Cloud/Simulator/DA1549"));
+    _interest.setInterestLifetime(2_s);
+    _interest.setMustBeFresh(true);
+
     m_face.setInterestFilter("/Simulator/BATT",
                              bind(&Producer::onInterest, this, _1, _2),
                              RegisterPrefixSuccessCallback(),
                              bind(&Producer::onRegisterFailed, this, _1, _2));
+    
+    m_face.expressInterest(_interest,
+                          bind(&Producer::AckData, this, _1, _2)),
+                          bind(&Producer::forwardingNack, this, _1, _2),
+                          bind(&Producer::forwardingTimeout, this, _1);
+    
+    std::cout << "Forwarding " << _interest << std::endl;
+    
     m_face.processEvents();
   }
 
@@ -52,6 +64,7 @@ private:
   onInterest(const InterestFilter& filter, const Interest& interest)
   {
     std::cout << "<< M_I: " << interest << std::endl;
+  }
 /*
     // Create new name, based on Interest's name
     Name dataName(interest.getName());
@@ -77,11 +90,25 @@ private:
     m_face.put(*data);
 */
 
-    Interest _interest(Name("/Cloud/Simulator/DA1549"));
-    _interest.setInterestLifetime(2_s);
-    _interest.setMustBeFresh(true);
+// add code
+  void
+  AckData(const Interest& interest, const Data& data)
+  {
+    std::cout << data << std::endl;
   }
 
+  void
+  forwardingNack(const Interest& interest, const lp::Nack& nack)
+  {
+    std::cout << "received Nack with reason ? " << nack.getReason()
+              << " for interest " << interest << std::endl;
+  }
+
+  void
+  forwardingTimeout(const Interest& interest)
+  {
+    std::cout << "Timeout " << interest << std::endl;
+  }
 
   void
   onRegisterFailed(const Name& prefix, const std::string& reason)
