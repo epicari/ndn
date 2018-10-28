@@ -50,9 +50,9 @@ public:
                              bind(&Producer::onRegisterFailed, this, _1, _2));
     
     m_face.expressInterest(_interest,
-                          bind(&Producer::AckData, this, _1, _2)),
+                          bind(&Producer::AckData, this, _1, _2),
                           bind(&Producer::forwardingNack, this, _1, _2),
-                          bind(&Producer::forwardingTimeout, this, _1);
+                          bind(&Producer::forwardingTimeout, this, _1));
     
     std::cout << "Forwarding " << _interest << std::endl;
     
