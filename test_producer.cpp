@@ -49,14 +49,14 @@ public:
 
 private:
   void
-  onInterest(const InterestFilter& filter, const Interest& interest)
+  onInterest(const InterestFilter& filter, const Interest& _interest)
   {
-    std::cout << "<< I: " << interest << std::endl;
+    std::cout << "<< I: " << _interest << std::endl;
 
     // Create new name, based on Interest's name
-    Name dataName(interest.getName());
+    Name dataName(_interest.getName());
     dataName
-      .append("testApp") // add "testApp" component to Interest name
+      .append("Simulator") // add "testApp" component to Interest name
       .appendVersion();  // add "version" component (current UNIX timestamp in milliseconds)
 
     static const std::string content = "HELLO KITTY";
