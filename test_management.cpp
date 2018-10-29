@@ -34,28 +34,17 @@ namespace ndn {
 // Additional nested namespaces can be used to prevent/limit name conflicts
 namespace examples {
 
-class Producer : noncopyable
+class Mgmt : noncopyable
 {
 public:
   void
   run()
   {
-    Interest _interest(Name("/Cloud/Simulator/DA1549"));
-    _interest.setInterestLifetime(2_s);
-    _interest.setMustBeFresh(true);
-
     m_face.setInterestFilter("/Simulator/BATT",
-                             bind(&Producer::onInterest, this, _1, _2),
+                             bind(&Mgmt::onInterest, this, _1, _2),
                              RegisterPrefixSuccessCallback(),
-                             bind(&Producer::onRegisterFailed, this, _1, _2));
-    
-    m_face.expressInterest(_interest,
-                          bind(&Producer::AckData, this, _1, _2),
-                          bind(&Producer::forwardingNack, this, _1, _2),
-                          bind(&Producer::forwardingTimeout, this, _1));
-    
-    std::cout << "Forwarding " << _interest << std::endl;
-    
+                             bind(&Mgmt::onRegisterFailed, this, _1, _2));
+
     m_face.processEvents();
   }
 
@@ -64,6 +53,14 @@ private:
   onInterest(const InterestFilter& filter, const Interest& interest)
   {
     std::cout << "<< M_I: " << interest << std::endl;
+
+    if (true){
+      &Mgmt::ForwardingInterest()
+      bind(&Mgmt::createData, this, _1);
+    }
+
+    else 
+      bind(&Mgmt::forwardingNack, this, _1, _2);
   }
 /*
     // Create new name, based on Interest's name
@@ -90,7 +87,30 @@ private:
     m_face.put(*data);
 */
 
-// add code
+  void
+  onRegisterFailed(const Name& prefix, const std::string& reason)
+  {
+    std::cerr << "ERROR: Failed to register prefix \""
+              << prefix << "\" in local hub's daemon (" << reason << ")"
+              << std::endl;
+    m_face.shutdown();
+  }
+
+  void
+  ForwardingInterest()
+  {
+     Interest _interest(Name("/Cloud/Simulator/DA1549"));
+    _interest.setInterestLifetime(2_s);
+    _interest.setMustBeFresh(true);
+    
+    m_face.expressInterest(_interest,
+                          bind(&Mgmt::AckData, this, _1, _2),
+                          bind(&Mgmt::forwardingNack, this, _1, _2),
+                          bind(&Mgmt::forwardingTimeout, this, _1));
+  
+    std::cout << "Forwarding " << _interest << std::endl;
+  }
+
   void
   AckData(const Interest& interest, const Data& data)
   {
@@ -111,12 +131,24 @@ private:
   }
 
   void
-  onRegisterFailed(const Name& prefix, const std::string& reason)
+  createData(const Interest& interest)
   {
-    std::cerr << "ERROR: Failed to register prefix \""
-              << prefix << "\" in local hub's daemon (" << reason << ")"
-              << std::endl;
-    m_face.shutdown();
+    Name dataNames(interest.getName());
+    dataNames
+            .append("BATT")
+            .appendVersion();
+    static const std::string contents = "BATT Simulation";
+
+    shared_ptr<Data> data = make_shared<Data>();
+    data->setName(dataNames);
+    data->setFreshnessPeriod(10_s);
+    data->setContent(reinterpret_cast<const uint8_t*>(contents.data(), contents.size()));
+
+    m_keyChain.sign(*data);
+
+    std::cout << ">>D: " << *data << std::endl;
+
+    m_face.put(*data);
   }
 
 private:
