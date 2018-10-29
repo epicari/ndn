@@ -162,9 +162,9 @@ private:
 int
 main(int argc, char** argv)
 {
-  ndn::examples::Producer producer;
+  ndn::examples::Mgmt mgmt;
   try {
-    producer.run();
+    mgmt.run();
   }
   catch (const std::exception& e) {
     std::cerr << "ERROR: " << e.what() << std::endl;
