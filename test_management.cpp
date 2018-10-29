@@ -55,7 +55,7 @@ private:
     std::cout << "<< M_I: " << interest << std::endl;
 
     if (true){
-      &Mgmt::ForwardingInterest()
+      ForwardingInterest();
       bind(&Mgmt::createData, this, _1);
     }
 
@@ -142,7 +142,7 @@ private:
     shared_ptr<Data> data = make_shared<Data>();
     data->setName(dataNames);
     data->setFreshnessPeriod(10_s);
-    data->setContent(reinterpret_cast<const uint8_t*>(contents.data(), contents.size()));
+    data->setContent(reinterpret_cast<const uint8_t*>(contents.data()), contents.size());
 
     m_keyChain.sign(*data);
 
