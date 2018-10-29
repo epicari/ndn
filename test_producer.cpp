@@ -64,7 +64,7 @@ private:
     // Create Data packet
     shared_ptr<Data> data = make_shared<Data>();
     data->setName(dataName);
-    data->setFreshnessPeriod(10_s); // 10 seconds
+    data->setFreshnessPeriod(20_s); // 10 seconds
     data->setContent(reinterpret_cast<const uint8_t*>(content.data()), content.size());
 
     // Sign Data packet with default identity

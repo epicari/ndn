@@ -100,7 +100,7 @@ private:
   ForwardingInterest()
   {
      Interest _interest(Name("/Cloud/Simulator/DA1549"));
-    _interest.setInterestLifetime(2_s);
+    _interest.setInterestLifetime(10_s);
     _interest.setMustBeFresh(true);
     
     m_face.expressInterest(_interest,
@@ -141,7 +141,7 @@ private:
 
     shared_ptr<Data> data = make_shared<Data>();
     data->setName(dataNames);
-    data->setFreshnessPeriod(10_s);
+    data->setFreshnessPeriod(20_s);
     data->setContent(reinterpret_cast<const uint8_t*>(contents.data()), contents.size());
 
     m_keyChain.sign(*data);

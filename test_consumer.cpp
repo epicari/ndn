@@ -39,7 +39,7 @@ public:
   run()
   {
     Interest interest(Name("/Simulator/BATT/Soc"));
-    interest.setInterestLifetime(2_s); // 2 seconds
+    interest.setInterestLifetime(10_s); // 2 seconds
     interest.setMustBeFresh(true);
 
     m_face.expressInterest(interest,
