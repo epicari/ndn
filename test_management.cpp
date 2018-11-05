@@ -85,6 +85,8 @@ private:
                           bind(&Mgmt::forwardingTimeout, this, _1));
   
     std::cout << "Forwarding: " << _interest << std::endl;
+
+    m_face.processEvents();
   }
 
   void
