@@ -62,30 +62,6 @@ private:
     else 
       bind(&Mgmt::forwardingNack, this, _1, _2);
   }
-/*
-    // Create new name, based on Interest's name
-    Name dataName(interest.getName());
-    dataName
-      .append("testApp") // add "testApp" component to Interest name
-      .appendVersion();  // add "version" component (current UNIX timestamp in milliseconds)
-
-    static const std::string content = "HELLO KITTY";
-
-    // Create Data packet
-    shared_ptr<Data> data = make_shared<Data>();
-    data->setName(dataName);
-    data->setFreshnessPeriod(10_s); // 10 seconds
-    data->setContent(reinterpret_cast<const uint8_t*>(content.data()), content.size());
-
-    // Sign Data packet with default identity
-    m_keyChain.sign(*data);
-    // m_keyChain.sign(data, <identityName>);
-    // m_keyChain.sign(data, <certificate>);
-
-    // Return Data packet to the requester
-    std::cout << ">> D: " << *data << std::endl;
-    m_face.put(*data);
-*/
 
   void
   onRegisterFailed(const Name& prefix, const std::string& reason)
@@ -108,13 +84,13 @@ private:
                           bind(&Mgmt::forwardingNack, this, _1, _2),
                           bind(&Mgmt::forwardingTimeout, this, _1));
   
-    std::cout << "Forwarding " << _interest << std::endl;
+    std::cout << "Forwarding: " << _interest << std::endl;
   }
 
   void
   AckData(const Interest& interest, const Data& data)
   {
-    std::cout << data << std::endl;
+    std::cout << "M_D: " << data << std::endl;
   }
 
   void
