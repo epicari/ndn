@@ -86,7 +86,7 @@ private:
   
     std::cout << "Forwarding: " << _interest << std::endl;
 
-    m_face.processEvents();
+    //m_face.processEvents();
   }
 
   void
@@ -105,7 +105,7 @@ private:
   void
   forwardingTimeout(const Interest& interest)
   {
-    std::cout << "Timeout " << interest << std::endl;
+    std::cout << "Timeout from producer " << interest << std::endl;
   }
 
   void
