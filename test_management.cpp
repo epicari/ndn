@@ -68,7 +68,7 @@ private:
   
         std::cout << ">> Forwarding: " << _interest << std::endl;
         
-        m_face.processEvents();
+        //m_face.processEvents();
     }
 
     else 
@@ -91,7 +91,7 @@ private:
 
     m_face.put(*data);  
   }
-  
+
   void
   onRegisterFailed(const Name& prefix, const std::string& reason)
   {
