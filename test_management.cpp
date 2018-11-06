@@ -52,65 +52,28 @@ private:
   void
   onInterest(const InterestFilter& filter, const Interest& interest)
   {
-    std::cout << "<< M_I: " << interest << std::endl;
+    std::cout << "<< Rcv Interest: " << interest << std::endl;
 
     if (true){
-      ForwardingInterest();
-      bind(&Mgmt::createData, this, _1);
+      //ForwardingInterest();
+      //bind(&Mgmt::createData, this, _1);
+        Interest _interest(Name("/Cloud/Simulator/DA1549"));
+        _interest.setInterestLifetime(10_s);
+        _interest.setMustBeFresh(true);
+    
+        m_face.expressInterest(_interest,
+                              bind(&Mgmt::AckData, this, _1, _2),
+                              bind(&Mgmt::forwardingNack, this, _1, _2),
+                              bind(&Mgmt::forwardingTimeout, this, _1));
+  
+        std::cout << ">> Forwarding: " << _interest << std::endl;
+        
+        m_face.processEvents();
     }
 
     else 
       bind(&Mgmt::forwardingNack, this, _1, _2);
-  }
-
-  void
-  onRegisterFailed(const Name& prefix, const std::string& reason)
-  {
-    std::cerr << "ERROR: Failed to register prefix \""
-              << prefix << "\" in local hub's daemon (" << reason << ")"
-              << std::endl;
-    m_face.shutdown();
-  }
-
-  void
-  ForwardingInterest()
-  {
-     Interest _interest(Name("/Cloud/Simulator/DA1549"));
-    _interest.setInterestLifetime(10_s);
-    _interest.setMustBeFresh(true);
-    
-    m_face.expressInterest(_interest,
-                          bind(&Mgmt::AckData, this, _1, _2),
-                          bind(&Mgmt::forwardingNack, this, _1, _2),
-                          bind(&Mgmt::forwardingTimeout, this, _1));
   
-    std::cout << "Forwarding: " << _interest << std::endl;
-
-    //m_face.processEvents();
-  }
-
-  void
-  AckData(const Interest& interest, const Data& data)
-  {
-    std::cout << "M_D: " << data << std::endl;
-  }
-
-  void
-  forwardingNack(const Interest& interest, const lp::Nack& nack)
-  {
-    std::cout << "received Nack with reason ? " << nack.getReason()
-              << " for interest " << interest << std::endl;
-  }
-
-  void
-  forwardingTimeout(const Interest& interest)
-  {
-    std::cout << "Timeout from producer " << interest << std::endl;
-  }
-
-  void
-  createData(const Interest& interest)
-  {
     Name dataNames(interest.getName());
     dataNames
             .append("BATT")
@@ -124,9 +87,37 @@ private:
 
     m_keyChain.sign(*data);
 
-    std::cout << ">>D: " << *data << std::endl;
+    std::cout << "<< Send Data: " << *data << std::endl;
 
-    m_face.put(*data);
+    m_face.put(*data);  
+  }
+  
+  void
+  onRegisterFailed(const Name& prefix, const std::string& reason)
+  {
+    std::cerr << "ERROR: Failed to register prefix \""
+              << prefix << "\" in local hub's daemon (" << reason << ")"
+              << std::endl;
+    m_face.shutdown();
+  }
+
+  void
+  AckData(const Interest& interest, const Data& data)
+  {
+    std::cout << ">> Rcv Data: " << data << std::endl;
+  }
+
+  void
+  forwardingNack(const Interest& interest, const lp::Nack& nack)
+  {
+    std::cout << "received Nack with reason ? " << nack.getReason()
+              << " for interest " << interest << std::endl;
+  }
+
+  void
+  forwardingTimeout(const Interest& interest)
+  {
+    std::cout << "Timeout from producer " << interest << std::endl;
   }
 
 private:
