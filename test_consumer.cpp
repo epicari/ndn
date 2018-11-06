@@ -47,7 +47,7 @@ public:
                            bind(&Consumer::onNack, this, _1, _2),
                            bind(&Consumer::onTimeout, this, _1));
 
-    std::cout << "Sending " << interest << std::endl;
+    std::cout << "Sending: " << interest << std::endl;
 
     // processEvents will block until the requested data received or timeout occurs
     m_face.processEvents();
@@ -57,7 +57,7 @@ private:
   void
   onData(const Interest& interest, const Data& data)
   {
-    std::cout << data << std::endl;
+    std::cout << "Rcv: " << data << std::endl;
   }
 
   void

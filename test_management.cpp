@@ -55,8 +55,6 @@ private:
     std::cout << "<< Rcv Interest: " << interest << std::endl;
 
     if (true){
-      //ForwardingInterest();
-      //bind(&Mgmt::createData, this, _1);
         Interest _interest(Name("/Cloud/Simulator/DA1549"));
         _interest.setInterestLifetime(10_s);
         _interest.setMustBeFresh(true);
@@ -67,29 +65,29 @@ private:
                               bind(&Mgmt::forwardingTimeout, this, _1));
   
         std::cout << ">> Forwarding: " << _interest << std::endl;
-        
-        //m_face.processEvents();
     }
 
     else 
       bind(&Mgmt::forwardingNack, this, _1, _2);
   
-    Name dataNames(interest.getName());
-    dataNames
-            .append("BATT")
-            .appendVersion();
-    static const std::string contents = "BATT Simulation";
+    if (true){
+        Name dataNames(interest.getName());
+        dataNames
+                .append("BATT")
+                .appendVersion();
+        static const std::string contents = "BATT Simulation";
 
-    shared_ptr<Data> data = make_shared<Data>();
-    data->setName(dataNames);
-    data->setFreshnessPeriod(20_s);
-    data->setContent(reinterpret_cast<const uint8_t*>(contents.data()), contents.size());
+        shared_ptr<Data> data = make_shared<Data>();
+        data->setName(dataNames);
+        data->setFreshnessPeriod(20_s);
+        data->setContent(reinterpret_cast<const uint8_t*>(contents.data()), contents.size());
 
-    m_keyChain.sign(*data);
+        m_keyChain.sign(*data);
 
-    std::cout << "<< Send Data: " << *data << std::endl;
+        std::cout << "<< Send Data: " << *data << std::endl;
 
-    m_face.put(*data);  
+        m_face.put(*data);  
+    }
   }
 
   void
