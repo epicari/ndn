@@ -65,12 +65,12 @@ main (int argc, char *argv[])
   // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
   CommandLine cmd;
   cmd.Parse (argc, argv);
-
+/*
   // Creating 3x3 topology
   PointToPointHelper p2p;
   PointToPointGridHelper grid (3, 3, p2p);
   grid.BoundingBox(100,100,200,200);
-
+*/
   // Create Node and set grid 
   NodeContainer consumer;
   consumer.Create (numberOfNodes);
@@ -78,12 +78,13 @@ main (int argc, char *argv[])
   NodeContainer producer;
   producer.Create (numberOfNodes);
 
-//  PointToPointHelper p2p;
-  NetDeviceContainer Consumerdevice = p2p.Install (consumer);
-  NetDeviceContainer Producerdevice = p2p.Install (producer);
+  PointToPointHelper p2p;
+  NetDeviceContainer nodeDevice = p2p.Install (producer, consumer);
+//  NetDeviceContainer Consumerdevice = p2p.Install (consumer);
+//  NetDeviceContainer Producerdevice = p2p.Install (producer);
 
-  consumer.Add (grid.GetNode (0, 0));
-  producer.Add (grid.GetNode (2, 2));
+//  consumer.Add (grid.GetNode (0, 0));
+//  producer.Add (grid.GetNode (2, 2));
 
   // Install Interest stack on all nodes
   InternetStackHelper internet;
@@ -93,11 +94,11 @@ main (int argc, char *argv[])
   Ipv4AddressHelper ipv4;
   ipv4.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer i;
-  i = ipv4.Assign (Consumerdevice);
+  i = ipv4.Assign (nodeDevice.Get (1));
 
   ipv4.SetBase ("20.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer j;
-  j = ipv4.Assign (Producerdevice);
+  j = ipv4.Assign (nodeDevice.Get (0));
 
   // Create Application
   uint16_t port = 9;
