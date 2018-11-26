@@ -73,8 +73,11 @@ main (int argc, char *argv[])
   grid.BoundingBox(100,100,200,200);
 
   // Create Node and set grid 
-  NodeContainer consumer = consumer.Create (numberOfNodes);
-  NodeContainer producer = producer.Create (numberOfNodes);
+  NodeContainer consumer;
+  consumer.Create (numberOfNodes);
+
+  NodeContainer producer;
+  producer.Create (numberOfNodes);
 
   NetDeviceContainer Consumerdevice = p2p.Install (consumer);
   NetDeviceContainer Producerdevice = p2p.Install (producer);
