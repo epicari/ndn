@@ -65,12 +65,12 @@ main (int argc, char *argv[])
   // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
   CommandLine cmd;
   cmd.Parse (argc, argv);
-/*
+
   // Creating 3x3 topology
   PointToPointHelper p2p;
   PointToPointGridHelper grid (3, 3, p2p);
   grid.BoundingBox(100,100,200,200);
-*/
+
   // Create Node and set grid 
   NodeContainer consumer;
   consumer.Create (numberOfNodes);
@@ -78,12 +78,12 @@ main (int argc, char *argv[])
   NodeContainer producer;
   producer.Create (numberOfNodes);
 
-  PointToPointHelper p2p;
+//  PointToPointHelper p2p;
   NetDeviceContainer Consumerdevice = p2p.Install (consumer);
   NetDeviceContainer Producerdevice = p2p.Install (producer);
 
-//  consumer.Add (grid.GetNode (0, 0));
-//  producer.Add (grid.GetNode (2, 2));
+  consumer.Add (grid.GetNode (0, 0));
+  producer.Add (grid.GetNode (2, 2));
 
   // Install Interest stack on all nodes
   InternetStackHelper internet;
