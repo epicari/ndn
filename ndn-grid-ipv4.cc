@@ -72,11 +72,14 @@ main (int argc, char *argv[])
   NodeContainer nodes;
   nodes.Create (2);
 
-  NetDeviceContainer Consumer = (nodes.Get (0));
-  NetDeviceContainer Producer = (nodes.Get (1));
+  Ptr<Node> Consumer = nodes.Get (0);
+  Ptr<Node> Producer = nodes.Get (1);
 
-  Consumer.Add (grid.GetNode (0, 0));
-  Producer.Add (grid.GetNode (2, 2));
+  NetDeviceContainer Consumerdevice = p2p.Install (Consumer);
+  NetDeviceContainer Producerdevice = p2p.Install (Producer);
+
+  Consumerdevice.Add (grid.GetNode (0, 0));
+  Producerdevice.Add (grid.GetNode (2, 2));
 
   // Install Interest stack on all nodes
   InternetStackHelper internet;
@@ -94,6 +97,8 @@ main (int argc, char *argv[])
 
   // Create Application
   uint16_t port = 9;
+  ApplicationContainer consumerHelper;
+  ApplicationContainer producerHelper;
 
   BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
                                       InetSocketAddress (j.GetAddress (1), port));
