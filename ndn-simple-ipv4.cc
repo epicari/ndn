@@ -123,12 +123,12 @@ main (int argc, char *argv[])
   ApplicationContainer consumerApp;
   ApplicationContainer producerApp;
 
-  OnOffHelper consumerHelper ("ns3::TcpSocketFactory", 
-                                      InetSocketAddress (j.GetAddress (0), port));
+  BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
+                                      Address (InetSocketAddress (j.GetAddress (0), port)));
   consumerApp.Add (consumerHelper.Install (c.Get (0)));
 
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory",
-                                    InetSocketAddress (Ipv4Address::GetAny (), port));
+                                    Address (InetSocketAddress (Ipv4Address::GetAny (), port)));
   producerApp.Add (producerHelper.Install (c.Get (2)));
 
   consumerApp.Start (Seconds (1.0));
