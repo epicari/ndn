@@ -95,7 +95,7 @@ main (int argc, char *argv[])
   // Create Application
   uint16_t port = 9;
 
-  BulkSendApplication consumerHelper ("ns3::TcpSocketFactory", 
+  BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
                                       InetSocketAddress (j.GetAddress (1), port));
   consumerHelper.Install (Consumer);
 
