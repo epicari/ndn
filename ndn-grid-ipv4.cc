@@ -72,8 +72,8 @@ main (int argc, char *argv[])
   NodeContainer nodes;
   nodes.Create (2);
 
-  NetDeviceContainer Consumer = nodes.Get (0);
-  NetDeviceContainer Producer = nodes.Get (1);
+  NetDeviceContainer Consumer = (nodes.Get (0));
+  NetDeviceContainer Producer = (nodes.Get (1));
 
   Consumer.Add (grid.GetNode (0, 0));
   Producer.Add (grid.GetNode (2, 2));
