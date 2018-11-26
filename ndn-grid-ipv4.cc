@@ -25,7 +25,6 @@
 #include "ns3/ipv4-global-routing-helper.h"
 #include "ns3/internet-module.h"
 #include "ns3/applications-module.h"
-#include "ns3/flow-monitor-module.h"
 #include "ns3/packet-sink.h"
 
 using namespace ns3;
@@ -97,23 +96,23 @@ main (int argc, char *argv[])
 
   // Create Application
   uint16_t port = 9;
-  ApplicationContainer consumerHelper;
-  ApplicationContainer producerHelper;
+  ApplicationContainer consumerApp;
+  ApplicationContainer producerApp;
 
   BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
-                                      InetSocketAddress (j.GetAddress (1), port));
-  consumerHelper.Install (nodes.Get (0));
+                                      InetSocketAddress (j.GetAddress (0), port));
+  consumerApp.Add (consumerHelper.Install (nodes.Get (0)));
 
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory",
                                     InetSocketAddress (Ipv4Address::GetAny (), port));
   producerHelper.SetAttribute ("MaxBytes", StringValue("1024"));
-  producerHelper.Install (nodes.Get (1));
+  producerApp.Add (producerHelper.Install (nodes.Get (1)));
 
-  consumerHelper.Start (Seconds (0.0));
-  producerHelper.Start (Seconds (0.0));
+  consumerApp.Start (Seconds (0.0));
+  producerApp.Start (Seconds (0.0));
 
-  consumerHelper.Stop (Seconds (20.0));
-  producerHelper.Stop (Seconds (20.0));
+  consumerApp.Stop (Seconds (20.0));
+  producerApp.Stop (Seconds (20.0));
 
   Simulator::Stop (Seconds (20.0));
 
