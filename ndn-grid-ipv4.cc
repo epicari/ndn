@@ -76,12 +76,17 @@ main (int argc, char *argv[])
   consumerContainer.Create (numberOfNodes);
   Ptr<Node> consumer = consumerContainer.Get (0); 
 
+  NodeContainer routerContainer;
+  routerContainer.Create (numberOfNodes);
+  Ptr<Node> router = routerContainer.Get (0);
+
   NodeContainer producerContainer;
   producerContainer.Create (numberOfNodes);
   Ptr<Node> producer = producerContainer.Get (0);
 
   PointToPointHelper p2p;
-  NetDeviceContainer nodeDevice = p2p.Install (consumer, producer);
+  NetDeviceContainer nodeDevice_a = p2p.Install (consumer, router);
+  NetDeviceContainer nodeDevice_b = p2p.Install (router, producer);
 //  NetDeviceContainer Consumerdevice = p2p.Install (consumer);
 //  NetDeviceContainer Producerdevice = p2p.Install (producer);
 
@@ -96,22 +101,29 @@ main (int argc, char *argv[])
   Ipv4AddressHelper ipv4;
   ipv4.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer i;
-  i = ipv4.Assign (nodeDevice);
+  i = ipv4.Assign (nodeDevice_a);
 
-  Ipv4Address producerAddr = i.GetAddress (1);
-/*
+  Ipv4Address routerAddr = i.GetAddress (1);
+
   ipv4.SetBase ("20.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer j;
-  j = ipv4.Assign (nodeDevice.Get (0));
-*/
+  j = ipv4.Assign (nodeDevice_b);
+
+  Ipv4Address producerAddr = j.GetAddress (1);
+
   // Create Application
   uint16_t port = 9;
   ApplicationContainer consumerApp;
   ApplicationContainer producerApp;
+  ApplicationContainer routerApp;
 
   BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
-                                      InetSocketAddress (producerAddr, port));
+                                      InetSocketAddress (routerAddr, port));
   consumerApp.Add (consumerHelper.Install (consumer));
+
+  BulkSendHelper routerHelper ("ns3::TcpSocketFactory",
+                                    InetSocketAddress (producerAddr, port));
+  routerApp.Add (routerHelper.Install (router));
 
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory",
                                     InetSocketAddress (Ipv4Address::GetAny (), port));
@@ -119,9 +131,11 @@ main (int argc, char *argv[])
 
   consumerApp.Start (Seconds (0.0));
   producerApp.Start (Seconds (0.0));
+  routerApp.Start (Seconds (0.0));
 
   consumerApp.Stop (Seconds (20.0));
   producerApp.Stop (Seconds (20.0));
+  routerApp.Stop (Seconds (20.0));
 
   Simulator::Stop (Seconds (20.0));
 
