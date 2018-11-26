@@ -71,18 +71,18 @@ main (int argc, char *argv[])
   grid.BoundingBox(100,100,200,200);
 
   // Create Node and set grid 
-  NodeContainer nodes;
-  nodes.Create (2);
+  NodeContainer consumer = consumer.Create (1);
+  NodeContainer producer = producer.Create (1);
 
-  NetDeviceContainer Consumerdevice = p2p.Install (nodes.Get (0));
-  NetDeviceContainer Producerdevice = p2p.Install (nodes.Get (1));
+  NetDeviceContainer Consumerdevice = p2p.Install (consumer);
+  NetDeviceContainer Producerdevice = p2p.Install (producer);
 
-  Consumerdevice.Add (grid.GetNode (0, 0));
-  Producerdevice.Add (grid.GetNode (2, 2));
+  consumer.Add (grid.GetNode (0, 0));
+  producer.Add (grid.GetNode (2, 2));
 
   // Install Interest stack on all nodes
   InternetStackHelper internet;
-  internet.Install (nodes);
+  internet.InstallAll ();
 
   // Assign Ipv4 Address
   Ipv4AddressHelper ipv4;
@@ -101,12 +101,12 @@ main (int argc, char *argv[])
 
   BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
                                       InetSocketAddress (j.GetAddress (0), port));
-  consumerApp.Add (consumerHelper.Install (nodes.Get (0)));
+  consumerApp.Add (consumerHelper.Install (consumer));
 
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory",
                                     InetSocketAddress (Ipv4Address::GetAny (), port));
   producerHelper.SetAttribute ("MaxBytes", StringValue("1024"));
-  producerApp.Add (producerHelper.Install (nodes.Get (1)));
+  producerApp.Add (producerHelper.Install (producer));
 
   consumerApp.Start (Seconds (0.0));
   producerApp.Start (Seconds (0.0));
