@@ -84,11 +84,11 @@ main (int argc, char *argv[])
 
   // Assign Ipv4 Address
   Ipv4AddressHelper ipv4;
-  ipv4.setBase ("10.1.1.0", "255.255.255.0");
+  ipv4.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer i;
   i = ipv4.Assign (Consumer);
 
-  ipv4.setBase ("20.1.1.0", "255.255.255.0");
+  ipv4.SetBase ("20.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer j;
   j = ipv4.Assign (Producer);
 
