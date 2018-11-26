@@ -121,7 +121,7 @@ main (int argc, char *argv[])
                                       InetSocketAddress (routerAddr, port));
   consumerApp.Add (consumerHelper.Install (consumer));
 
-  BulkSendHelper routerHelper ("ns3::TcpSocketFactory",
+  PacketSinkHelper routerHelper ("ns3::TcpSocketFactory",
                                     InetSocketAddress (producerAddr, port));
   routerApp.Add (routerHelper.Install (router));
 
