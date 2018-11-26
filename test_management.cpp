@@ -65,12 +65,7 @@ private:
                               bind(&Mgmt::forwardingTimeout, this, _1));
   
         std::cout << ">> Forwarding: " << _interest << std::endl;
-    }
 
-    else 
-      bind(&Mgmt::forwardingNack, this, _1, _2);
-  
-    if (true){
         Name dataNames(interest.getName());
         dataNames
                 .append("BATT")
@@ -86,8 +81,12 @@ private:
 
         std::cout << "<< Send Data: " << *data << std::endl;
 
-        m_face.put(*data);  
+        m_face.put(*data);
     }
+    
+    else 
+        std::cout << "received Nack with reason ? " << nack.getReason()
+                  << " for interest " << interest << std::endl;
   }
 
   void
@@ -103,13 +102,6 @@ private:
   AckData(const Interest& interest, const Data& data)
   {
     std::cout << ">> Rcv Data: " << data << std::endl;
-  }
-
-  void
-  forwardingNack(const Interest& interest, const lp::Nack& nack)
-  {
-    std::cout << "received Nack with reason ? " << nack.getReason()
-              << " for interest " << interest << std::endl;
   }
 
   void
