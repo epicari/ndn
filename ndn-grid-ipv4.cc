@@ -86,11 +86,11 @@ main (int argc, char *argv[])
   Ipv4AddressHelper ipv4;
   ipv4.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer i;
-  i = ipv4.Assign (Consumer);
+  i = ipv4.Assign (nodes.Get (0));
 
   ipv4.SetBase ("20.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer j;
-  j = ipv4.Assign (Producer);
+  j = ipv4.Assign (nodes.Get (1));
 
   // Create Application
   uint16_t port = 9;
