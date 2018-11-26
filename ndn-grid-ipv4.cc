@@ -56,6 +56,8 @@ using namespace ns3;
 int
 main (int argc, char *argv[])
 {
+  uint16_t numberOfNodes = 1;
+
   // Setting default parameters for PointToPoint links and channels
   Config::SetDefault ("ns3::PointToPointNetDevice::DataRate", StringValue ("1Mbps"));
   Config::SetDefault ("ns3::PointToPointChannel::Delay", StringValue ("10ms"));
@@ -71,8 +73,8 @@ main (int argc, char *argv[])
   grid.BoundingBox(100,100,200,200);
 
   // Create Node and set grid 
-  NodeContainer consumer = consumer.Create ();
-  NodeContainer producer = producer.Create ();
+  NodeContainer consumer = consumer.Create (numberOfNodes);
+  NodeContainer producer = producer.Create (numberOfNodes);
 
   NetDeviceContainer Consumerdevice = p2p.Install (consumer);
   NetDeviceContainer Producerdevice = p2p.Install (producer);
