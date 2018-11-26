@@ -110,7 +110,6 @@ main (int argc, char *argv[])
 
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory",
                                     InetSocketAddress (Ipv4Address::GetAny (), port));
-  producerHelper.SetAttribute ("MaxBytes", StringValue("1024"));
   producerApp.Add (producerHelper.Install (producer));
 
   consumerApp.Start (Seconds (0.0));
