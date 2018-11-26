@@ -72,14 +72,16 @@ main (int argc, char *argv[])
   grid.BoundingBox(100,100,200,200);
 */
   // Create Node and set grid 
-  NodeContainer consumer;
-  consumer.Create (numberOfNodes);
+  NodeContainer consumerContainer;
+  consumerContainer.Create (numberOfNodes);
+  Ptr<Node> consumer = consumerContainer.Get (0); 
 
-  NodeContainer producer;
-  producer.Create (numberOfNodes);
+  NodeContainer producerContainer;
+  producerContainer.Create (numberOfNodes);
+  Ptr<Node> producer = producerContainer.Get (0);
 
   PointToPointHelper p2p;
-  NetDeviceContainer nodeDevice = p2p.Install (producer, consumer);
+  NetDeviceContainer nodeDevice = p2p.Install (consumer, producer);
 //  NetDeviceContainer Consumerdevice = p2p.Install (consumer);
 //  NetDeviceContainer Producerdevice = p2p.Install (producer);
 
@@ -94,12 +96,14 @@ main (int argc, char *argv[])
   Ipv4AddressHelper ipv4;
   ipv4.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer i;
-  i = ipv4.Assign (nodeDevice.Get (1));
+  i = ipv4.Assign (nodeDevice);
 
+  Ipv4Address producerAddr = i.GetAddress (1);
+/*
   ipv4.SetBase ("20.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer j;
   j = ipv4.Assign (nodeDevice.Get (0));
-
+*/
   // Create Application
   uint16_t port = 9;
   ApplicationContainer consumerApp;
