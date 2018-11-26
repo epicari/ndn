@@ -78,6 +78,7 @@ main (int argc, char *argv[])
   NodeContainer producer;
   producer.Create (numberOfNodes);
 
+  PointToPointHelper p2p;
   NetDeviceContainer Consumerdevice = p2p.Install (consumer);
   NetDeviceContainer Producerdevice = p2p.Install (producer);
 
