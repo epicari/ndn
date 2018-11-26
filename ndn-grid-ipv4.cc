@@ -72,11 +72,8 @@ main (int argc, char *argv[])
   NodeContainer nodes;
   nodes.Create (2);
 
-  Ptr<Node> Consumer = nodes.Get (0);
-  Ptr<Node> Producer = nodes.Get (1);
-
-  NetDeviceContainer Consumerdevice = p2p.Install (Consumer);
-  NetDeviceContainer Producerdevice = p2p.Install (Producer);
+  NetDeviceContainer Consumerdevice = p2p.Install (nodes.Get (0));
+  NetDeviceContainer Producerdevice = p2p.Install (nodes.Get (1));
 
   Consumerdevice.Add (grid.GetNode (0, 0));
   Producerdevice.Add (grid.GetNode (2, 2));
@@ -89,11 +86,11 @@ main (int argc, char *argv[])
   Ipv4AddressHelper ipv4;
   ipv4.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer i;
-  i = ipv4.Assign (Consumer);
+  i = ipv4.Assign (Consumerdevice);
 
   ipv4.SetBase ("20.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer j;
-  j = ipv4.Assign (Producer);
+  j = ipv4.Assign (Producerdevice);
 
   // Create Application
   uint16_t port = 9;
@@ -102,12 +99,12 @@ main (int argc, char *argv[])
 
   BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
                                       InetSocketAddress (j.GetAddress (1), port));
-  consumerHelper.Install (Consumer);
+  consumerHelper.Install (nodes.Get (0));
 
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory",
                                     InetSocketAddress (Ipv4Address::GetAny (), port));
   producerHelper.SetAttribute ("MaxBytes", StringValue("1024"));
-  producerHelper.Install (producer);
+  producerHelper.Install (nodes.Get (1));
 
   consumerHelper.Start (Seconds (0.0));
   producerHelper.Start (Seconds (0.0));
