@@ -118,8 +118,4 @@ main (int argc, char *argv[])
 
   Simulator::Run ();
   Simulator::Destroy ();
-
-  Ptr<PacketSink> sink1 = DynamicCast<PacketSink> (producerHelper.Get (0));
-  std::cout << "Total Bytes Received: " << sink1->GetTotalRx () << std::endl;
-
 }
