@@ -106,6 +106,7 @@ main (int argc, char *argv[])
 
   BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
                                       InetSocketAddress (j.GetAddress (0), port));
+  consumerHelper.SetAttribute ("MaxBytes", UintegerValue (1024));
   consumerApp.Add (consumerHelper.Install (consumer));
 
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory",
