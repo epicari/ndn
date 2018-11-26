@@ -72,8 +72,8 @@ main (int argc, char *argv[])
   NodeContainer nodes;
   nodes.Create (2);
 
-  NodeContainer Consumer = nodes.Get (0);
-  NodeContainer Producer = nodes.Get (1);
+  NetDeviceContainer Consumer = nodes.Get (0);
+  NetDeviceContainer Producer = nodes.Get (1);
 
   Consumer.Add (grid.GetNode (0, 0));
   Producer.Add (grid.GetNode (2, 2));
@@ -86,11 +86,11 @@ main (int argc, char *argv[])
   Ipv4AddressHelper ipv4;
   ipv4.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer i;
-  i = ipv4.Assign (nodes.Get (0));
+  i = ipv4.Assign (Consumer);
 
   ipv4.SetBase ("20.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer j;
-  j = ipv4.Assign (nodes.Get (1));
+  j = ipv4.Assign (Producer);
 
   // Create Application
   uint16_t port = 9;
