@@ -110,7 +110,7 @@ main (int argc, char *argv[])
   ApplicationContainer producerApp;
 
   BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
-                                      InetSocketAddress (j.GetAddress (0), port));
+                                      InetSocketAddress (producerAddr, port));
   consumerHelper.SetAttribute ("MaxBytes", UintegerValue (1024));
   consumerApp.Add (consumerHelper.Install (consumer));
 
