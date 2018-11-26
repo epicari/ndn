@@ -117,10 +117,8 @@ main (int argc, char *argv[])
   ApplicationContainer producerApp;
   ApplicationContainer routerApp;
 
-  OnOffHelper consumerHelper ("ns3::TcpSocketFactory", 
+  BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
                                       InetSocketAddress (routerAddr, port));
-  consumerHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
-  consumerHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
   consumerApp.Add (consumerHelper.Install (consumer));
 
   OnOffHelper routerHelper ("ns3::TcpSocketFactory",
