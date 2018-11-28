@@ -56,7 +56,7 @@ using namespace ns3;
 int
 main (int argc, char *argv[])
 {
-  uint16_t numberOfNodes = 1;
+  uint16_t numberOfNodes = 3;
 
   // Setting default parameters for PointToPoint links and channels
   Config::SetDefault ("ns3::PointToPointNetDevice::DataRate", StringValue ("1Mbps"));
@@ -65,79 +65,77 @@ main (int argc, char *argv[])
   // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
   CommandLine cmd;
   cmd.Parse (argc, argv);
-/*
+
   // Creating 3x3 topology
   PointToPointHelper p2p;
   PointToPointGridHelper grid (3, 3, p2p);
   grid.BoundingBox(100,100,200,200);
-*/
+
+
   // Create Node and set grid 
   NodeContainer consumerContainer;
   consumerContainer.Create (numberOfNodes);
   Ptr<Node> consumer = consumerContainer.Get (0); 
 
-  NodeContainer routerContainer;
-  routerContainer.Create (numberOfNodes);
-  Ptr<Node> router = routerContainer.Get (0);
-
   NodeContainer producerContainer;
   producerContainer.Create (numberOfNodes);
   Ptr<Node> producer = producerContainer.Get (0);
 
-  PointToPointHelper p2p;
-  NetDeviceContainer nodeDevice_a = p2p.Install (consumer, router);
-  NetDeviceContainer nodeDevice_b = p2p.Install (router, producer);
-//  NetDeviceContainer Consumerdevice = p2p.Install (consumer);
-//  NetDeviceContainer Producerdevice = p2p.Install (producer);
+  consumer.Add (grid.GetNode (0, 0));
+  producer.Add (grid.GetNode (2, 2));
 
-//  consumer.Add (grid.GetNode (0, 0));
-//  producer.Add (grid.GetNode (2, 2));
+/*
+  // Create Node
+  NodeContainer c;
+  c.Create (numberOfNodes);
+
+  NodeContainer cr = NodeContainer (c.Get (0), c.Get (1));
+  NodeContainer pr = NodeContainer (c.Get (2), c.Get (1));
+
+  PointToPointHelper p2p;
+  NetDeviceContainer dcr = p2p.Install (cr);
+  NetDeviceContainer dpr = p2p.Install (pr);
+*/
+
+
 
   // Install Interest stack on all nodes
   InternetStackHelper internet;
-  internet.InstallAll ();
+  internet.Install (consumerContainer);
+  internet.Install (producerContainer);
 
   // Assign Ipv4 Address
   Ipv4AddressHelper ipv4;
   ipv4.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer i;
-  i = ipv4.Assign (nodeDevice_a);
-
-  Ipv4Address routerAddr = i.GetAddress (1);
+  i = ipv4.Assign (consumer);
 
   ipv4.SetBase ("20.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer j;
-  j = ipv4.Assign (nodeDevice_b);
+  j = ipv4.Assign (producer);
 
-  Ipv4Address producerAddr = j.GetAddress (1);
+  Ipv4Address producerAddr = j.GetAddress (0);
+
+  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 
   // Create Application
   uint16_t port = 9;
   ApplicationContainer consumerApp;
   ApplicationContainer producerApp;
-  ApplicationContainer routerApp;
 
   BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", 
-                                      InetSocketAddress (routerAddr, port));
+                                  Address (InetSocketAddress (producerAddr, port)));
   consumerApp.Add (consumerHelper.Install (consumer));
 
-  OnOffHelper routerHelper ("ns3::TcpSocketFactory",
-                                    InetSocketAddress (producerAddr, port));
-  consumerHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
-  consumerHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
-  routerApp.Add (routerHelper.Install (router));
-
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory",
-                                    InetSocketAddress (Ipv4Address::GetAny (), port));
+                                    Address (InetSocketAddress (Ipv4Address::GetAny (), port)));
   producerApp.Add (producerHelper.Install (producer));
 
   consumerApp.Start (Seconds (0.0));
   producerApp.Start (Seconds (0.0));
-  routerApp.Start (Seconds (0.0));
 
   consumerApp.Stop (Seconds (20.0));
   producerApp.Stop (Seconds (20.0));
-  routerApp.Stop (Seconds (20.0));
 
   Simulator::Stop (Seconds (20.0));
 
