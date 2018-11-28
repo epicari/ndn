@@ -81,8 +81,8 @@ main (int argc, char *argv[])
   producerContainer.Create (numberOfNodes);
   Ptr<Node> producer = producerContainer.Get (0);
 
-  consumer.Add (grid.GetNode (0, 0));
-  producer.Add (grid.GetNode (2, 2));
+  consumer = grid.GetNode (0, 0);
+  producer = grid.GetNode (2, 2);
 
 /*
   // Create Node
@@ -108,11 +108,11 @@ main (int argc, char *argv[])
   Ipv4AddressHelper ipv4;
   ipv4.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer i;
-  i = ipv4.Assign (consumer);
+  i = ipv4.Assign (consumerContainer);
 
   ipv4.SetBase ("20.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer j;
-  j = ipv4.Assign (producer);
+  j = ipv4.Assign (producerContainer);
 
   Ipv4Address producerAddr = j.GetAddress (0);
 
