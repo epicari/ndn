@@ -81,8 +81,6 @@ main (int argc, char *argv[])
   producerContainer.Create (numberOfNodes);
   Ptr<Node> producer = producerContainer.Get (0);
 
-  consumer = grid.GetNode (0, 0);
-  producer = grid.GetNode (2, 2);
 
 /*
   // Create Node
