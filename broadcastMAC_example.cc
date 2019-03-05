@@ -94,20 +94,19 @@ main (int argc, char *argv[])
       devices.Add(asHelper.Create(*i, newDevice));
 
       NS_LOG_DEBUG("Node:" << newDevice->GetAddress() << " position: ( " << boundry.x << "," << boundry.y << "," << boundry.z << " )");
-      boundry.x += 100;
-      boundry.y += 100;
-      boundry.z += 100;
+      boundry.x += 1000;
+      boundry.y += 2000;
       //newDevice->GetPhy()->SetTransRange(range);
     }
 
   for (NodeContainer::Iterator i = sinksCon.Begin(); i != sinksCon.End(); i++)
     {
       Ptr<AquaSimNetDevice> newDevice = CreateObject<AquaSimNetDevice>();
+      boundry.x += 1000;
       position->Add(boundry);
       devices.Add(asHelper.Create(*i, newDevice));
 
-      NS_LOG_DEBUG("Sink:" << newDevice->GetAddress() << " position: (" << boundry.x << "," << boundry.y << "," << boundry.z << " )");
-      boundry.x += 100;
+      NS_LOG_DEBUG("Sink:" << newDevice->GetAddress() << " position: ( " << boundry.x << "," << boundry.y << "," << boundry.z << " )");
       //newDevice->GetPhy()->SetTransRange(range);
     }
 
