@@ -25,6 +25,7 @@
 #include "ns3/applications-module.h"
 #include "ns3/log.h"
 #include "ns3/callback.h"
+#include "ns3/flow-monitor-module.h"
 
 
 /*
@@ -38,6 +39,18 @@
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("ASBroadcastMac");
+
+Ptr<PacketSink> pktsinkA, pktsinkB, pktsinkC;
+
+void
+GetTotalRx ()
+{
+  Time now = Simulator::Now ();
+  double totalrx = pktsinkA->GetTotalRx () * 8;
+  double totalthroughput = totalrx / now.GetSeconds ();
+  std::cout << now.GetSeconds () << "s: \t" << "total RX :" << totalrx << " " << "total Throughput :" << totalthroughput << " Mbit/s" << std::endl;
+  Simulator::Schedule (MilliSeconds (100), &GetTotalRx);
+}
 
 int
 main (int argc, char *argv[])
@@ -76,6 +89,11 @@ main (int argc, char *argv[])
   asHelper.SetChannel(channel.Create());
   asHelper.SetMac("ns3::AquaSimBroadcastMac");
   asHelper.SetRouting("ns3::AquaSimRoutingDummy");
+  asHelper.SetEnergyModel("ns3::AquaSimEnergyModel",
+                      "RxPower", DoubleValue(0.1),
+                      "TxPower", DoubleValue(2.0),
+                      "InitialEnergy", DoubleValue(50),
+                      "IdlePower", DoubleValue(0.01));
 
   /*
    * Set up mobility model for nodes and sinks
@@ -102,7 +120,7 @@ main (int argc, char *argv[])
   for (NodeContainer::Iterator i = sinksCon.Begin(); i != sinksCon.End(); i++)
     {
       Ptr<AquaSimNetDevice> newDevice = CreateObject<AquaSimNetDevice>();
-      boundry.x += 1000;
+      boundry.x += 500;
       position->Add(boundry);
       devices.Add(asHelper.Create(*i, newDevice));
 
@@ -128,9 +146,11 @@ main (int argc, char *argv[])
   app.SetAttribute ("PacketSize", UintegerValue (m_packetSize));
 
   ApplicationContainer apps = app.Install (nodesCon);
+  pktsinkA = StaticCast<PacketSink> (apps.Get (0));
+  pktsinkB = StaticCast<PacketSink> (apps.Get (1));
+  pktsinkC = StaticCast<PacketSink> (apps.Get (2));
   apps.Start (Seconds (0.5));
   apps.Stop (Seconds (simStop + 1));
-
 
   Ptr<Node> sinkNode = sinksCon.Get(0);
   TypeId psfid = TypeId::LookupByName ("ns3::PacketSocketFactory");
@@ -147,6 +167,10 @@ main (int argc, char *argv[])
   if (tReader.ReadFile("channelTrace.txt")) NS_LOG_DEBUG("Trace Reader Success");
   else NS_LOG_DEBUG("Trace Reader Failure");
 */
+
+  FlowMonitorHelper flowmon;
+  Ptr<FlowMonitor> monitor = flowmon.InstallAll ();
+  monitor->StartRightNow();
 
   Packet::EnablePrinting (); //for debugging purposes
   std::cout << "-----------Running Simulation-----------\n";
