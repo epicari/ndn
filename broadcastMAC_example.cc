@@ -75,7 +75,7 @@ main (int argc, char *argv[])
   AquaSimHelper asHelper = AquaSimHelper::Default();
   asHelper.SetChannel(channel.Create());
   asHelper.SetMac("ns3::AquaSimBroadcastMac");
-  asHelper.SetRouting("ns3::AquaSimDDBR");
+  asHelper.SetRouting("ns3::AquaSimRoutingDummy");
 
   /*
    * Set up mobility model for nodes and sinks
