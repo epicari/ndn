@@ -43,13 +43,13 @@ NS_LOG_COMPONENT_DEFINE("ASBroadcastMac");
 Ptr<PacketSink> pktsinkA, pktsinkB, pktsinkC;
 
 void
-GetTotalRx ()
+GetRx ()
 {
   Time now = Simulator::Now ();
   double totalrx = pktsinkA->GetTotalRx () * 8;
   double totalthroughput = totalrx / now.GetSeconds ();
   std::cout << now.GetSeconds () << "s: \t" << "total RX :" << totalrx << " " << "total Throughput :" << totalthroughput << " Mbit/s" << std::endl;
-  Simulator::Schedule (MilliSeconds (100), &GetTotalRx);
+  Simulator::Schedule (MilliSeconds (100), &GetRx);
 }
 
 int
@@ -121,6 +121,7 @@ main (int argc, char *argv[])
     {
       Ptr<AquaSimNetDevice> newDevice = CreateObject<AquaSimNetDevice>();
       boundry.x += 500;
+      boundry.y += 500;
       position->Add(boundry);
       devices.Add(asHelper.Create(*i, newDevice));
 
