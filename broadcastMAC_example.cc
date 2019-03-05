@@ -40,18 +40,6 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("ASBroadcastMac");
 
-Ptr<PacketSink> pktsinkA, pktsinkB, pktsinkC;
-
-void
-GetRx ()
-{
-  Time now = Simulator::Now ();
-  double totalrx = pktsinkA->GetTotalRx () * 8;
-  double totalthroughput = totalrx / now.GetSeconds ();
-  std::cout << now.GetSeconds () << "s: \t" << "total RX :" << totalrx << " " << "total Throughput :" << totalthroughput << " Mbit/s" << std::endl;
-  Simulator::Schedule (MilliSeconds (100), &GetRx);
-}
-
 int
 main (int argc, char *argv[])
 {
@@ -147,9 +135,6 @@ main (int argc, char *argv[])
   app.SetAttribute ("PacketSize", UintegerValue (m_packetSize));
 
   ApplicationContainer apps = app.Install (nodesCon);
-  pktsinkA = StaticCast<PacketSink> (apps.Get (0));
-  pktsinkB = StaticCast<PacketSink> (apps.Get (1));
-  pktsinkC = StaticCast<PacketSink> (apps.Get (2));
   apps.Start (Seconds (0.5));
   apps.Stop (Seconds (simStop + 1));
 
