@@ -168,10 +168,6 @@ main (int argc, char *argv[])
   else NS_LOG_DEBUG("Trace Reader Failure");
 */
 
-  FlowMonitorHelper flowmon;
-  Ptr<FlowMonitor> monitor = flowmon.InstallAll ();
-  monitor->StartRightNow();
-
   Packet::EnablePrinting (); //for debugging purposes
   std::cout << "-----------Running Simulation-----------\n";
   Simulator::Stop(Seconds(simStop));
