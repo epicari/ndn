@@ -93,8 +93,10 @@ main (int argc, char *argv[])
       position->Add(boundry);
       devices.Add(asHelper.Create(*i, newDevice));
 
-      NS_LOG_DEBUG("Node:" << newDevice->GetAddress() << " position(x):" << boundry.x);
+      NS_LOG_DEBUG("Node:" << newDevice->GetAddress() << " position: ( " << boundry.x << "," << boundry.y << "," << boundry.z << " )");
       boundry.x += 100;
+      boundry.y += 100;
+      boundry.z += 100;
       //newDevice->GetPhy()->SetTransRange(range);
     }
 
@@ -104,7 +106,7 @@ main (int argc, char *argv[])
       position->Add(boundry);
       devices.Add(asHelper.Create(*i, newDevice));
 
-      NS_LOG_DEBUG("Sink:" << newDevice->GetAddress() << " position(x):" << boundry.x);
+      NS_LOG_DEBUG("Sink:" << newDevice->GetAddress() << " position: (" << boundry.x << "," << boundry.y << "," << boundry.z << " )");
       boundry.x += 100;
       //newDevice->GetPhy()->SetTransRange(range);
     }
