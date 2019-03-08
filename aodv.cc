@@ -97,11 +97,13 @@ private:
 };
 
 static void 
-CourseChange (std::string context, Ptr<const MobilityModel> position)
+CourseChange (std::string foo, Ptr<const MobilityModel> mobility)
 {
-  Vector pos = position->GetPosition ();
-  std::cout << Simulator::Now () << ", pos=" << position << ", x=" << pos.x << ", y=" << pos.y
-            << ", z=" << pos.z << std::endl;
+  Vector pos = mobility->GetPosition ();
+  Vector vel = mobility->GetVelocity ();
+  std::cout << Simulator::Now () << ", model=" << mobility << ", POS: x=" << pos.x << ", y=" << pos.y
+            << ", z=" << pos.z << "; VEL:" << vel.x << ", y=" << vel.y
+            << ", z=" << vel.z << std::endl;
 }
 
 int main (int argc, char **argv)
