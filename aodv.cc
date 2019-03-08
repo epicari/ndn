@@ -177,12 +177,12 @@ AodvExample::CreateNodes ()
 
   for (uint16_t i=0; i < 3; i++)
   {
-    NodeContainer cm1 = NodeContainer (serverNode.Get (0), nodeds.Get (i));
+    NodeContainer cm1 = NodeContainer (serverNode.Get (0), nodes.Get (i));
   }
 
   for (uint16_t i=3; i < 6; i++)
   {
-    NodeContainer cm2 = NodeContainer (serverNode.Get (1), nodeds.Get (i));
+    NodeContainer cm2 = NodeContainer (serverNode.Get (1), nodes.Get (i));
   }
 
   NodeContainer c1 = NodeContainer (serverNode.Get (0), serverNode.Get (2));
