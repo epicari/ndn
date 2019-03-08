@@ -173,8 +173,8 @@ AodvExample::CreateNodes ()
   MobilityHelper mobility;
   
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", DoubleValue ("100.0"),
-                                 "Y", DoubleValue ("100.0"),
+                                 "X", StringValue ("100.0"),
+                                 "Y", StringValue ("100.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   
