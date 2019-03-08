@@ -96,6 +96,14 @@ private:
   void InstallApplications ();
 };
 
+static void 
+CourseChange (std::string context, Ptr<const MobilityModel> position)
+{
+  Vector pos = position->GetPosition ();
+  std::cout << Simulator::Now () << ", pos=" << position << ", x=" << pos.x << ", y=" << pos.y
+            << ", z=" << pos.z << std::endl;
+}
+
 int main (int argc, char **argv)
 {
   AodvExample test;
@@ -147,6 +155,9 @@ AodvExample::Run ()
 
   std::cout << "Starting simulation for " << totalTime << " s ...\n";
 
+  Config::Connect ("/NodeList/*/$ns3::MobilityModel/CourseChange",
+                  MakeCallback (&CourseChange));
+
   Simulator::Stop (Seconds (totalTime));
   Simulator::Run ();
   Simulator::Destroy ();
@@ -177,7 +188,7 @@ AodvExample::CreateNodes ()
                                  "Y", StringValue ("100.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  
+
   mobility.Install (nodes);
 }
 
