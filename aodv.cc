@@ -175,15 +175,13 @@ AodvExample::CreateNodes ()
   nodes.Create (size-3);
   serverNode.Create (3);
 
-  for (uint16_t i=0; i < 3; i++)
-  {
-    NodeContainer cm1 = NodeContainer (serverNode.Get (0), nodes.Get (i));
-  }
+  NodeContainer cm1 = NodeContainer (serverNode.Get (0), nodes.Get (0));  
+  NodeContainer cm1 = NodeContainer (serverNode.Get (0), nodes.Get (1));
+  NodeContainer cm1 = NodeContainer (serverNode.Get (0), nodes.Get (2));
 
-  for (uint16_t i=3; i < 6; i++)
-  {
-    NodeContainer cm2 = NodeContainer (serverNode.Get (1), nodes.Get (i));
-  }
+  NodeContainer cm2 = NodeContainer (serverNode.Get (1), nodes.Get (3));
+  NodeContainer cm2 = NodeContainer (serverNode.Get (1), nodes.Get (4));
+  NodeContainer cm2 = NodeContainer (serverNode.Get (1), nodes.Get (5));
 
   NodeContainer c1 = NodeContainer (serverNode.Get (0), serverNode.Get (2));
   NodeContainer c2 = NodeContainer (serverNode.Get (1), serverNode.Get (2));
@@ -220,11 +218,11 @@ AodvExample::CreateDevices ()
   WifiHelper wifi;
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager", "DataMode", StringValue ("OfdmRate6Mbps"), "RtsCtsThreshold", UintegerValue (0));
   //devices = wifi.Install (wifiPhy, wifiMac, nodes); 
-  for(uint16_t i=0; i<nodes.size (); i++)
+  for(uint16_t i=0; i<6; i++)
     {
       deviceAdjacencyList[i] = wifi.Install (wifiPhy, wifiMac, nodes);
     }
-  for(uint16_t i=0; i<serverNode.size (); i++)
+  for(uint16_t i=0; i<3; i++)
     {
       serverDeviceAdjacencyList[i] = wifi.Install (wifiPhy, wifiMac, serverNode);
     }
