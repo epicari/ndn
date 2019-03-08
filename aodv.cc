@@ -80,6 +80,7 @@ private:
   // network
   /// nodes used in the example
   NodeContainer nodes;
+  NodeContainer serverNode;
   /// devices used in the example
   NetDeviceContainer devices;
   /// interfaces used in the example
@@ -97,22 +98,15 @@ private:
 };
 
 static void 
-CourseChange (std::string foo, Ptr<const MobilityModel> mobility)
+CourseChange (std::string context, Ptr<const MobilityModel> position)
 {
-  Vector pos = mobility->GetPosition ();
-  Vector vel = mobility->GetVelocity ();
-  std::cout << Simulator::Now () << ", model=" << mobility << ", POS: x=" << pos.x << ", y=" << pos.y
-            << ", z=" << pos.z << "; VEL:" << vel.x << ", y=" << vel.y
-            << ", z=" << vel.z << std::endl;
+  Vector pos = position->GetPosition ();
+  std::cout << Simulator::Now () << ", pos=" << position << ", x=" << pos.x << ", y=" << pos.y
+            << ", z=" << pos.z << std::endl;
 }
 
 int main (int argc, char **argv)
 {
-  Config::SetDefault ("ns3::RandomWalk2dMobilityModel::Mode", StringValue ("Time"));
-  Config::SetDefault ("ns3::RandomWalk2dMobilityModel::Time", StringValue ("2s"));
-  Config::SetDefault ("ns3::RandomWalk2dMobilityModel::Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"));
-  Config::SetDefault ("ns3::RandomWalk2dMobilityModel::Bounds", StringValue ("0|200|0|200"));
-  
   AodvExample test;
   if (!test.Configure (argc, argv))
     NS_FATAL_ERROR ("Configuration failed. Aborted.");
@@ -124,7 +118,7 @@ int main (int argc, char **argv)
 
 //-----------------------------------------------------------------------------
 AodvExample::AodvExample () :
-  size (10),
+  size (9),
   step (100),
   totalTime (100),
   pcap (true),
@@ -178,15 +172,33 @@ AodvExample::Report (std::ostream &)
 void
 AodvExample::CreateNodes ()
 {
-  std::cout << "Creating " << (unsigned)size << " nodes " << step << " m apart.\n";
-  nodes.Create (size);
+  nodes.Create (size-3);
+  serverNode.Create (3);
+
+  for (uint16_t i=0; i < 3; i++)
+  {
+    NodeContainer cm1 = NodeContainer (serverNode.Get (0), nodeds.Get (i));
+  }
+
+  for (uint16_t i=3; i < 6; i++)
+  {
+    NodeContainer cm2 = NodeContainer (serverNode.Get (1), nodeds.Get (i));
+  }
+
+  NodeContainer c1 = NodeContainer (serverNode.Get (0), serverNode.Get (2));
+  NodeContainer c2 = NodeContainer (serverNode.Get (1), serverNode.Get (2));
+
+  NodeContainer allNodes = NodeContainer (cm1, cm2, serverNode.Get (2));
+
   // Name nodes
+  /*
   for (uint32_t i = 0; i < size; ++i)
     {
       std::ostringstream os;
       os << "node-" << i;
       Names::Add (os.str (), nodes.Get (i));
     }
+  */
   // Create static grid
   MobilityHelper mobility;
   
@@ -194,13 +206,7 @@ AodvExample::CreateNodes ()
                                  "X", StringValue ("100.0"),
                                  "Y", StringValue ("100.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
-  mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
-                             "Mode", StringValue ("Time"),
-                             "Time", StringValue ("2s"),
-                             "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                             "Bounds", StringValue ("0|200|0|200"));
-
-  mobility.Install (nodes);
+  mobility.Install (allNodes);
 }
 
 void
@@ -213,7 +219,15 @@ AodvExample::CreateDevices ()
   wifiPhy.SetChannel (wifiChannel.Create ());
   WifiHelper wifi;
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager", "DataMode", StringValue ("OfdmRate6Mbps"), "RtsCtsThreshold", UintegerValue (0));
-  devices = wifi.Install (wifiPhy, wifiMac, nodes); 
+  //devices = wifi.Install (wifiPhy, wifiMac, nodes); 
+  for(uint16_t i=0; i<nodes.size (); i++)
+    {
+      deviceAdjacencyList[i] = wifi.Install (wifiPhy, wifiMac, nodes);
+    }
+  for(uint16_t i=0; i<serverNode.size (); i++)
+    {
+      serverDeviceAdjacencyList[i] = wifi.Install (wifiPhy, wifiMac, serverNode);
+    }
 
   if (pcap)
     {
@@ -228,10 +242,31 @@ AodvExample::InstallInternetStack ()
   // you can configure AODV attributes here using aodv.Set(name, value)
   InternetStackHelper stack;
   stack.SetRoutingHelper (aodv); // has effect on the next Install ()
-  stack.Install (nodes);
-  Ipv4AddressHelper address;
-  address.SetBase ("10.0.0.0", "255.0.0.0");
-  interfaces = address.Assign (devices);
+  stack.Install (allNodes);
+
+  Ipv4AddressHelper ipv4;
+  std::vector<Ipv4InterfaceContainer> interfaceAdjacencyList (size-3);
+  for(uint32_t i=0; i<interfaceAdjacencyList.size (); ++i)
+    {
+      std::ostringstream cluster_members;
+      cluster_members<<"10.1."<<i+1<<".0";
+      ipv4.SetBase (cluster_members.str ().c_str (), "255.255.255.0");
+      interfaceAdjacencyList[i] = ipv4.Assign (deviceAdjacencyList[i]);
+    }
+  std::vector<Ipv4InterfaceContainer> interfaceAdjacencyLists (3);
+  for(uint32_t i=0; i<interfaceAdjacencyLists.size (); ++i)
+    {
+      std::ostringstream cluster_head;
+      cluster_head<<"10.2."<<i+1<<".0";
+      ipv4.SetBase (cluster_head.str ().c_str (), "255.255.255.0");
+      interfaceAdjacencyLists[i] = ipv4.Assign (serverDeviceAdjacencyList[i]);
+    }
+  
+  Ipv4Address sinkAddress = interfaceAdjacencyLists[2].GetAddress (2);
+  for(uint32_t i=0; i<2; i++)
+    {
+    Ipv4Address clusterAddress = interfaceAdjacencyLists[i].GetAddress (i);
+    }
 
   if (printRoutes)
     {
@@ -243,6 +278,7 @@ AodvExample::InstallInternetStack ()
 void
 AodvExample::InstallApplications ()
 {
+  /*
   V4PingHelper ping (interfaces.GetAddress (size - 1));
   ping.SetAttribute ("Verbose", BooleanValue (true));
 
@@ -254,5 +290,31 @@ AodvExample::InstallApplications ()
   Ptr<Node> node = nodes.Get (size/2);
   Ptr<MobilityModel> mob = node->GetObject<MobilityModel> ();
   Simulator::Schedule (Seconds (totalTime/3), &MobilityModel::SetPosition, mob, Vector (1e5, 1e5, 1e5));
+  */
+
+  uint16_t port = 5000;
+  for(uint32_t i=0; i<serverNode.size (); i++)
+    {
+      OnOffHelper onoff_destination ("ns3::UdpSocketFactory", InetSocketAddress (sinkAddress, port));
+      onoff_destination.SetConstantRate (DataRate ("400Mb/s"), 1420);
+      onoff_destination.SetAttribute ("StartTime", TimeValue (Seconds (0.5)));
+      onoff_destination.SetAttribute ("StopTime", TimeValue (Seconds (simuTime)));
+      ApplicationContainer apps_destination = onoff_destination.Install (serverNode.Get (i));
+    }
+
+  for(uint32_t i=0; i<nodes(size-3); i++)
+    {
+      OnOffHelper onoff_source ("ns3::UdpSocketFactory", InetSocketAddress (clusterAddress, port));
+      onoff_source.SetConstantRate (DataRate ("400Mb/s"), 1420);
+      onoff_source.SetAttribute ("StartTime", TimeValue (Seconds (0.5)));
+      onoff_source.SetAttribute ("StopTime", TimeValue (Seconds (simuTime)));
+      ApplicationContainer apps_source = onoff_source.Install (nodes.Get (i));
+    }
+
+  apps_source.Start (Seconds (0.5));
+  apps_source.Stop (Seconds (totalTime));
+  apps_destination.Start (Seconds (1.0));
+  apps_destination.Start (Seconds (totalTime));
+
 }
 
