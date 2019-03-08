@@ -172,7 +172,7 @@ AodvExample::CreateNodes ()
   // Create static grid
   MobilityHelper mobility;
   
-  mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
+  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", DoubleValue ("100.0"),
                                  "Y", DoubleValue ("100.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
