@@ -60,9 +60,15 @@ main (int argc, char *argv[])
   AquaSimChannelHelper channel = AquaSimChannelHelper::Default();
   channel.SetPropagation("ns3::AquaSimRangePropagation");
   NamedDataHelper ndHelper;
-  AquaSimEnergyHelper energy;	//******this could instead be handled by node helper. ****/
   ndHelper.SetChannel(channel.Create());
-  ndHelper.SetRouting("ns3::AquaSimRoutingDummy");
+  ndHelper.SetEnergyModel("ns3::AquaSimEnergyModel",
+                          "RxPower", DoubleValue(0.1),
+                          "TxPower", DoubleValue(2.0),
+                          "InitialEnergy", DoubleValue(50),
+                          "IdlePower", DoubleValue(0.01));
+  ndHelper.SetNamedData("ns3::NamedData");
+  ndHelper.SetFib("ns3::Fib");
+  ndHelper.SetPit("ns3::Pit");
 
   /*
    * Preset up mobility model for nodes here
