@@ -67,7 +67,8 @@ main (int argc, char *argv[])
                           "InitialEnergy", DoubleValue(50),
                           "IdlePower", DoubleValue(0.01));
   ndHelper.SetNamedData("ns3::NamedData");
-  ndHelper.SetFib("ns3::Fib");
+  ndHelper.SetFib("ns3::Fib",
+                  "SetForwardStrategy", StringValue (MULTICAST));
   ndHelper.SetPit("ns3::Pit");
 
   /*
