@@ -58,9 +58,11 @@ main (int argc, char *argv[])
 
   //establish layers using helper's pre-build settings
   AquaSimChannelHelper channel = AquaSimChannelHelper::Default();
+  channel.SetPropagation("ns3::AquaSimRangePropagation");
   NamedDataHelper ndHelper;
-  //AquaSimEnergyHelper energy;	//******this could instead be handled by node helper. ****/
+  AquaSimEnergyHelper energy;	//******this could instead be handled by node helper. ****/
   ndHelper.SetChannel(channel.Create());
+  ndHelper.SetRouting("ns3::AquaSimRoutingDummy");
 
   /*
    * Preset up mobility model for nodes here
@@ -92,7 +94,6 @@ main (int argc, char *argv[])
 
   PacketSocketAddress socket;
   socket.SetAllDevices();
-  // socket.SetSingleDevice (devices.Get(0)->GetIfIndex());
   socket.SetPhysicalAddress (devices.Get(0)->GetAddress());
   socket.SetProtocol (0);
 
@@ -112,14 +113,6 @@ main (int argc, char *argv[])
 
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, psfid);
   sinkSocket->Bind (socket);
-
-/*
-  ApplicationContainer serverApp;
-  UdpServerHelper myServer (250);
-  serverApp = myServer.Install (nodesCon.Get (0));
-  serverApp.Start (Seconds (0.0));
-  serverApp.Stop (Seconds (simStop + 1));
-*/ //TODO implement application within this example...
 
   Packet::EnablePrinting ();  //for debugging purposes
   std::cout << "-----------Running Simulation-----------\n";

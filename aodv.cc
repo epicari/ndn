@@ -173,21 +173,10 @@ void
 AodvExample::CreateNodes ()
 {
   nodes.Create (size-3);
-  serverNode.Create (3);
+  serverNode.Create (1);
+  clusterHeaderNodes.Create (2);
 
-  NodeContainer cm1 = NodeContainer (serverNode.Get (0), nodes.Get (0));  
-  NodeContainer cm1 = NodeContainer (serverNode.Get (0), nodes.Get (1));
-  NodeContainer cm1 = NodeContainer (serverNode.Get (0), nodes.Get (2));
-
-  NodeContainer cm2 = NodeContainer (serverNode.Get (1), nodes.Get (3));
-  NodeContainer cm2 = NodeContainer (serverNode.Get (1), nodes.Get (4));
-  NodeContainer cm2 = NodeContainer (serverNode.Get (1), nodes.Get (5));
-
-  NodeContainer c1 = NodeContainer (serverNode.Get (0), serverNode.Get (2));
-  NodeContainer c2 = NodeContainer (serverNode.Get (1), serverNode.Get (2));
-
-  NodeContainer allNodes = NodeContainer (cm1, cm2, serverNode.Get (2));
-
+  NodeContainer allNodes = NodeContainer (nodes, serverNode, clusterHeaderNodes);
   // Name nodes
   /*
   for (uint32_t i = 0; i < size; ++i)
@@ -218,13 +207,19 @@ AodvExample::CreateDevices ()
   WifiHelper wifi;
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager", "DataMode", StringValue ("OfdmRate6Mbps"), "RtsCtsThreshold", UintegerValue (0));
   //devices = wifi.Install (wifiPhy, wifiMac, nodes); 
+  std::vector<NetDeviceContainer> deviceAdjacencyList (size-3);
   for(uint16_t i=0; i<6; i++)
     {
       deviceAdjacencyList[i] = wifi.Install (wifiPhy, wifiMac, nodes);
     }
-  for(uint16_t i=0; i<3; i++)
+  
+  std::vector<NetDeviceContainer> serverDeviceAdjacencyList (1);
+     serverDeviceAdjacencyList[i] = wifi.Install (wifiPhy, wifiMac, serverNode);
+  
+  std::vector<NetDeviceContainer> clusterDeviceAdjacencyList (2);
+  for(uint16_t i=0; i<2; i++)
     {
-      serverDeviceAdjacencyList[i] = wifi.Install (wifiPhy, wifiMac, serverNode);
+      clusterDeviceAdjacencyList[i] = wifi.Install (wifiPhy, wifiMac, clusterHeaderNodes);
     }
 
   if (pcap)
