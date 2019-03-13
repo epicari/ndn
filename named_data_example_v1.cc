@@ -29,6 +29,9 @@
 
 
 using namespace ns3;
+using ns3::ndn::StrategyChoiceHelper;
+using ns3::ndn::AppHelper;
+using ns3::ndn::GlobalRoutingHelper;
 
 NS_LOG_COMPONENT_DEFINE("NamedDataExample");
 
@@ -36,7 +39,6 @@ int
 main (int argc, char *argv[])
 {
   double simStop = 60; //seconds
-  int nodes = 3;
   uint32_t m_dataRate = 180;
   uint32_t m_packetSize = 32;
 
@@ -50,15 +52,23 @@ main (int argc, char *argv[])
 
   std::cout << "-----------Initializing simulation-----------\n";
 
-  NodeContainer nodesCon;
-  nodesCon.Create(nodes);
+  NodeContainer cmnodes;
+  cmnodes.Create(50);
+
+  NodeContainer sinknode;
+  sinknode.Create(1);
+  
+  NodeContainer Allnodes;
+  Allnodes.Create(cmnodes, sinknode);
 
   PacketSocketHelper socketHelper;
-  socketHelper.Install(nodesCon);
+  socketHelper.Install(Allnodes);
 
   //establish layers using helper's pre-build settings
   AquaSimChannelHelper channel = AquaSimChannelHelper::Default();
   channel.SetPropagation("ns3::AquaSimRangePropagation");
+  channel.AddDevice(Allnodes);
+
   NamedDataHelper ndHelper;
   ndHelper.SetChannel(channel.Create());
   ndHelper.SetEnergyModel("ns3::AquaSimEnergyModel",
@@ -66,38 +76,19 @@ main (int argc, char *argv[])
                           "TxPower", DoubleValue(2.0),
                           "InitialEnergy", DoubleValue(50),
                           "IdlePower", DoubleValue(0.01));
-  ndHelper.SetNamedData("ns3::NamedData");
-  ndHelper.SetFib("ns3::Fib",
-                  "SetForwardStrategy", BEST_ROUTE);
-  ndHelper.SetPit("ns3::Pit");
-
+  
   /*
    * Preset up mobility model for nodes here
    */
+
   MobilityHelper mobility;
-  NetDeviceContainer devices;
-  Ptr<ListPositionAllocator> position = CreateObject<ListPositionAllocator> ();
-  Vector boundry = Vector(0,0,0);
-
-  std::cout << "Creating Nodes\n";
-
-  for (NodeContainer::Iterator i = nodesCon.Begin(); i != nodesCon.End(); i++)
-    {
-      Ptr<AquaSimNetDevice> newDevice = CreateObject<AquaSimNetDevice>();
-      position->Add(boundry);
-      devices.Add(ndHelper.Create(*i, newDevice));
-
-      NS_LOG_DEBUG("Node: " << *i << " newDevice: " << newDevice << " Position: " <<
-		     boundry.x << "," << boundry.y << "," << boundry.z <<
-		     " freq:" << newDevice->GetPhy()->GetFrequency() << " addr:" <<
-         AquaSimAddress::ConvertFrom(newDevice->GetAddress()).GetAsInt() );
-
-      boundry.x += 2000;
-    }
-
-  mobility.SetPositionAllocator(position);
-  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-  mobility.Install(nodesCon);
+  
+  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
+                                 "X", StringValue ("1000.0"),
+                                 "Y", StringValue ("1000.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"));
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+  mobility.Install (Allnodes);
 
   PacketSocketAddress socket;
   socket.SetAllDevices();
@@ -110,12 +101,12 @@ main (int argc, char *argv[])
   app.SetAttribute ("DataRate", DataRateValue (m_dataRate));
   app.SetAttribute ("PacketSize", UintegerValue (m_packetSize));
 
-  ApplicationContainer apps = app.Install (nodesCon);
+  ApplicationContainer apps = app.Install (Allnodes);
   apps.Start (Seconds (0.5));
   apps.Stop (Seconds (simStop + 1));
 
   //XXX remove sink assignment here for a correct producer/consumer app model
-  Ptr<Node> sNode = nodesCon.Get(0);
+  Ptr<Node> sNode = sinknode.Get(0);
   TypeId psfid = TypeId::LookupByName ("ns3::PacketSocketFactory");
 
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, psfid);
