@@ -60,10 +60,10 @@ NDaqua::Run()
   uint32_t m_dataRate = 180;
   uint32_t m_packetSize = 32;
   uint32_t numberOfnodes = 50;
-  uint32_t rxPower = 0.1;
-  uint32_t txPower = 2.0;
-  uint32_t initialEnergy = 50;
-  uint32_t idlePower = 0.01;
+  double rxPower = 0.1;
+  double txPower = 2.0;
+  double initialEnergy = 50;
+  double idlePower = 0.01;
 
   LogComponentEnable ("NamedDataExample", LOG_LEVEL_INFO);
 
@@ -140,8 +140,8 @@ NDaqua::Run()
       //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
       Ptr<AquaSimEnergyModel> aquaEnergy = DynamicCast<AquaSimEnergyModel> (nodes.Get (i));
       
-      std::cout << "Decr Rcv Energy: " << aquaEnergy->DecrRcvEnergy(rxPower);
-      std::cout << "Decr Tx Energy: " << aquaEnergy->DecrTxEnergy(txPower);
+      //std::cout << "Decr Rcv Energy: " << aquaEnergy->DecrRcvEnergy(rxPower);
+      //std::cout << "Decr Tx Energy: " << aquaEnergy->DecrTxEnergy(txPower);
 
       apps.Start (Seconds (0.0));
       apps.Stop (Seconds (simStop));
