@@ -65,18 +65,6 @@ main (int argc, char *argv[])
                           "InitialEnergy", DoubleValue(50),
                           "IdlePower", DoubleValue(0.01));
   
-  /*
-   * Preset up mobility model for nodes here
-   */
-/*
-  MobilityHelper mobility;  
-  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("1000.0"),
-                                 "Y", StringValue ("1000.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"));
-  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  mobility.Install (nodes);
-*/
   MobilityHelper mobility;
   NetDeviceContainer devices;
   Ptr<ListPositionAllocator> position = CreateObject<ListPositionAllocator> ();
@@ -118,12 +106,15 @@ main (int argc, char *argv[])
   app.SetAttribute ("DataRate", DataRateValue (m_dataRate));
   app.SetAttribute ("PacketSize", UintegerValue (m_packetSize));
 
-  ApplicationContainer apps = app.Install (nodes);
-  apps.Start (Seconds (0.0));
-  apps.Stop (Seconds (simStop));
+  for (uint16_t i = 1; i < nodes; i++)
+    {
+      ApplicationContainer apps = app.Install (nodes.Get (i));
 
-  //XXX remove sink assignment here for a correct producer/consumer app model
-  Ptr<Node> sNode = nodes.Get(0);
+      apps.Start (Seconds (0.0));
+      apps.Stop (Seconds (simStop));
+    }
+
+  Ptr<Node> sNode = nodes.Get (0);
   TypeId psfid = TypeId::LookupByName ("ns3::PacketSocketFactory");
 
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, psfid);
