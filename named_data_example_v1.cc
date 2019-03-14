@@ -40,9 +40,14 @@ class NDaqua
 };
 
 void
-NDaqua::ReceivedPkt(Pkt<Socket> socket)
+NDaqua::ReceivedPkt(Ptr<Socket> socket)
 {
-  std::cout << "Received a pcket from: " << nodes;
+  std::cout << "Received a pcket from: " << nodes << "\n";
+  Ptr<Packet> packet;
+  while ((packet = socket->Recv ()))
+  {
+    std::cout << "Recv a packet of size " << packet->GetSize() << "\n";
+  }
 }
 
 
@@ -50,9 +55,15 @@ void
 NDaqua::Run()
 {
   double simStop = 60; //seconds
+  double energyTx = 0.0;
+  double energyRx = 0.0;
   uint32_t m_dataRate = 180;
   uint32_t m_packetSize = 32;
-  uint16_t numberOfnodes = 50;
+  uint32_t numberOfnodes = 50;
+  uint32_t rxPower = 0.1;
+  uint32_t txPower = 2.0;
+  uint32_t initialEnergy = 50;
+  uint32_t idlePower = 0.01;
 
   LogComponentEnable ("NamedDataExample", LOG_LEVEL_INFO);
 
@@ -75,10 +86,10 @@ NDaqua::Run()
   NamedDataHelper ndHelper;
   ndHelper.SetChannel(channel.Create());
   ndHelper.SetEnergyModel("ns3::AquaSimEnergyModel",
-                          "RxPower", DoubleValue(0.1),
-                          "TxPower", DoubleValue(2.0),
-                          "InitialEnergy", DoubleValue(50),
-                          "IdlePower", DoubleValue(0.01));
+                          "RxPower", DoubleValue (rxPower),
+                          "TxPower", DoubleValue (txPower),
+                          "InitialEnergy", DoubleValue (initialEnergy),
+                          "IdlePower", DoubleValue (idlePower));
   
   MobilityHelper mobility;
   NetDeviceContainer devices;
@@ -111,7 +122,11 @@ NDaqua::Run()
   socket.SetAllDevices();
   socket.SetPhysicalAddress (devices.Get(0)->GetAddress());
   socket.SetProtocol (0);
-
+/*
+  BasicEnergySourceHelper basicEnergySource;
+  basicEnergySource.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (50));
+  EnergySourceContainer energySource = basicEnergySource.Install (nodes);
+*/
   OnOffNdHelper app ("ns3::PacketSocketFactory", Address (socket));
   app.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   app.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
@@ -121,6 +136,13 @@ NDaqua::Run()
   for (uint16_t i = 1; i < numberOfnodes; i++)
     {
       ApplicationContainer apps = app.Install (nodes.Get (i));
+
+      //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
+      Ptr<AquaSimEnergyModel> aquaEnergy = DynamicCast<AquaSimEnergyModel> (nodes.Get (i));
+      
+      std::cout << "Decr Rcv Energy: " << DecrRcvEnergy(rxPower);
+      std::cout << "Decr Tx Energy: " << DecrTxEnergy(txPower);
+
       apps.Start (Seconds (0.0));
       apps.Stop (Seconds (simStop));
     }
