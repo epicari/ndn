@@ -57,7 +57,7 @@ main(int argc, char* argv[])
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.Install (nodes);
 
-  ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
+  //ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
 
   WifiHelper wifi;
   wifi.SetStandard (WIFI_PHY_STANDARD_80211a);
@@ -79,8 +79,8 @@ main(int argc, char* argv[])
   MobilityHelper mobility;
   
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("1000.0"),
-                                 "Y", StringValue ("1000.0"),
+                                 "X", StringValue ("100.0"),
+                                 "Y", StringValue ("100.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.Install (nodes);
