@@ -38,6 +38,7 @@ main (int argc, char *argv[])
   double simStop = 60; //seconds
   uint32_t m_dataRate = 180;
   uint32_t m_packetSize = 32;
+  uint16_t numberOfnodes = 50;
 
   LogComponentEnable ("NamedDataExample", LOG_LEVEL_INFO);
 
@@ -48,7 +49,7 @@ main (int argc, char *argv[])
   std::cout << "-----------Initializing simulation-----------\n";
 
   NodeContainer nodes;
-  nodes.Create(50);
+  nodes.Create(numberOfnodes);
 
   PacketSocketHelper socketHelper;
   socketHelper.Install(nodes);
@@ -83,7 +84,7 @@ main (int argc, char *argv[])
 		     " freq:" << newDevice->GetPhy()->GetFrequency() << " addr:" <<
          AquaSimAddress::ConvertFrom(newDevice->GetAddress()).GetAsInt() );
 
-      for (uint16_t u = 1; u < nodes; u++)
+      for (uint16_t u = 1; u < numberOfnodes; u++)
        {
           boundry.x += 10+u;
           boundry.y += 10+u;
@@ -106,7 +107,7 @@ main (int argc, char *argv[])
   app.SetAttribute ("DataRate", DataRateValue (m_dataRate));
   app.SetAttribute ("PacketSize", UintegerValue (m_packetSize));
 
-  for (uint16_t i = 1; i < nodes; i++)
+  for (uint16_t i = 1; i < numberOfnodes; i++)
     {
       ApplicationContainer apps = app.Install (nodes.Get (i));
 
