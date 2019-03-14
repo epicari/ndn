@@ -117,7 +117,7 @@ for (uint16_t i = 0; i < 11 ; i++) {
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", DoubleValue(5.0));
   auto apps = consumerHelper.Install (nodes.Get(j));
-
+  apps.Stop (Seconds (0.1));
   }
 }
 
