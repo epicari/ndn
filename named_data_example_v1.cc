@@ -98,7 +98,7 @@ main (int argc, char *argv[])
   apps.Stop (Seconds (simStop));
 
   //XXX remove sink assignment here for a correct producer/consumer app model
-  Ptr<Node> sNode = sinknode.Get(0);
+  Ptr<Node> sNode = nodes.Get(0);
   TypeId psfid = TypeId::LookupByName ("ns3::PacketSocketFactory");
 
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, psfid);
