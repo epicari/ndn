@@ -95,8 +95,12 @@ main (int argc, char *argv[])
 		     " freq:" << newDevice->GetPhy()->GetFrequency() << " addr:" <<
          AquaSimAddress::ConvertFrom(newDevice->GetAddress()).GetAsInt() );
 
-      boundry.x += 30;
-      boundry.y += 20;
+      for (uint16_t u = 1; u < nodes; u++)
+       {
+          boundry.x += 10+u;
+          boundry.y += 10+u;
+          boundry.z += 10+u;
+      }
     }
 
   mobility.SetPositionAllocator(position);
