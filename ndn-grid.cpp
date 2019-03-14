@@ -95,7 +95,7 @@ main(int argc, char* argv[])
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, pstid);
   sinkSocket->Bind (socket);
 */
-
+/*
   BasicEnergySourceHelper basicEnergySource;
   basicEnergySource.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (100));
   EnergySourceContainer energySourceContainer;
@@ -103,7 +103,7 @@ main(int argc, char* argv[])
   WifiRadioEnergyModelHelper wifiRadioEnergyModel;
   DeviceEnergyModelContainer deviceEnergyContainer;
   deviceEnergyContainer = wifiRadioEnergyModel.Install (netDevices, energySourceContainer);
-
+*/
 for (uint16_t i = 0; i < 11 ; i++) {
   
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
