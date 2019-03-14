@@ -46,7 +46,7 @@ main(int argc, char* argv[])
   cmd.Parse (argc, argv);
 
   NodeContainer nodes;
-  nodes.Create (50);
+  nodes.Create (10);
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
@@ -104,17 +104,18 @@ main(int argc, char* argv[])
   DeviceEnergyModelContainer deviceEnergyContainer;
   deviceEnergyContainer = wifiRadioEnergyModel.Install (netDevices, energySourceContainer);
 
-for (uint16_t u = 1; u < 50 ; u++ ) {
-  
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
-  producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
-  producerHelper.Install (nodes.Get(u));
+  producerHelper.SetAttribute("PayloadSize", StringValue("64"));
+  producerHelper.Install (nodes.Get(0));
 
+for (uint16_t u = 1; u < 10 ; u++ ) {
+  
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
-  consumerHelper.Install (nodes.Get(0));
+  consumerHelper.SetAttribute("Frequency", DoubleValue(5.0));
+  auto apps = consumerHelper.Install (nodes.Get(u));
+  apps.Stop (Seconds (1.0));
 
   }
 
@@ -122,7 +123,7 @@ for (uint16_t u = 1; u < 50 ; u++ ) {
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Packet::EnablePrinting (); 
 
-  Simulator::Stop(Seconds(61));
+  Simulator::Stop(Seconds(100.0));
 
   Simulator::Run();
   Simulator::Destroy();
