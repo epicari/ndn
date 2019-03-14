@@ -17,8 +17,6 @@
  * ndnSIM, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-// ndn-grid.cpp
-
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
 #include "ns3/ndnSIM-module.h"
@@ -27,6 +25,8 @@
 #include "ns3/on-off-helper.h"
 #include "ns3/packet-socket-helper.h"
 #include "ns3/energy-module.h"
+#include "ns3/mobility-module.h"
+#include "ns3/wifi-module.h"
 
 namespace ns3 {
 
@@ -95,19 +95,24 @@ main(int argc, char* argv[])
   socket.SetProtocol (0);
 
   Ptr<Node> sNode = nodes.Get(0);
-  Ptr<Socket> sink = SetupPacketReceive (sNode);
+  TypeId pstid = TypeId::LookupByName ("ns3::PacketSocketFactory");
+  Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, pstid);
+  sinkSocket->Bind (socket);
 
-  OnOffNdHelper app ("ns3::PacketSocketFactory", Address (socket));
-  app.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
-  app.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
-  app.SetAttribute ("DataRate", DataRateValue (m_dataRate));
-  app.SetAttribute ("PacketSize", UintegerValue (m_packetSize));
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  consumerHelper.SetPrefix("/test/prefix");
+  consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
+  consumerHelper.Install (nodes.Get(0));
+
+  ndn::AppHelper producerHelper("ns3::ndn::Producer");
+  producerHelper.SetPrefix("/");
+  producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
 
 for (uint16_t u = 1; u <= nodes - 1 ; u++ ) {
-  ApplicationContainer apps = app.Install (nodes.Get (u));
-  Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
   
-  apps.Start (Seconds (var->GetValue (0.0)));
+  producerHelper.Install (nodes.Get(u));
+    
+  apps.Start (Seconds (0.5));
   apps.Stop (Seconds (simStop));
 }
 
