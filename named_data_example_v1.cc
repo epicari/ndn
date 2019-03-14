@@ -54,15 +54,15 @@ void
 NDaqua::Run()
 {
   double simStop = 60; //seconds
-  double energyTx = 0.0;
-  double energyRx = 0.0;
-  uint32_t m_dataRate = 180;
-  uint32_t m_packetSize = 32;
-  uint32_t numberOfnodes = 50;
   double rxPower = 0.1;
   double txPower = 2.0;
   double initialEnergy = 50;
   double idlePower = 0.01;
+  //double energyTx = 0.0;
+  //double energyRx = 0.0;
+  uint32_t m_dataRate = 180;
+  uint32_t m_packetSize = 32;
+  uint32_t numberOfnodes = 50;
 
   LogComponentEnable ("NamedDataExample", LOG_LEVEL_INFO);
 
