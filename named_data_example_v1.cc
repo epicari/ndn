@@ -49,7 +49,6 @@ NDaqua::ReceivedPkt(Ptr<Socket> socket)
   }
 }
 
-
 void
 NDaqua::Run()
 {
@@ -65,10 +64,6 @@ NDaqua::Run()
   uint32_t numberOfnodes = 50;
 
   LogComponentEnable ("NamedDataExample", LOG_LEVEL_INFO);
-
-  //to change on the fly
-  CommandLine cmd;
-  cmd.Parse(argc,argv);
 
   std::cout << "-----------Initializing simulation-----------\n";
 
@@ -165,6 +160,10 @@ NDaqua::Run()
 int
 main (int argc, char *argv[])
 {
+  //to change on the fly
+  CommandLine cmd;
+  cmd.Parse(argc,argv);
+
   NDaqua NDaqua;
   NDaqua.Run();
   return 0;
