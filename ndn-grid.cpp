@@ -84,7 +84,7 @@ main(int argc, char* argv[])
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.Install (nodes);
-
+/*
   PacketSocketAddress socket;
   socket.SetAllDevices();
   socket.SetPhysicalAddress (netDevices.Get(0)->GetAddress());
@@ -94,7 +94,7 @@ main(int argc, char* argv[])
   TypeId pstid = TypeId::LookupByName ("ns3::PacketSocketFactory");
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, pstid);
   sinkSocket->Bind (socket);
-
+*/
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
@@ -104,9 +104,10 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
 
-for (uint16_t u = 1; u <= 49 ; u++ ) {
+for (uint16_t u = 1; u < 50 ; u++ ) {
   
   producerHelper.Install (nodes.Get(u));
+
   }
 
   // Calculate and install FIBs
