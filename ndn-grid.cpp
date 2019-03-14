@@ -115,9 +115,9 @@ for (uint16_t i = 0; i < 11 ; i++) {
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", DoubleValue(5.0));
+  consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
   auto apps = consumerHelper.Install (nodes.Get(j));
-  apps.Stop (Seconds (0.1));
+  //apps.Stop (Seconds (0.1));
   }
 }
 
