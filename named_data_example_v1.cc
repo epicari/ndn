@@ -32,8 +32,22 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("NamedDataExample");
 
-int
-main (int argc, char *argv[])
+class NDaqua
+{
+  public:
+    void Run();
+    void ReceivedPkt(Ptr<Socket> socket);
+};
+
+void
+NDaqua::ReceivedPkt(Pkt<Socket> socket)
+{
+  std::cout << "Received a pcket from: " << nodes;
+}
+
+
+void
+NDaqua::Run()
 {
   double simStop = 60; //seconds
   uint32_t m_dataRate = 180;
@@ -107,7 +121,6 @@ main (int argc, char *argv[])
   for (uint16_t i = 1; i < numberOfnodes; i++)
     {
       ApplicationContainer apps = app.Install (nodes.Get (i));
-      NS_LOG_DEBUG("Node: " << nodes.Get (i));
       apps.Start (Seconds (0.0));
       apps.Stop (Seconds (simStop));
     }
@@ -117,6 +130,7 @@ main (int argc, char *argv[])
 
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, psfid);
   sinkSocket->Bind (socket);
+  sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt, this));
 
   Packet::EnablePrinting ();  //for debugging purposes
   std::cout << "-----------Running Simulation-----------\n";
@@ -125,5 +139,12 @@ main (int argc, char *argv[])
   Simulator::Destroy();
 
   std::cout << "Simulation Completed.\n";
+}
+
+int
+main (int argc, chr *argv[])
+{
+  NDaqua NDaqua;
+  NDaqua.Run();
   return 0;
 }
