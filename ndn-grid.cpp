@@ -107,13 +107,7 @@ main(int argc, char* argv[])
 for (uint16_t u = 1; u <= 49 ; u++ ) {
   
   producerHelper.Install (nodes.Get(u));
-    
-  consumerHelper.Start (Seconds (0.0));
-  consumerHelper.Stop (Seconds (60));
-
-  producerHelper.Start (Seconds (0.5));
-  producerHelper.Stop (Seconds (60));
-}
+  }
 
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes();
