@@ -34,10 +34,6 @@ int
 main(int argc, char* argv[])
 {
 
-  double simStop = 60; //seconds
-  uint32_t m_dataRate = 180;
-  uint32_t m_packetSize = 32;
-
   // disable fragmentation
   Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold", 
                       StringValue("2200"));
@@ -108,19 +104,22 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
 
-for (uint16_t u = 1; u <= nodes - 1 ; u++ ) {
+for (uint16_t u = 1; u <= 49 ; u++ ) {
   
   producerHelper.Install (nodes.Get(u));
     
-  apps.Start (Seconds (0.5));
-  apps.Stop (Seconds (simStop));
+  consumerHelper.Start (Seconds (0.0));
+  consumerHelper.Stop (Seconds (60));
+
+  producerHelper.Start (Seconds (0.5));
+  producerHelper.Stop (Seconds (60));
 }
 
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Packet::EnablePrinting (); 
 
-  Simulator::Stop(Seconds(simStop + 1));
+  Simulator::Stop(Seconds(61));
 
   Simulator::Run();
   Simulator::Destroy();
