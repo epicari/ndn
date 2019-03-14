@@ -140,8 +140,8 @@ NDaqua::Run()
       //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
       Ptr<AquaSimEnergyModel> aquaEnergy = DynamicCast<AquaSimEnergyModel> (nodes.Get (i));
       
-      std::cout << "Decr Rcv Energy: " << DecrRcvEnergy(rxPower);
-      std::cout << "Decr Tx Energy: " << DecrTxEnergy(txPower);
+      std::cout << "Decr Rcv Energy: " << aquaEnergy->DecrRcvEnergy(rxPower);
+      std::cout << "Decr Tx Energy: " << aquaEnergy->DecrTxEnergy(txPower);
 
       apps.Start (Seconds (0.0));
       apps.Stop (Seconds (simStop));
@@ -164,7 +164,7 @@ NDaqua::Run()
 }
 
 int
-main (int argc, chr *argv[])
+main (int argc, char *argv[])
 {
   NDaqua NDaqua;
   NDaqua.Run();
