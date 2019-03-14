@@ -45,7 +45,7 @@ NDaqua::ReceivedPkt(Ptr<Socket> socket)
   Ptr<Packet> packet;
   while ((packet = socket->Recv ()))
   {
-    std::cout << "Recv a packet of size " << packet->GetSize() << "\n";
+    NS_LOG_DEBUG("Recv a packet of size " << packet->GetSize());
   }
 }
 
