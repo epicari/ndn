@@ -84,12 +84,9 @@ main (int argc, char *argv[])
 		     " freq:" << newDevice->GetPhy()->GetFrequency() << " addr:" <<
          AquaSimAddress::ConvertFrom(newDevice->GetAddress()).GetAsInt() );
 
-      for (uint16_t u = 1; u < numberOfnodes; u++)
-       {
-          boundry.x += 10+u;
-          boundry.y += 10+u;
-          boundry.z += 10+u;
-      }
+      boundry.x += 10;
+      boundry.y += 10;
+      boundry.z += 10;
     }
 
   mobility.SetPositionAllocator(position);
@@ -110,7 +107,7 @@ main (int argc, char *argv[])
   for (uint16_t i = 1; i < numberOfnodes; i++)
     {
       ApplicationContainer apps = app.Install (nodes.Get (i));
-
+      NS_LOG_DEBUG("Node: " << nodes.Get (i));
       apps.Start (Seconds (0.0));
       apps.Stop (Seconds (simStop));
     }
