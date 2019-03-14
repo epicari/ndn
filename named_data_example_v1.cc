@@ -46,28 +46,20 @@ main (int argc, char *argv[])
 
   //to change on the fly
   CommandLine cmd;
-  cmd.AddValue ("simStop", "Length of simulation", simStop);
-  cmd.AddValue ("nodes", "Amount of regular underwater nodes", nodes);
   cmd.Parse(argc,argv);
 
   std::cout << "-----------Initializing simulation-----------\n";
 
-  NodeContainer cmnodes;
-  cmnodes.Create(50);
-
-  NodeContainer sinknode;
-  sinknode.Create(1);
-  
-  NodeContainer Allnodes;
-  Allnodes.Create(cmnodes, sinknode);
+  NodeContainer nodes;
+  nodes.Create(50);
 
   PacketSocketHelper socketHelper;
-  socketHelper.Install(Allnodes);
+  socketHelper.Install(nodes);
 
   //establish layers using helper's pre-build settings
   AquaSimChannelHelper channel = AquaSimChannelHelper::Default();
   channel.SetPropagation("ns3::AquaSimRangePropagation");
-  channel.AddDevice(Allnodes);
+  channel.AddDevice(nodes);
 
   NamedDataHelper ndHelper;
   ndHelper.SetChannel(channel.Create());
@@ -88,7 +80,7 @@ main (int argc, char *argv[])
                                  "Y", StringValue ("1000.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  mobility.Install (Allnodes);
+  mobility.Install (nodes);
 
   PacketSocketAddress socket;
   socket.SetAllDevices();
@@ -101,9 +93,9 @@ main (int argc, char *argv[])
   app.SetAttribute ("DataRate", DataRateValue (m_dataRate));
   app.SetAttribute ("PacketSize", UintegerValue (m_packetSize));
 
-  ApplicationContainer apps = app.Install (Allnodes);
-  apps.Start (Seconds (0.5));
-  apps.Stop (Seconds (simStop + 1));
+  ApplicationContainer apps = app.Install (nodes);
+  apps.Start (Seconds (0.0));
+  apps.Stop (Seconds (simStop));
 
   //XXX remove sink assignment here for a correct producer/consumer app model
   Ptr<Node> sNode = sinknode.Get(0);

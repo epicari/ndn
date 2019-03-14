@@ -104,22 +104,22 @@ main(int argc, char* argv[])
   DeviceEnergyModelContainer deviceEnergyContainer;
   deviceEnergyContainer = wifiRadioEnergyModel.Install (netDevices, energySourceContainer);
 */
-for (uint16_t i = 0; i < 11 ; i++) {
-  
+
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
   producerHelper.Install (nodes.Get(i));
-
-  for (uint16_t j = i+1; j < 10; j++) {
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
   auto apps = consumerHelper.Install (nodes.Get(j));
   //apps.Stop (Seconds (0.1));
+
+  for (uint16_t i = 0; i <= nodes; i++) {
+    auto producer = producerHelper.Install (nodes.Get(i));
+      for (uint16_t j = i+1; j < 11;)
   }
-}
 
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes();
