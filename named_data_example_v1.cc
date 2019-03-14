@@ -29,9 +29,6 @@
 
 
 using namespace ns3;
-using ns3::ndn::StrategyChoiceHelper;
-using ns3::ndn::AppHelper;
-using ns3::ndn::GlobalRoutingHelper;
 
 NS_LOG_COMPONENT_DEFINE("NamedDataExample");
 
@@ -59,7 +56,6 @@ main (int argc, char *argv[])
   //establish layers using helper's pre-build settings
   AquaSimChannelHelper channel = AquaSimChannelHelper::Default();
   channel.SetPropagation("ns3::AquaSimRangePropagation");
-  channel.AddDevice(nodes);
 
   NamedDataHelper ndHelper;
   ndHelper.SetChannel(channel.Create());
@@ -72,15 +68,40 @@ main (int argc, char *argv[])
   /*
    * Preset up mobility model for nodes here
    */
-
-  MobilityHelper mobility;
-  
+/*
+  MobilityHelper mobility;  
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("1000.0"),
                                  "Y", StringValue ("1000.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.Install (nodes);
+*/
+  MobilityHelper mobility;
+  NetDeviceContainer devices;
+  Ptr<ListPositionAllocator> position = CreateObject<ListPositionAllocator> ();
+  Vector boundry = Vector(0,0,0);
+
+  std::cout << "Creating Nodes\n";
+
+  for (NodeContainer::Iterator i = nodes.Begin(); i != nodes.End(); i++)
+    {
+      Ptr<AquaSimNetDevice> newDevice = CreateObject<AquaSimNetDevice>();
+      position->Add(boundry);
+      devices.Add(ndHelper.Create(*i, newDevice));
+
+      NS_LOG_DEBUG("Node: " << *i << " newDevice: " << newDevice << " Position: " <<
+		     boundry.x << "," << boundry.y << "," << boundry.z <<
+		     " freq:" << newDevice->GetPhy()->GetFrequency() << " addr:" <<
+         AquaSimAddress::ConvertFrom(newDevice->GetAddress()).GetAsInt() );
+
+      boundry.x += 30;
+      boundry.y += 20;
+    }
+
+  mobility.SetPositionAllocator(position);
+  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+  mobility.Install(nodes);
 
   PacketSocketAddress socket;
   socket.SetAllDevices();
