@@ -104,18 +104,18 @@ main(int argc, char* argv[])
   DeviceEnergyModelContainer deviceEnergyContainer;
   deviceEnergyContainer = wifiRadioEnergyModel.Install (netDevices, energySourceContainer);
 
+for (uint16_t u = 0; u < 10 ; u++ ) {
+  
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
-  producerHelper.Install (nodes.Get(0));
+  producerHelper.Install (nodes.Get(u));
 
-for (uint16_t u = 1; u < 10 ; u++ ) {
-  
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", DoubleValue(5.0));
-  auto apps = consumerHelper.Install (nodes.Get(u));
-  apps.Stop (Seconds (1.0));
+  auto apps = consumerHelper.Install (nodes.Get(u+1));
+  //apps.Stop (Seconds (1.0));
 
   }
 
