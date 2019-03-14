@@ -42,7 +42,6 @@ class NDaqua
 void
 NDaqua::ReceivedPkt(Ptr<Socket> socket)
 {
-  std::cout << "Received a pcket from: " << nodes << "\n";
   Ptr<Packet> packet;
   while ((packet = socket->Recv ()))
   {
