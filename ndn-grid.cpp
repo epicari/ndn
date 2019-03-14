@@ -95,18 +95,26 @@ main(int argc, char* argv[])
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, pstid);
   sinkSocket->Bind (socket);
 */
+
+  BasicEnergySourceHelper basicEnergySource;
+  basicEnergySource.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (100));
+  EnergySourceContainer energySourceContainer;
+  energySourceContainer = basicEnergySource.Install (nodes);
+  WifiRadioEnergyModelHelper wifiRadioEnergyModel;
+  DeviceEnergyModelContainer deviceEnergyContainer;
+  deviceEnergyContainer = wifiRadioEnergyModel.Install (netDevices, energySourceContainer);
+
+for (uint16_t u = 1; u < 50 ; u++ ) {
+  
+  ndn::AppHelper producerHelper("ns3::ndn::Producer");
+  producerHelper.SetPrefix("/");
+  producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
+  producerHelper.Install (nodes.Get(u));
+
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
   consumerHelper.Install (nodes.Get(0));
-
-  ndn::AppHelper producerHelper("ns3::ndn::Producer");
-  producerHelper.SetPrefix("/");
-  producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
-
-for (uint16_t u = 1; u < 50 ; u++ ) {
-  
-  producerHelper.Install (nodes.Get(u));
 
   }
 
