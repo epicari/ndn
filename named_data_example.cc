@@ -147,7 +147,7 @@ NDaqua::Run()
       NS_LOG_INFO ("Starting flow at time " <<  Simulator::Now ().GetSeconds ());
       //NS_LOG_INFO ("node number: " << nodes.Get (i));
       apps.Stop (Seconds (simStop));
-    }
+//    }
 
   Packet::EnablePrinting ();  //for debugging purposes
   std::cout << "-----------Running Simulation-----------\n";
