@@ -122,7 +122,7 @@ NDaqua::Run()
 
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sinkNode, psfid);
   sinkSocket->Bind (socket);
-  sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt));
+  sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt, this));
 
 /*
   BasicEnergySourceHelper basicEnergySource;
