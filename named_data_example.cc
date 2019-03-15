@@ -26,8 +26,6 @@
 #include "ns3/applications-module.h"
 #include "ns3/log.h"
 #include "ns3/callback.h"
-#include "ns3/ndnSIM-module.h"
-
 
 using namespace ns3;
 
@@ -140,6 +138,7 @@ NDaqua::Run()
 
   for (uint16_t i = 1; i < numberOfnodes; i++)
     {
+      apps.Start (Seconds (i));
       ApplicationContainer apps = app.Install (nodes.Get (i));
 
       //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
@@ -147,9 +146,7 @@ NDaqua::Run()
       
       //std::cout << "Decr Rcv Energy: " << aquaEnergy->DecrRcvEnergy(rxPower);
       //std::cout << "Decr Tx Energy: " << aquaEnergy->DecrTxEnergy(txPower);
-
-      apps.Start (Seconds (0.5));
-      apps.Stop (Seconds (simStop));
+      apps.Stop (Seconds (i+0.1));
     }
 
 
