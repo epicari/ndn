@@ -84,7 +84,6 @@ NDaqua::Run()
                           "TxPower", DoubleValue (txPower),
                           "InitialEnergy", DoubleValue (initialEnergy),
                           "IdlePower", DoubleValue (idlePower));
-  ndHelper.SetAddress();
 
   MobilityHelper mobility;
   NetDeviceContainer devices;
