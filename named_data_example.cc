@@ -122,7 +122,7 @@ NDaqua::Run()
 
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sinkNode, psfid);
   sinkSocket->Bind (socket);
-  sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt, this));
+
 
 /*
   BasicEnergySourceHelper basicEnergySource;
@@ -139,7 +139,7 @@ NDaqua::Run()
   for (uint16_t i = 1; i < numberOfnodes; i++)
     {
       ApplicationContainer apps = app.Install (nodes.Get (i));
-
+      sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt, this));
       //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
       Ptr<AquaSimEnergyModel> aquaEnergy = DynamicCast<AquaSimEnergyModel> (nodes.Get (i));
       
