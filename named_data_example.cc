@@ -84,6 +84,7 @@ NDaqua::Run()
                           "TxPower", DoubleValue (txPower),
                           "InitialEnergy", DoubleValue (initialEnergy),
                           "IdlePower", DoubleValue (idlePower));
+  ndHelper.SetAddress();
 
   MobilityHelper mobility;
   NetDeviceContainer devices;
@@ -95,17 +96,17 @@ NDaqua::Run()
   for (NodeContainer::Iterator i = nodes.Begin(); i != nodes.End(); i++)
     {
       Ptr<AquaSimNetDevice> newDevice = CreateObject<AquaSimNetDevice>();
-      position->Add(boundry);
       devices.Add(ndHelper.Create(*i, newDevice));
+      position->Add(boundry);
 /*
       NS_LOG_DEBUG("Node: " << *i << " newDevice: " << newDevice << " Position: " <<
 		     boundry.x << "," << boundry.y << "," << boundry.z <<
 		     " freq:" << newDevice->GetPhy()->GetFrequency() << " addr:" <<
          AquaSimAddress::ConvertFrom(newDevice->GetAddress()).GetAsInt() );
 */
-      boundry.x += 10;
-      boundry.y += 10;
-      boundry.z += 10;
+      boundry.x += 5;
+      boundry.y += 3;
+      boundry.z += 2;
     }
 
   mobility.SetPositionAllocator(position);
@@ -115,7 +116,7 @@ NDaqua::Run()
   PacketSocketAddress socket;
   socket.SetAllDevices ();
   socket.SetPhysicalAddress (devices.Get (0)->GetAddress());
-  socket.SetProtocol (0);
+  socket.SetProtocol (6);
 
 /*
   BasicEnergySourceHelper basicEnergySource;
