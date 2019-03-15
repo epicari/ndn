@@ -118,19 +118,13 @@ NDaqua::Run()
   socket.SetPhysicalAddress (devices.Get (0)->GetAddress());
   socket.SetProtocol (0);
 
-  Ptr<Node> sinkNode = nodes.Get (0);
-  TypeId psfid = TypeId::LookupByName ("ns3::PacketSocketFactory");
-
-  Ptr<Socket> sinkSocket = Socket::CreateSocket (sinkNode, psfid);
-  sinkSocket->Bind (socket);
-
 /*
   BasicEnergySourceHelper basicEnergySource;
   basicEnergySource.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (50));
   EnergySourceContainer energySource = basicEnergySource.Install (nodes);
 */
 
-  OnOffNdHelper app ("ns3::UdpSocketFactory", Address (socket));
+  OnOffNdHelper app ("ns3::PacketSocketFactory", Address (socket));
   app.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.0066]"));
   app.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.9934]"));
   app.SetAttribute ("DataRate", DataRateValue (m_dataRate));
