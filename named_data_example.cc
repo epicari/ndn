@@ -41,11 +41,11 @@ class NDaqua
 void
 NDaqua::ReceivedPkt(Ptr<Socket> socket)
 {
-  NS_LOG_DEBUG("Test, recv a packet");
+  NS_LOG_INFO("Test, recv a packet");
   Ptr<Packet> packet;
   while ((packet = socket->Recv ()))
   {
-    NS_LOG_DEBUG("Recv a packet of size " << packet->GetSize());
+    NS_LOG_INFO("Recv a packet of size " << packet->GetSize());
   }
 }
 
@@ -146,6 +146,8 @@ NDaqua::Run()
       //std::cout << "Decr Rcv Energy: " << aquaEnergy->DecrRcvEnergy(rxPower);
       //std::cout << "Decr Tx Energy: " << aquaEnergy->DecrTxEnergy(txPower);
       apps.Start (Seconds (i));
+      NS_LOG_INFO ("Starting flow at time " <<  Simulator::Now ().GetSeconds ());
+      NS_LOG_INFO ("node number: " << nodes.Get (i));
       apps.Stop (Seconds (i+0.1));
     }
 
