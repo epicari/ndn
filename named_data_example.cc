@@ -26,7 +26,6 @@
 #include "ns3/applications-module.h"
 #include "ns3/log.h"
 #include "ns3/callback.h"
-#include "ns3/ndnSIM-module.h"
 
 using namespace ns3;
 
@@ -132,14 +131,20 @@ NDaqua::Run()
 */
 
   OnOffNdHelper app ("ns3::UdpSocketFactory", Address (socket));
-  app.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
-  app.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+  app.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.0066]"));
+  app.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.9934]"));
   app.SetAttribute ("DataRate", DataRateValue (m_dataRate));
   app.SetAttribute ("PacketSize", UintegerValue (m_packetSize));
 
   for (uint16_t i = 1; i < numberOfnodes; i++)
     {
+      Ptr<Node> sinkNode = nodes.Get (0);
+      TypeId psfid = TypeId::LookupByName ("ns3::PacketSocketFactory");
+
       ApplicationContainer apps = app.Install (nodes.Get (i));
+
+      Ptr<Socket> sinkSocket = Socket::CreateSocket (sinkNode, psfid);
+      sinkSocket->Bind (socket);
       sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt, this));
       //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
       Ptr<AquaSimEnergyModel> aquaEnergy = DynamicCast<AquaSimEnergyModel> (nodes.Get (i));
