@@ -41,7 +41,6 @@ class NDaqua
 void
 NDaqua::ReceivedPkt(Ptr<Socket> socket)
 {
-  NS_LOG_INFO("Test, recv a packet");
   Ptr<Packet> packet;
   while ((packet = socket->Recv ()))
   {
@@ -79,6 +78,9 @@ NDaqua::Run()
 
   NamedDataHelper ndHelper;
   ndHelper.SetChannel(channel.Create());
+  ndHelper.SetCS("ns3::CSFifo");
+  ndHelper.SetFib("ns3::Fib");
+  ndHelper.SetNamedData("ns3::NamedData");
   ndHelper.SetEnergyModel("ns3::AquaSimEnergyModel",
                           "RxPower", DoubleValue (rxPower),
                           "TxPower", DoubleValue (txPower),
@@ -115,8 +117,8 @@ NDaqua::Run()
   PacketSocketAddress socket;
   socket.SetAllDevices ();
   socket.SetPhysicalAddress (devices.Get (0)->GetAddress());
-  socket.SetSingleDevice (devices.Get (0)->GetIfIndex());
-  socket.SetProtocol (1);
+  //socket.SetSingleDevice (devices.Get (0)->GetIfIndex());
+  socket.SetProtocol (0);
 
 /*
   BasicEnergySourceHelper basicEnergySource;
@@ -131,7 +133,6 @@ NDaqua::Run()
   app.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.9934]"));
   app.SetAttribute ("DataRate", DataRateValue (m_dataRate));
   app.SetAttribute ("PacketSize", UintegerValue (m_packetSize));
-  app.SetAttribute ("Remote", AddressValue (socket));
 
 //  for (uint16_t i = 1; i < numberOfnodes; i++)
 //    {
