@@ -26,6 +26,7 @@
 #include "ns3/applications-module.h"
 #include "ns3/log.h"
 #include "ns3/callback.h"
+#include "ns3/ndnSIM-module.h"
 
 using namespace ns3;
 
@@ -84,7 +85,8 @@ NDaqua::Run()
                           "TxPower", DoubleValue (txPower),
                           "InitialEnergy", DoubleValue (initialEnergy),
                           "IdlePower", DoubleValue (idlePower));
-  
+  nhHelper.SetAddress();
+
   MobilityHelper mobility;
   NetDeviceContainer devices;
   Ptr<ListPositionAllocator> position = CreateObject<ListPositionAllocator> ();
@@ -123,14 +125,13 @@ NDaqua::Run()
   Ptr<Socket> sinkSocket = Socket::CreateSocket (sinkNode, psfid);
   sinkSocket->Bind (socket);
 
-
 /*
   BasicEnergySourceHelper basicEnergySource;
   basicEnergySource.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (50));
   EnergySourceContainer energySource = basicEnergySource.Install (nodes);
 */
 
-  OnOffNdHelper app ("ns3::PacketSocketFactory", Address (socket));
+  OnOffNdHelper app ("ns3::UdpSocketFactory", Address (socket));
   app.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   app.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
   app.SetAttribute ("DataRate", DataRateValue (m_dataRate));
@@ -150,9 +151,6 @@ NDaqua::Run()
       NS_LOG_INFO ("node number: " << nodes.Get (i));
       apps.Stop (Seconds (i+0.1));
     }
-
-
-
 
   Packet::EnablePrinting ();  //for debugging purposes
   std::cout << "-----------Running Simulation-----------\n";
