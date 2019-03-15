@@ -115,7 +115,8 @@ NDaqua::Run()
   PacketSocketAddress socket;
   socket.SetAllDevices ();
   socket.SetPhysicalAddress (devices.Get (0)->GetAddress());
-  socket.SetProtocol (6);
+  socket.SetSingleDevice (device.Get (0)->GetIfIndex());
+  socket.SetProtocol (1);
 
 /*
   BasicEnergySourceHelper basicEnergySource;
