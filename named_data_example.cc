@@ -41,6 +41,7 @@ class NDaqua
 void
 NDaqua::ReceivedPkt(Ptr<Socket> socket)
 {
+  NS_LOG_INFO ("Starting flow at time " <<  Simulator::Now ().GetSeconds ());
   Ptr<Packet> packet;
   while ((packet = socket->Recv ()))
   {
@@ -137,19 +138,22 @@ NDaqua::Run()
 //  for (uint16_t i = 1; i < numberOfnodes; i++)
 //    {
       ApplicationContainer apps = app.Install (nodes);
+
+      Ptr<Socket> sinkSocket = SetupPacketReceive (nodes.Get (0));
+      /*
       Ptr<Node> sinkNode = nodes.Get (0);
       TypeId psfid = TypeId::LookupByName ("ns3::PacketSocketFactory");
 
       Ptr<Socket> sinkSocket = Socket::CreateSocket (sinkNode, psfid);
       sinkSocket->Bind (socket);
+      */
       sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt, this));
       //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
       Ptr<AquaSimEnergyModel> aquaEnergy = DynamicCast<AquaSimEnergyModel> (nodes.Get (0));
       //aquaEnergy->DecrRcvEnergy (50);
       //std::cout << "Decr Rcv Energy: " << aquaEnergy->DecrRcvEnergy(rxPower);
       //std::cout << "Decr Tx Energy: " << aquaEnergy->DecrTxEnergy(txPower);
-      NS_LOG_INFO ("Starting flow at time " <<  Simulator::Now ().GetSeconds ());
-      apps.Start (Seconds (0));
+      apps.Start (Seconds (0.5));
       //NS_LOG_INFO ("node number: " << nodes.Get (i));
       apps.Stop (Seconds (simStop));
 //    }
