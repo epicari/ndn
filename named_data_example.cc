@@ -140,7 +140,7 @@ NDaqua::Run()
       sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt, this));
       //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
       Ptr<AquaSimEnergyModel> aquaEnergy = DynamicCast<AquaSimEnergyModel> (nodes.Get (i));
-      NS_LOG_INFO ("Decr Tx Energy: " << aquaEnergy->DecrRcvEnergy(Simulator::Now ().GetSeconds ()));
+      aquaEnergy->DecrRcvEnergy (i);
       //std::cout << "Decr Rcv Energy: " << aquaEnergy->DecrRcvEnergy(rxPower);
       //std::cout << "Decr Tx Energy: " << aquaEnergy->DecrTxEnergy(txPower);
       apps.Start (Seconds (i));
