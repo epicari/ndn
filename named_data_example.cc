@@ -123,6 +123,8 @@ NDaqua::Run()
   EnergySourceContainer energySource = basicEnergySource.Install (nodes);
 */
 
+  std::cout << "Set of Application\n";
+
   OnOffNdHelper app ("ns3::PacketSocketFactory", Address (socket));
   app.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.0066]"));
   app.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.9934]"));
@@ -143,8 +145,8 @@ NDaqua::Run()
       //aquaEnergy->DecrRcvEnergy (50);
       //std::cout << "Decr Rcv Energy: " << aquaEnergy->DecrRcvEnergy(rxPower);
       //std::cout << "Decr Tx Energy: " << aquaEnergy->DecrTxEnergy(txPower);
-      apps.Start (Seconds (0));
       NS_LOG_INFO ("Starting flow at time " <<  Simulator::Now ().GetSeconds ());
+      apps.Start (Seconds (0));
       //NS_LOG_INFO ("node number: " << nodes.Get (i));
       apps.Stop (Seconds (simStop));
 //    }
