@@ -138,7 +138,6 @@ NDaqua::Run()
 
   for (uint16_t i = 1; i < numberOfnodes; i++)
     {
-      apps.Start (Seconds (i));
       ApplicationContainer apps = app.Install (nodes.Get (i));
 
       //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
@@ -146,6 +145,7 @@ NDaqua::Run()
       
       //std::cout << "Decr Rcv Energy: " << aquaEnergy->DecrRcvEnergy(rxPower);
       //std::cout << "Decr Tx Energy: " << aquaEnergy->DecrTxEnergy(txPower);
+      apps.Start (Seconds (i));
       apps.Stop (Seconds (i+0.1));
     }
 
