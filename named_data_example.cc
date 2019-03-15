@@ -130,6 +130,7 @@ NDaqua::Run()
   app.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.9934]"));
   app.SetAttribute ("DataRate", DataRateValue (m_dataRate));
   app.SetAttribute ("PacketSize", UintegerValue (m_packetSize));
+  app.SetAttribute ("Remote", AddressValue (socket));
 
 //  for (uint16_t i = 1; i < numberOfnodes; i++)
 //    {
