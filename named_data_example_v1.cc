@@ -21,11 +21,12 @@
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
 #include "ns3/mobility-module.h"
-#include "ns3/energy-module.h"  //may not be needed here...
+#include "ns3/energy-module.h"
 #include "ns3/aqua-sim-ng-module.h"
 #include "ns3/applications-module.h"
 #include "ns3/log.h"
 #include "ns3/callback.h"
+#include "ns3/ndnSIM-module.h"
 
 
 using namespace ns3;
@@ -42,6 +43,7 @@ class NDaqua
 void
 NDaqua::ReceivedPkt(Ptr<Socket> socket)
 {
+  NS_LOG_DEBUG("Test, recv a packet");
   Ptr<Packet> packet;
   while ((packet = socket->Recv ()))
   {
@@ -97,12 +99,12 @@ NDaqua::Run()
       Ptr<AquaSimNetDevice> newDevice = CreateObject<AquaSimNetDevice>();
       position->Add(boundry);
       devices.Add(ndHelper.Create(*i, newDevice));
-
+/*
       NS_LOG_DEBUG("Node: " << *i << " newDevice: " << newDevice << " Position: " <<
 		     boundry.x << "," << boundry.y << "," << boundry.z <<
 		     " freq:" << newDevice->GetPhy()->GetFrequency() << " addr:" <<
          AquaSimAddress::ConvertFrom(newDevice->GetAddress()).GetAsInt() );
-
+*/
       boundry.x += 10;
       boundry.y += 10;
       boundry.z += 10;
@@ -113,14 +115,23 @@ NDaqua::Run()
   mobility.Install(nodes);
 
   PacketSocketAddress socket;
-  socket.SetAllDevices();
-  socket.SetPhysicalAddress (devices.Get(0)->GetAddress());
+  socket.SetAllDevices ();
+  socket.SetPhysicalAddress (devices.Get (0)->GetAddress());
   socket.SetProtocol (0);
+
+  Ptr<Node> sinkNode = nodes.Get (0);
+  TypeId psfid = TypeId::LookupByName ("ns3::PacketSocketFactory");
+
+  Ptr<Socket> sinkSocket = Socket::CreateSocket (sinkNode, psfid);
+  sinkSocket->Bind (socket);
+  sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt));
+
 /*
   BasicEnergySourceHelper basicEnergySource;
   basicEnergySource.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (50));
   EnergySourceContainer energySource = basicEnergySource.Install (nodes);
 */
+
   OnOffNdHelper app ("ns3::PacketSocketFactory", Address (socket));
   app.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   app.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
@@ -137,16 +148,12 @@ NDaqua::Run()
       //std::cout << "Decr Rcv Energy: " << aquaEnergy->DecrRcvEnergy(rxPower);
       //std::cout << "Decr Tx Energy: " << aquaEnergy->DecrTxEnergy(txPower);
 
-      apps.Start (Seconds (0.0));
+      apps.Start (Seconds (0.5));
       apps.Stop (Seconds (simStop));
     }
 
-  Ptr<Node> sNode = nodes.Get (0);
-  TypeId psfid = TypeId::LookupByName ("ns3::PacketSocketFactory");
 
-  Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, psfid);
-  sinkSocket->Bind (socket);
-  sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt, this));
+
 
   Packet::EnablePrinting ();  //for debugging purposes
   std::cout << "-----------Running Simulation-----------\n";
