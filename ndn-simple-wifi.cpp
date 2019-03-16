@@ -75,7 +75,7 @@ main(int argc, char* argv[])
   
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
 
-  NodeContainer n0, n1, n2, n3, n4, n5, n6, n7, n8, n9;
+  NodeContainer n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11;
   n0.Create (1);
   n1.Create (1);
   n2.Create (1);
@@ -86,9 +86,29 @@ main(int argc, char* argv[])
   n7.Create (1);
   n8.Create (1);
   n9.Create (1);
+  n10.Create (1);
+  n11.Create (1);
+
+  NodeContainer nodecm1;
+  nodecm1.Create (n0, n1, n2);
+
+  NodeContainer nodecm2;
+  nodecm2.Create (n3, n4, n5);
+
+  NodeContainer nodecm3;
+  nodecm3.Create (n6, n7, n8);
+
+  NodeContainer nodecm4;
+  nodecm4.Create (n9, n10, n11);
+
+  NodeContainer nodech1;
+  nodech1.Create (nodecm1, nodecm2);
+
+  NodeContainer nodech2;
+  nodech2.Create (nodecm3, nodecm4);
 
   NodeContainer Allnodes;
-  Allnodes.Create (n0, n1, n2, n3, n4, n5, n6, n7, n8, n9);
+  Allnodes.Create (nodech1, nodech2);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
@@ -198,6 +218,18 @@ main(int argc, char* argv[])
   auto cunappn8 = consumerHelper.Install (n9);
   cunappn8.Start (Seconds (9.1));
   cunappn8.Stop (Seconds (10.0));
+
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  consumerHelper.SetPrefix("/test/prefix");
+  auto cunappn9 = consumerHelper.Install (n10);
+  cunappn9.Start (Seconds (10.1));
+  cunappn9.Stop (Seconds (11.0));
+
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  consumerHelper.SetPrefix("/test/prefix");
+  auto cunappn10 = consumerHelper.Install (n11);
+  cunappn10.Start (Seconds (11.1));
+  cunappn10.Stop (Seconds (12.0));
 
   Simulator::Stop(Seconds(15.0));
   Simulator::Run();
