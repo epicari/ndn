@@ -173,6 +173,7 @@ main(int argc, char* argv[])
       auto cunapp = consumerHelper.Install (nodes.Get (i));
 
       cunapp.Start (Seconds (i));
+      proapp.Start (Seconds (0));
       cunapp.Stop (Seconds (i+1));
     }
 
