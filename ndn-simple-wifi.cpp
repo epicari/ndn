@@ -145,10 +145,10 @@ main(int argc, char* argv[])
       ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
       consumerHelper.SetPrefix("/test/prefix");
       auto cunapp = consumerHelper.Install (nodes.Get (i));
+      cunapp.Start (Seconds (0.0));
+      cunapp.Stop (Seconds (30.0));
     }
 
-  cunapp.Start (Seconds (0.0));
-  cunapp.Stop (Seconds (30.0));
   proapp.Start (Seconds (0.0));
   proapp.Stop (Seconds (30.0));      
 
