@@ -155,8 +155,23 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
   
   for (uint16_t i = 1; i <= numberOfnodes; i++)
+    { 
+      auto proapp = producerHelper.Install (nodes.Get (0));
+      auto cunapp = consumerHelper.Install (nodes.Get (i));
+
+      cunapp.Start (Seconds (i));
+      proapp.Start (Seconds (0.0));
+      cunapp.Stop (Seconds (i+1));
+      rroapp.Stop (Seconds (30.0));
+    }
+
+  Simulator::Stop(Seconds(30.0));
+
+  Simulator::Run();
+
+  for (uint16_t j = 0; j <= numberOfnodes; j++)
     {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (i));
+      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (j));
       //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
@@ -167,25 +182,15 @@ main(int argc, char* argv[])
       NS_LOG_UNCOND ("Idle Current: " << IdleCurrent);
       NS_LOG_UNCOND ("TX Current: " << TxCurrent);
       NS_LOG_UNCOND ("RX Current: " << RxCurrent);
-      basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-      
-      auto proapp = producerHelper.Install (nodes.Get (0));
-      auto cunapp = consumerHelper.Install (nodes.Get (i));
-
-      cunapp.Start (Seconds (i));
-      proapp.Start (Seconds (0));
-      cunapp.Stop (Seconds (i+1));
     }
 
-  Simulator::Stop(Seconds(30.0));
-
-  Simulator::Run();
+  basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergyModels.Begin (); iter != deviceEnergyModels.End (); iter ++)
     {
       double energyConsumed = (*iter)->GetTotalEnergyConsumption ();
       NS_LOG_UNCOND ("End of simulation (" << Simulator::Now ().GetSeconds ()
-                     << "s) Total energy consumed by radio = " << energyConsumed << "J");
+                      << "s) Total energy consumed by radio = " << energyConsumed << "J");
       NS_ASSERT (energyConsumed <= 0.1);
     }
 
