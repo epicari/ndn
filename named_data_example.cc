@@ -144,7 +144,6 @@ NDaqua::Run()
 
       Ptr<Socket> sinkSocket = Socket::CreateSocket (sinkNode, psfid);
       sinkSocket->Bind (socket);
-      sinkSocket->SetupPacketReceive (sinkNode);
       sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt, this));
       //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
       Ptr<AquaSimEnergyModel> aquaEnergy = DynamicCast<AquaSimEnergyModel> (nodes.Get (0));
