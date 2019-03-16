@@ -160,9 +160,9 @@ main(int argc, char* argv[])
       auto cunapp = consumerHelper.Install (nodes.Get (i));
 
       cunapp.Start (Seconds (i));
-      proapp.Start (Seconds (0.0));
       cunapp.Stop (Seconds (i+1));
-      rroapp.Stop (Seconds (30.0));
+      proapp.Start (Seconds (0.0));
+      proapp.Stop (Seconds (30.0));     
     }
 
   Simulator::Stop(Seconds(30.0));
@@ -184,7 +184,7 @@ main(int argc, char* argv[])
       NS_LOG_UNCOND ("RX Current: " << RxCurrent);
     }
 
-  basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+  //basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergyModels.Begin (); iter != deviceEnergyModels.End (); iter ++)
     {
