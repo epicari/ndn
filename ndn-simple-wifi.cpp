@@ -69,6 +69,7 @@ main(int argc, char* argv[])
   Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue("OfdmRate24Mbps"));
 
   uint16_t numberOfnodes = 10;
+  char numberData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   double IdleCurrent = 0.0;
   double TxCurrent = 0.0;
   double RxCurrent = 0.0;
@@ -153,27 +154,24 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
-/*  
-  for (uint16_t i = 1; i <= numberOfnodes; i++)
-    { 
-      auto proapp = producerHelper.Install (nodes.Get (0));
-      auto cunapp = consumerHelper.Install (nodes.Get (i));
 
-      cunapp.Start (Seconds (i));
-      cunapp.Stop (Seconds (i+1));
+  //for (uint16_t i = 0; i <= numberOfnodes; i++)
+  //  { 
+      auto proapp = producerHelper.Install (nodes.Get (0));
+      auto cunapp = consumerHelper.Install (nodes);
+
+      cunapp.Start (Seconds (0.0));
+      cunapp.Stop (Seconds (30.0));
       proapp.Start (Seconds (0.0));
-      proapp.Stop (Seconds (30.0));     
-    }
-*/
+      proapp.Stop (Seconds (30.0));      
+  //  }
+
   Simulator::Stop(Seconds(30.0));
 
   Simulator::Run();
 
   for (uint16_t i = 0; i <= numberOfnodes; i++)
     {
-      auto proapp = producerHelper.Install (nodes.Get (0));
-      auto cunapp = consumerHelper.Install (nodes.Get (i));
-
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (i));
       //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
@@ -186,11 +184,6 @@ main(int argc, char* argv[])
       NS_LOG_UNCOND ("Idle Current: " << IdleCurrent);
       NS_LOG_UNCOND ("TX Current: " << TxCurrent);
       NS_LOG_UNCOND ("RX Current: " << RxCurrent);
-      
-      cunapp.Start (Seconds (i));
-      cunapp.Stop (Seconds (i+1));
-      proapp.Start (Seconds (0.0));
-      proapp.Stop (Seconds (30.0));
     }
 
   //basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
