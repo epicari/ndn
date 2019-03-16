@@ -120,7 +120,7 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("ssid");
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdHocWifiMac");
+  wifiMacHelper.SetType("ns3::AdhocWifiMac");
   NetDeviceContainer wifiDev = wifi.Install (wifiPhyHelper, wifiMacHelper, Allnodes);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
