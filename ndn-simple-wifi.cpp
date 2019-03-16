@@ -132,12 +132,9 @@ main(int argc, char* argv[])
   // Set Energy Model
   BasicEnergySourceHelper basicEnergySourceHelper;
   basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (0.1));
-
   EnergySourceContainer sources = basicEnergySourceHelper.Install (nodes);
 
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
-  wifiRadioEnergyModelHelper.Set ("TxCurrentA", DoubleValue (0.0174));
-
   DeviceEnergyModelContainer deviceEnergyModels = wifiRadioEnergyModelHelper.Install (wifiNetDevices, sources);
   
   // 4. Set up applications
@@ -156,10 +153,9 @@ main(int argc, char* argv[])
     { 
       auto proapp = producerHelper.Install (nodes.Get (0));
       auto cunapp = consumerHelper.Install (nodes.Get (i));
-
-      cunapp.Start (Seconds (i));
-      cunapp.Stop (Seconds (i+1));
       NS_LOG_INFO("Node count: " << nodes.Get (i));
+      cunapp.Start (Seconds (0.0));
+      cunapp.Stop (Seconds (30.0));
       proapp.Start (Seconds (0.0));
       proapp.Stop (Seconds (30.0));      
     }
