@@ -134,18 +134,18 @@ main(int argc, char* argv[])
   
   // 4. Set up applications
   NS_LOG_INFO("Installing Applications");
-
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
-  //consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
   
-
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
-
   auto proapp = producerHelper.Install (nodes.Get (0));
-  auto cunapp = consumerHelper.Install (nodes);
+
+  for (uint16_t i = 1; i <= numberOfnodes; i++)
+    {
+      ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+      consumerHelper.SetPrefix("/test/prefix");
+      auto cunapp = consumerHelper.Install (nodes.Get (i));
+    }
 
   cunapp.Start (Seconds (0.0));
   cunapp.Stop (Seconds (30.0));
