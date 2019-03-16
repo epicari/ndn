@@ -30,6 +30,7 @@
 
 using namespace ns3;
 using namespace std;
+using namespace ndn;
 
 NS_LOG_COMPONENT_DEFINE("NamedDataExample");
 
@@ -61,8 +62,8 @@ NDaqua::Run()
   double idlePower = 0.01;
   //double energyTx = 0.0;
   //double energyRx = 0.0;
-  uint32_t m_dataRate = 180;
-  uint32_t m_packetSize = 32;
+  //uint32_t m_dataRate = 180;
+  //uint32_t m_packetSize = 32;
   uint32_t numberOfnodes = 2;
 
   LogComponentEnable ("NamedDataExample", LOG_LEVEL_INFO);
