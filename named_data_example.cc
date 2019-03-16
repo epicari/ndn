@@ -116,6 +116,14 @@ NDaqua::Run()
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
   mobility.Install(nodes);
 
+  ndn::AppHelper consumer ("ns3::ndn::Consumer");
+  consumer.SetPrefix ("/test/prefix");
+  consumer.Install (nodes.Get (0));
+
+  ndn::AppHelper producer ("ns3::ndn:Producer");
+  producer.SetPrefix ("/");
+  producer.Install (nodes.Get (1));
+/*
   PacketSocketAddress socket;
   socket.SetAllDevices ();
   socket.SetPhysicalAddress (devices.Get (1)->GetAddress());
@@ -127,7 +135,7 @@ NDaqua::Run()
   basicEnergySource.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (50));
   EnergySourceContainer energySource = basicEnergySource.Install (nodes);
 */
-
+/*
   std::cout << "Set of Application\n";
 
   OnOffNdHelper app ("ns3::PacketSocketFactory", Address (socket));
@@ -155,7 +163,7 @@ NDaqua::Run()
       //NS_LOG_INFO ("node number: " << nodes.Get (i));
       apps.Stop (Seconds (simStop));
 //    }
-
+*/
   Packet::EnablePrinting ();  //for debugging purposes
   std::cout << "-----------Running Simulation-----------\n";
   Simulator::Stop(Seconds(simStop + 1));
