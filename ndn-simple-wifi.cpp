@@ -140,7 +140,7 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
   auto proapp = producerHelper.Install (nodes.Get (0));
 
-  for (uint16_t i = 1; i <= numberOfnodes; i++)
+  for (uint16_t i = 0; i <= numberOfnodes; ++i)
     {
       ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
       consumerHelper.SetPrefix("/test/prefix");

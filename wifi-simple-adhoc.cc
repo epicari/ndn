@@ -221,7 +221,7 @@ main (int argc, char *argv[])
   ApplicationContainer sinkApp;
   ApplicationContainer client;
 
-  for (uint16_t u = 1; u <= numberOfnodes; u++)
+  for (uint16_t u = 0; u <= numberOfnodes; ++u)
     {
       PacketSinkHelper pktSinkHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), Port));
       sinkApp.Add (pktSinkHelper.Install (c.Get (0)));
