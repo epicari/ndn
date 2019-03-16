@@ -172,7 +172,7 @@ main(int argc, char* argv[])
   for (uint16_t j = 0; j <= numberOfnodes; j++)
     {
       auto proapp = producerHelper.Install (nodes.Get (0));
-      auto cunapp = consumerHelper.Install (nodes.Get (i));
+      auto cunapp = consumerHelper.Install (nodes.Get (j));
 
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (j));
       //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
