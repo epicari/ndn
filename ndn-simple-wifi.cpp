@@ -69,7 +69,9 @@ main(int argc, char* argv[])
   Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue("OfdmRate24Mbps"));
 
   uint16_t numberOfnodes = 10;
-  double avgIdle = 0.0;
+  double IdleCurrent = 0.0;
+  double TxCurrent = 0.0;
+  double RxCurrent = 0.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -154,19 +156,19 @@ main(int argc, char* argv[])
   
   for (uint16_t i = 1; i <= numberOfnodes; i++)
     {
-      producerHelper.Install(nodes.Get(i));
-      consumerHelper.Install(nodes.Get(0));
+      producerHelper.Install (nodes.Get (i));
+      consumerHelper.Install (nodes.Get (0));
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (i));
       basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
-      avgIdle += ptr->GetIdleTime().ToDouble(Time::MS);
+      IdleCurrent = ptr->GetIdleCurrentA ();
+      NS_LOG_UNCOND ("Idle Current: " << IdleCurrent);
       basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
     }
-    
+
   std::cout << "Avg Idle time(ms): " << avgIdle/numberOfnodes;
-  ////////////////
 
   Simulator::Stop(Seconds(30.0));
 
