@@ -69,9 +69,9 @@ main(int argc, char* argv[])
   Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue("OfdmRate24Mbps"));
 
   uint16_t numberOfnodes = 10;
-  double IdleCurrent = 0.0;
-  double TxCurrent = 0.0;
-  double RxCurrent = 0.0;
+  //double IdleCurrent = 0.0;
+  //double TxCurrent = 0.0;
+  do//uble RxCurrent = 0.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -93,8 +93,6 @@ main(int argc, char* argv[])
   // YansWifiPhy wifiPhy = YansWifiPhy::Default();
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
   wifiPhyHelper.SetChannel(wifiChannel.Create());
-  wifiPhyHelper.Set("TxPowerStart", DoubleValue(5));
-  wifiPhyHelper.Set("TxPowerEnd", DoubleValue(5));
 
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
@@ -129,7 +127,7 @@ main(int argc, char* argv[])
   ndnHelper.Install(nodes);
 
   // Set BestRoute strategy
-  ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
+  //ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
 
   // Set Energy Model
   BasicEnergySourceHelper basicEnergySourceHelper;
@@ -152,7 +150,7 @@ main(int argc, char* argv[])
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
-  producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
+  producerHelper.SetAttribute("PayloadSize", StringValue("64"));
 
   //for (uint16_t i = 0; i <= numberOfnodes; i++)
   //  { 
@@ -175,15 +173,11 @@ main(int argc, char* argv[])
       //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
-      
+
       NS_ASSERT (basicRadioModels != NULL);
-      IdleCurrent = ptr->GetIdleCurrentA ();
-      TxCurrent = ptr->GetTxCurrentA ();
-      RxCurrent = ptr->GetRxCurrentA ();
-      NS_LOG_UNCOND ("Idle Current: " << IdleCurrent);
-      NS_LOG_UNCOND ("TX Current: " << TxCurrent);
-      NS_LOG_UNCOND ("RX Current: " << RxCurrent);
     }
+
+  
 
   //basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
 
