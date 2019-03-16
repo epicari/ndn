@@ -63,6 +63,7 @@
 #include "ns3/internet-stack-helper.h"
 #include "ns3/energy-module.h"
 #include "ns3/wifi-radio-energy-model-helper.h"
+#include "ns3/applications-module.h"
 
 using namespace ns3;
 
@@ -220,19 +221,20 @@ main (int argc, char *argv[])
 */
   uint16_t Port = 80;
 
-  PacketSinkHelper pktSinkHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny(), Port));
+  PacketSinkHelper pktSinkHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), Port));
   ApplicationContainer sinkApp.Add (pktSinkHelper.Install (c.Get (0)));
+
   for (uint16_t u = 1; u <= numberOfnodes; u++)
     {
       UdpClientHelper udpClientHelper (i.GetAddress (u), Port);
       udpClientHelper.SetAttribute ("PacketSize", UintegerValue (104));
       ApplicationContainer client = udpClientHelper.Install (c.Get (u));
+      client.Start (Seconds (0.0));
+      client.Stop (Seconds (30.0));
     }
 
   sinkApp.Start (Seconds (0.0));
   sinkApp.Stop (Seconds (30.0));
-  client.Start (Seconds (0.0));
-  client.Stop (Seconds (30.0));
 
   Simulator::Stop (Seconds(30.0));
   Simulator::Run ();
@@ -255,10 +257,4 @@ main (int argc, char *argv[])
   Simulator::Destroy ();
 
   return 0;
-}
-
-int
-main(int argc, char* argv[])
-{
-  return ns3::main(argc, argv);
 }
