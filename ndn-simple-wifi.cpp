@@ -169,7 +169,7 @@ main(int argc, char* argv[])
 
   Simulator::Run();
 
-  for (uint16_t i = 0; i <= numberOfnodes; j++)
+  for (uint16_t i = 0; i <= numberOfnodes; i++)
     {
       auto proapp = producerHelper.Install (nodes.Get (0));
       auto cunapp = consumerHelper.Install (nodes.Get (i));
