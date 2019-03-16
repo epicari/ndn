@@ -66,7 +66,6 @@ main(int argc, char* argv[])
   
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 10;
-  int node = 1;
   //double IdleCurrent = 0.0;
   //double TxCurrent = 0.0;
   //double RxCurrent = 0.0;
@@ -165,62 +164,42 @@ main(int argc, char* argv[])
   cunappn0.Start (Seconds (0.0));
   cunappn0.Stop (Seconds (1.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
   auto cunappn1 = consumerHelper.Install (n2);
   cunappn1.Start (Seconds (1.1));
   cunappn1.Stop (Seconds (2.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
   auto cunappn2 = consumerHelper.Install (n3);
   cunappn2.Start (Seconds (2.1));
   cunappn2.Stop (Seconds (3.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
   auto cunappn3 = consumerHelper.Install (n4);
   cunappn3.Start (Seconds (3.1));
   cunappn3.Stop (Seconds (4.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
   auto cunappn4 = consumerHelper.Install (n5);
   cunappn4.Start (Seconds (4.1));
   cunappn4.Stop (Seconds (5.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
   auto cunappn5 = consumerHelper.Install (n6);
   cunappn5.Start (Seconds (5.1));
   cunappn5.Stop (Seconds (6.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
   auto cunappn6 = consumerHelper.Install (n7);
   cunappn6.Start (Seconds (6.1));
   cunappn6.Stop (Seconds (7.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
   auto cunappn7 = consumerHelper.Install (n8);
   cunappn7.Start (Seconds (7.1));
   cunappn7.Stop (Seconds (8.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
   auto cunappn8 = consumerHelper.Install (n9);
   cunappn8.Start (Seconds (9.1));
   cunappn8.Stop (Seconds (10.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
   auto cunappn9 = consumerHelper.Install (n10);
   cunappn9.Start (Seconds (10.1));
   cunappn9.Stop (Seconds (11.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
   auto cunappn10 = consumerHelper.Install (n11);
   cunappn10.Start (Seconds (11.1));
   cunappn10.Stop (Seconds (12.0));
