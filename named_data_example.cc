@@ -26,6 +26,7 @@
 #include "ns3/applications-module.h"
 #include "ns3/log.h"
 #include "ns3/callback.h"
+#include "ns3/ndnSIM-module.h"
 
 using namespace ns3;
 
