@@ -66,8 +66,10 @@ main(int argc, char* argv[])
   // disable fragmentation
   Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue("2200"));
   Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("2200"));
-  Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode",
-                     StringValue("OfdmRate24Mbps"));
+  Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue("OfdmRate24Mbps"));
+
+  uint16_t numberOfnodes = 10;
+  double avgIdle = 0.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -106,7 +108,7 @@ main(int argc, char* argv[])
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
 
   NodeContainer nodes;
-  nodes.Create(2);
+  nodes.Create(numberOfnodes);
 
   ////////////////
   // 1. Install Wifi
@@ -137,12 +139,6 @@ main(int argc, char* argv[])
   wifiRadioEnergyModelHelper.Set ("TxCurrentA", DoubleValue (0.0174));
 
   DeviceEnergyModelContainer deviceEnergyModels = wifiRadioEnergyModelHelper.Install (wifiNetDevices, sources);
-
-  Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (1));
-  basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
-  Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
-  NS_ASSERT (basicRadioModels != NULL);
-  basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
   
   // 4. Set up applications
   NS_LOG_INFO("Installing Applications");
@@ -150,13 +146,26 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
-  consumerHelper.Install(nodes.Get(0));
+  
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
-  producerHelper.Install(nodes.Get(1));
-
+  
+  for (uint16_t i = 1; i <= numberOfnodes; i++)
+    {
+      producerHelper.Install(nodes.Get(i));
+      consumerHelper.Install(nodes.Get(0));
+      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (i));
+      basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
+      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
+      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
+      NS_ASSERT (basicRadioModels != NULL);
+      avgIdle += ptr->GetIdleTime().ToDouble(Time::MS);
+      basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+    }
+    
+  std::cout << "Avg Idle time(ms): " << avgIdle/numberOfnodes;
   ////////////////
 
   Simulator::Stop(Seconds(30.0));
