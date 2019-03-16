@@ -145,23 +145,23 @@ main(int argc, char* argv[])
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
+  consumerHelper.SetAttribute("Frequency", DoubleValue(1.0));
   
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
 
-  //for (uint16_t i = 0; i <= numberOfnodes; i++)
-  //  { 
+  for (uint16_t i = 0; i <= numberOfnodes; i++)
+    { 
       auto proapp = producerHelper.Install (nodes.Get (0));
-      auto cunapp = consumerHelper.Install (nodes);
+      auto cunapp = consumerHelper.Install (nodes.Get (i));
 
-      cunapp.Start (Seconds (0.0));
-      cunapp.Stop (Seconds (30.0));
+      cunapp.Start (Seconds (i));
+      cunapp.Stop (Seconds (i+1));
       proapp.Start (Seconds (0.0));
       proapp.Stop (Seconds (30.0));      
-  //  }
+    }
 
   Simulator::Stop(Seconds(30.0));
 
