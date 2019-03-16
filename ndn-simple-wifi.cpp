@@ -169,11 +169,11 @@ main(int argc, char* argv[])
       NS_LOG_UNCOND ("RX Current: " << RxCurrent);
       basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
       
-      producerHelper.Install (nodes.Get (0));
-      consumerHelper.Install (nodes.Get (i));
+      auto proapp = producerHelper.Install (nodes.Get (0));
+      auto cunapp = consumerHelper.Install (nodes.Get (i));
 
-      consumerHelper.Start (Seconds (i));
-      consumerHelper.Stop (Seconds (i+1));
+      cunapp.Start (Seconds (i));
+      cunapp.Stop (Seconds (i+1));
     }
 
   Simulator::Stop(Seconds(30.0));
