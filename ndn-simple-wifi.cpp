@@ -153,7 +153,7 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
-  
+/*  
   for (uint16_t i = 1; i <= numberOfnodes; i++)
     { 
       auto proapp = producerHelper.Install (nodes.Get (0));
@@ -164,17 +164,21 @@ main(int argc, char* argv[])
       proapp.Start (Seconds (0.0));
       proapp.Stop (Seconds (30.0));     
     }
-
+*/
   Simulator::Stop(Seconds(30.0));
 
   Simulator::Run();
 
   for (uint16_t j = 0; j <= numberOfnodes; j++)
     {
+      auto proapp = producerHelper.Install (nodes.Get (0));
+      auto cunapp = consumerHelper.Install (nodes.Get (i));
+
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (j));
       //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
+      
       NS_ASSERT (basicRadioModels != NULL);
       IdleCurrent = ptr->GetIdleCurrentA ();
       TxCurrent = ptr->GetTxCurrentA ();
@@ -182,6 +186,11 @@ main(int argc, char* argv[])
       NS_LOG_UNCOND ("Idle Current: " << IdleCurrent);
       NS_LOG_UNCOND ("TX Current: " << TxCurrent);
       NS_LOG_UNCOND ("RX Current: " << RxCurrent);
+      
+      cunapp.Start (Seconds (i));
+      cunapp.Stop (Seconds (i+1));
+      proapp.Start (Seconds (0.0));
+      proapp.Stop (Seconds (30.0));
     }
 
   //basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
