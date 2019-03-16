@@ -142,8 +142,8 @@ main(int argc, char* argv[])
   EnergySourceContainer sourceAP = basicEnergySourceHelper.Install (ap);
 
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
-  DeviceEnergyModelContainer deviceEnergyModels = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
-  DeviceEnergyModelContainer deviceEnergyModels = wifiRadioEnergyModelHelper.Install (apDev, sourcesAP);
+  DeviceEnergyModelContainer deviceEnergySTA = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
+  DeviceEnergyModelContainer deviceEnergyAP = wifiRadioEnergyModelHelper.Install (apDev, sourceAP);
   
   // 4. Set up applications
   /*
@@ -170,7 +170,7 @@ main(int argc, char* argv[])
       PacketSocketAddress socket;
       socket.SetAllDevices ();
       //socket.SetSingleDevice (wifiDev.Get (u)->GetIfIndex ());
-      socket.SetPhysicalAddress (staDevs.Get (i)->GetAddress ());
+      socket.SetPhysicalAddress (wifiDev.Get (i)->GetAddress ());
       socket.SetProtocol (1);
 
       TypeId tid = TypeId::LookupByName ("ns3::PacketSocketFactory");
@@ -202,7 +202,15 @@ main(int argc, char* argv[])
 
   //basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
 
-  for (DeviceEnergyModelContainer::Iterator iter = deviceEnergyModels.Begin (); iter != deviceEnergyModels.End (); iter ++)
+  for (DeviceEnergyModelContainer::Iterator iter = deviceEnergySTA.Begin (); iter != deviceEnergySTA.End (); iter ++)
+    {
+      double energyConsumed = (*iter)->GetTotalEnergyConsumption ();
+      NS_LOG_UNCOND ("End of simulation (" << Simulator::Now ().GetSeconds ()
+                      << "s) Total energy consumed by radio = " << energyConsumed << "J");
+      NS_ASSERT (energyConsumed <= 0.1);
+    }
+
+  for (DeviceEnergyModelContainer::Iterator iter = deviceEnergyAP.Begin (); iter != deviceEnergyAP.End (); iter ++)
     {
       double energyConsumed = (*iter)->GetTotalEnergyConsumption ();
       NS_LOG_UNCOND ("End of simulation (" << Simulator::Now ().GetSeconds ()
