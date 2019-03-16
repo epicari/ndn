@@ -133,6 +133,7 @@ main(int argc, char* argv[])
   DeviceEnergyModelContainer deviceEnergyModels = wifiRadioEnergyModelHelper.Install (wifiNetDevices, sources);
   
   // 4. Set up applications
+  /*
   NS_LOG_INFO("Installing Applications");
   
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
@@ -140,17 +141,34 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
   auto proapp = producerHelper.Install (nodes.Get (0));
 
-  for (uint16_t i = 0; i <= numberOfnodes; ++i)
-    {
-      ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-      consumerHelper.SetPrefix("/test/prefix");
-      auto cunapp = consumerHelper.Install (nodes.Get (i));
-      cunapp.Start (Seconds (0.0));
-      cunapp.Stop (Seconds (30.0));
-    }
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  consumerHelper.SetPrefix("/test/prefix");
+  auto cunapp = consumerHelper.Install (nodes);
 
+  cunapp.Start (Seconds (0.0));
+  cunapp.Stop (Seconds (30.0));
   proapp.Start (Seconds (0.0));
   proapp.Stop (Seconds (30.0));      
+  */
+  PacketSocketAddress socket;
+  socket.SetAllDevices ();
+  socket.SetPhysicalAddress (wifiNetDevices.Get (0)->GetAddress ());
+  socket.SetProtocol (0);
+
+  TypeId tid = TypeId::LookupByName ("ns3::PacketSocketFactory");
+  Ptr<Socket> recvSink = Socket::CreateSocket (nodes.Get (0), tid);
+  recvSink->Bind (socket);
+
+  for (uint16_t u = 0; u <= numberOfnodes; ++u)
+    {
+      OnOffHelper onoff ("ns3::PacketSocketFacotry", Address (socket));
+      onoff.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
+      onoff.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+      onoff.SetAttribute ("PacketSize", UintegerValue (64));
+      ApplicationContainer apps = onoff.Install (nodes.Get (u));
+      apps.Start (Seconds (0.0));
+      apps.Stop (Seconds (30.0));
+    }
 
   Simulator::Stop(Seconds(30.0));
   Simulator::Run();
@@ -164,9 +182,7 @@ main(int argc, char* argv[])
 
   NS_ASSERT (basicRadioModels != NULL);
 //    }
-
-  
-
+r
   //basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergyModels.Begin (); iter != deviceEnergyModels.End (); iter ++)
