@@ -159,6 +159,7 @@ main(int argc, char* argv[])
 
       cunapp.Start (Seconds (i));
       cunapp.Stop (Seconds (i+1));
+      NS_LOG_INFO("Node count: " << nodes.Get (i));
       proapp.Start (Seconds (0.0));
       proapp.Stop (Seconds (30.0));      
     }
