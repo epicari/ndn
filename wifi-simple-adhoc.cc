@@ -168,17 +168,15 @@ main (int argc, char *argv[])
   wifiMac.SetType ("ns3::AdhocWifiMac");
   NetDeviceContainer devices = wifi.Install (wifiPhy, wifiMac, c);
 
-  // Note that with FixedRssLossModel, the positions below are not
-  // used for received signal strength.
-  Ptr<UniformRandomVariable> randomizer = CreateObject<UniformRandomVariable>();
-  randomizer->SetAttribute("Min", DoubleValue(10));
-  randomizer->SetAttribute("Max", DoubleValue(100));
+  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+  for (uint16_t i = 0; i < numberOfnodes; i++)
+    {
+      positionAlloc->Add (Vector(5 * i, 2 * i, 0));
+    }
 
   MobilityHelper mobility;
-  mobility.SetPositionAllocator("ns3::RandomBoxPositionAllocator", "X", PointerValue(randomizer),
-                                "Y", PointerValue(randomizer), "Z", PointerValue(randomizer));
-
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+  mobility.SetPositionAllocator(positionAlloc);
   mobility.Install (c);
 
   InternetStackHelper internet;
@@ -222,7 +220,7 @@ main (int argc, char *argv[])
   uint16_t Port = 80;
 
   PacketSinkHelper pktSinkHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), Port));
-  ApplicationContainer sinkApp.Add (pktSinkHelper.Install (c.Get (0)));
+  ApplicationContainer sinkApp = pktSinkHelper.Install (c.Get (0));
 
   for (uint16_t u = 1; u <= numberOfnodes; u++)
     {

@@ -95,15 +95,15 @@ main(int argc, char* argv[])
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
 
-  Ptr<UniformRandomVariable> randomizer = CreateObject<UniformRandomVariable>();
-  randomizer->SetAttribute("Min", DoubleValue(10));
-  randomizer->SetAttribute("Max", DoubleValue(100));
+  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+  for (uint16_t i = 0; i < numberOfnodes; i++)
+    {
+      positionAlloc->Add (Vector(5 * i, 2 * i, 0));
+    }
 
   MobilityHelper mobility;
-  mobility.SetPositionAllocator("ns3::RandomBoxPositionAllocator", "X", PointerValue(randomizer),
-                                "Y", PointerValue(randomizer), "Z", PointerValue(randomizer));
-
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+  mobility.SetPositionAllocator(positionAlloc);
 
   ////////////////
   // 1. Install Wifi
