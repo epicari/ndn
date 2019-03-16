@@ -156,8 +156,8 @@ main(int argc, char* argv[])
   
   for (uint16_t i = 1; i <= numberOfnodes; i++)
     {
-      producerHelper.Install (nodes.Get (i));
-      consumerHelper.Install (nodes.Get (0));
+      producerHelper.Install (nodes.Get (0));
+      consumerHelper.Install (nodes.Get (i));
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (i));
       basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
