@@ -71,7 +71,7 @@ main(int argc, char* argv[])
   uint16_t numberOfnodes = 10;
   //double IdleCurrent = 0.0;
   //double TxCurrent = 0.0;
-  do//uble RxCurrent = 0.0;
+  //double RxCurrent = 0.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -88,7 +88,7 @@ main(int argc, char* argv[])
   YansWifiChannelHelper wifiChannel; // = YansWifiChannelHelper::Default ();
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
   wifiChannel.AddPropagationLoss("ns3::ThreeLogDistancePropagationLossModel");
-  wifiChannel.AddPropagationLoss("ns3::NakagamiPropagationLossModel");
+  wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel");
 
   // YansWifiPhy wifiPhy = YansWifiPhy::Default();
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
