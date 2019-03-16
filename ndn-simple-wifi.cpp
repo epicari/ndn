@@ -165,8 +165,8 @@ main(int argc, char* argv[])
       onoff.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
       onoff.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
       onoff.SetAttribute ("PacketSize", UintegerValue (64));
-      ApplicationContainer apps = onoff.Install (nodes.Get (u));
-      
+      ApplicationContainer apps = onoff.Install (nodes.Get (i));
+
       apps.Start (Seconds (0.0));
       apps.Stop (Seconds (30.0));
     }
@@ -183,7 +183,7 @@ main(int argc, char* argv[])
 
   NS_ASSERT (basicRadioModels != NULL);
 //    }
-r
+
   //basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergyModels.Begin (); iter != deviceEnergyModels.End (); iter ++)
