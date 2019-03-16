@@ -156,8 +156,6 @@ main(int argc, char* argv[])
   
   for (uint16_t i = 1; i <= numberOfnodes; i++)
     {
-      producerHelper.Install (nodes.Get (0));
-      consumerHelper.Install (nodes.Get (i));
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (i));
       basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
@@ -170,6 +168,12 @@ main(int argc, char* argv[])
       NS_LOG_UNCOND ("TX Current: " << TxCurrent);
       NS_LOG_UNCOND ("RX Current: " << RxCurrent);
       basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+      
+      producerHelper.Install (nodes.Get (0));
+      consumerHelper.Install (nodes.Get (i));
+
+      consumerHelper.Start (Seconds (i));
+      consumerHelper.Stop (Seconds (i+1));
     }
 
   Simulator::Stop(Seconds(30.0));
