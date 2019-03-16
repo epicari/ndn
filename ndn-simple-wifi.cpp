@@ -69,7 +69,6 @@ main(int argc, char* argv[])
   Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue("OfdmRate24Mbps"));
 
   uint16_t numberOfnodes = 10;
-  char numberData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   double IdleCurrent = 0.0;
   double TxCurrent = 0.0;
   double RxCurrent = 0.0;
