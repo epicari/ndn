@@ -154,20 +154,23 @@ main(int argc, char* argv[])
   socket.SetAllDevices ();
   socket.SetPhysicalAddress (wifiNetDevices.Get (0)->GetAddress ());
   socket.SetProtocol (0);
-
-  TypeId tid = TypeId::LookupByName ("ns3::PacketSocketFactory");
-  Ptr<Socket> recvSink = Socket::CreateSocket (nodes.Get (0), tid);
-  recvSink->Bind (socket);
-
-  for (uint16_t u = 0; u <= numberOfnodes; ++u)
+  
+  for (uint16_t i = 0; i <= numberOfnodes; i++)
     {
-      OnOffHelper onoff ("ns3::PacketSocketFacotry", Address (socket));
-      onoff.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
-      onoff.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
-      onoff.SetAttribute ("PacketSize", UintegerValue (64));
-      ApplicationContainer apps = onoff.Install (nodes.Get (u));
-      apps.Start (Seconds (0.0));
-      apps.Stop (Seconds (30.0));
+      TypeId tid = TypeId::LookupByName ("ns3::PacketSocketFactory");
+      Ptr<Socket> recvSink = Socket::CreateSocket (nodes.Get (0), tid);
+      recvSink->Bind (socket);
+
+    for (uint16_t u = 0; u <= numberOfnodes; ++u)
+      {
+        OnOffHelper onoff ("ns3::PacketSocketFacotry", Address (socket));
+        onoff.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
+        onoff.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+        onoff.SetAttribute ("PacketSize", UintegerValue (64));
+        ApplicationContainer apps = onoff.Install (nodes.Get (u));
+        apps.Start (Seconds (0.0));
+        apps.Stop (Seconds (30.0));
+      }
     }
 
   Simulator::Stop(Seconds(30.0));
