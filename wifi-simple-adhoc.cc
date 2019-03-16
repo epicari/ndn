@@ -105,7 +105,8 @@ TotalEnergy (double oldValue, double totalEnergy)
                  << "s Total energy consumed by radio = " << totalEnergy << "J");
 }
 
-int main (int argc, char *argv[])
+int 
+main (int argc, char *argv[])
 {
   std::string phyMode ("DsssRate1Mbps");
   //double rss = -80;  // -dBm
