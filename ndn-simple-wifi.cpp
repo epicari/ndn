@@ -149,16 +149,14 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
 
-  for (uint16_t i = 0; i <= numberOfnodes; i++)
-    { 
-      auto proapp = producerHelper.Install (nodes.Get (0));
-      auto cunapp = consumerHelper.Install (nodes.Get (i));
-      NS_LOG_INFO("Node count: " << nodes.Get (i));
-      cunapp.Start (Seconds (0.0));
-      cunapp.Stop (Seconds (30.0));
-      proapp.Start (Seconds (0.0));
-      proapp.Stop (Seconds (30.0));      
-    }
+
+  auto proapp = producerHelper.Install (nodes.Get (0));
+  auto cunapp = consumerHelper.Install (nodes);
+
+  cunapp.Start (Seconds (0.0));
+  cunapp.Stop (Seconds (30.0));
+  proapp.Start (Seconds (0.0));
+  proapp.Stop (Seconds (30.0));      
 
   Simulator::Stop(Seconds(30.0));
 
