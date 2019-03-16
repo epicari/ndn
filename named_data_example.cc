@@ -61,7 +61,7 @@ NDaqua::Run()
   //double energyRx = 0.0;
   uint32_t m_dataRate = 180;
   uint32_t m_packetSize = 32;
-  uint32_t numberOfnodes = 50;
+  uint32_t numberOfnodes = 2;
 
   LogComponentEnable ("NamedDataExample", LOG_LEVEL_INFO);
 
@@ -117,9 +117,9 @@ NDaqua::Run()
 
   PacketSocketAddress socket;
   socket.SetAllDevices ();
-  socket.SetPhysicalAddress (devices.Get (0)->GetAddress());
-  //socket.SetSingleDevice (devices.Get (0)->GetIfIndex());
-  socket.SetProtocol (0);
+  socket.SetPhysicalAddress (devices.Get (1)->GetAddress());
+  socket.SetSingleDevice (devices.Get (0)->GetIfIndex());
+  socket.SetProtocol (1);
 
 /*
   BasicEnergySourceHelper basicEnergySource;
@@ -137,16 +137,14 @@ NDaqua::Run()
 
 //  for (uint16_t i = 1; i < numberOfnodes; i++)
 //    {
-      ApplicationContainer apps = app.Install (nodes);
-
-      Ptr<Socket> sinkSocket = SetupPacketReceive (nodes.Get (0));
-      /*
-      Ptr<Node> sinkNode = nodes.Get (0);
+      ApplicationContainer apps = app.Install (nodes.Get (0));
+      
+      Ptr<Node> sinkNode = nodes.Get (1);
       TypeId psfid = TypeId::LookupByName ("ns3::PacketSocketFactory");
 
       Ptr<Socket> sinkSocket = Socket::CreateSocket (sinkNode, psfid);
       sinkSocket->Bind (socket);
-      */
+      sinkSocket->SetupPacketReceive (sinkNode);
       sinkSocket->SetRecvCallback (MakeCallback (&NDaqua::ReceivedPkt, this));
       //Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (energySource.Get (i));
       Ptr<AquaSimEnergyModel> aquaEnergy = DynamicCast<AquaSimEnergyModel> (nodes.Get (0));
