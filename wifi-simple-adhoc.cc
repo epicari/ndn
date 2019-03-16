@@ -62,7 +62,7 @@
 #include "ns3/mobility-model.h"
 #include "ns3/internet-stack-helper.h"
 #include "ns3/energy-module.h"
-#included "ns3/wifi-radio-energy-model-helper.h"
+#include "ns3/wifi-radio-energy-model-helper.h"
 
 using namespace ns3;
 
@@ -124,7 +124,7 @@ int main (int argc, char *argv[])
   cmd.AddValue ("verbose", "turn on all WifiNetDevice log components", verbose);
   cmd.Parse (argc, argv);
   // Convert to time object
-  Time interPacketInterval = Seconds (interval);
+  //Time interPacketInterval = Seconds (interval);
 
   // Fix non-unicast data rate to be the same as that of unicast
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",
