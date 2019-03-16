@@ -218,19 +218,21 @@ main (int argc, char *argv[])
                                   source, packetSize, numPackets, interPacketInterval);
 */
   uint16_t Port = 80;
-
-  PacketSinkHelper pktSinkHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), Port));
-  ApplicationContainer sinkApp = pktSinkHelper.Install (c.Get (0));
+  ApplicationContainer sinkApp;
+  ApplicationContainer client;
 
   for (uint16_t u = 1; u <= numberOfnodes; u++)
     {
+      PacketSinkHelper pktSinkHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), Port));
+      sinkApp.Add (pktSinkHelper.Install (c.Get (0)));
+      
       UdpClientHelper udpClientHelper (i.GetAddress (u), Port);
       udpClientHelper.SetAttribute ("PacketSize", UintegerValue (104));
-      ApplicationContainer client = udpClientHelper.Install (c.Get (u));
-      client.Start (Seconds (0.0));
-      client.Stop (Seconds (30.0));
+      client.Add (udpClientHelper.Install (c.Get (u)));
     }
 
+  client.Start (Seconds (0.0));
+  client.Stop (Seconds (30.0));
   sinkApp.Start (Seconds (0.0));
   sinkApp.Stop (Seconds (30.0));
 
