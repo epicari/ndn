@@ -63,11 +63,8 @@ TotalEnergy (double oldValue, double totalEnergy)
 int
 main(int argc, char* argv[])
 {
-  // disable fragmentation
-  Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue("2200"));
-  Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("2200"));
-  Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue("OfdmRate24Mbps"));
-
+  
+  std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 10;
   //double IdleCurrent = 0.0;
   //double TxCurrent = 0.0;
@@ -75,22 +72,23 @@ main(int argc, char* argv[])
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
+  
+  Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
 
-  //////////////////////
-  //////////////////////
-  //////////////////////
+  NodeContainer nodes;
+  nodes.Create(numberOfnodes);
+
   WifiHelper wifi;
-  // wifi.SetRemoteStationManager ("ns3::AarfWifiManager");
   wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
-  wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager", "DataMode",
-                               StringValue("OfdmRate24Mbps"));
+  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
+                                "DataMode", StringValue (phyMode), 
+                                "ControlMode", StringValue (phyMode));
 
-  YansWifiChannelHelper wifiChannel; // = YansWifiChannelHelper::Default ();
+  YansWifiChannelHelper wifiChannel;
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
   wifiChannel.AddPropagationLoss("ns3::ThreeLogDistancePropagationLossModel");
   wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel");
 
-  // YansWifiPhy wifiPhy = YansWifiPhy::Default();
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
   wifiPhyHelper.SetChannel(wifiChannel.Create());
 
@@ -106,9 +104,6 @@ main(int argc, char* argv[])
                                 "Y", PointerValue(randomizer), "Z", PointerValue(randomizer));
 
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-
-  NodeContainer nodes;
-  nodes.Create(numberOfnodes);
 
   ////////////////
   // 1. Install Wifi
@@ -142,13 +137,12 @@ main(int argc, char* argv[])
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", DoubleValue(1.0));
+  //consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
   
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
-
 
   auto proapp = producerHelper.Install (nodes.Get (0));
   auto cunapp = consumerHelper.Install (nodes);
@@ -159,17 +153,16 @@ main(int argc, char* argv[])
   proapp.Stop (Seconds (30.0));      
 
   Simulator::Stop(Seconds(30.0));
-
   Simulator::Run();
 
 //  for (uint16_t i = 0; i <= numberOfnodes; i++)
 //    {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (0));
+  Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (0));
       //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
-      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
-      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
+  Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
+  Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
 
-//      NS_ASSERT (basicRadioModels != NULL);
+  NS_ASSERT (basicRadioModels != NULL);
 //    }
 
   
