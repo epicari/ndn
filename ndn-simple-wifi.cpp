@@ -66,6 +66,7 @@ main(int argc, char* argv[])
   
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 10;
+  int node = 1;
   //double IdleCurrent = 0.0;
   //double TxCurrent = 0.0;
   //double RxCurrent = 0.0;
@@ -89,26 +90,19 @@ main(int argc, char* argv[])
   n10.Create (1);
   n11.Create (1);
 
-  NodeContainer nodecm1;
-  nodecm1.Create (n0, n1, n2);
+  NodeContainer nodecm1 = NodeContainer (n0, n1, n2);
 
-  NodeContainer nodecm2;
-  nodecm2.Create (n3, n4, n5);
+  NodeContainer nodecm2 = NodeContainer (n3, n4, n5);
 
-  NodeContainer nodecm3;
-  nodecm3.Create (n6, n7, n8);
+  NodeContainer nodecm3 = NodeContainer (n6, n7, n8);
 
-  NodeContainer nodecm4;
-  nodecm4.Create (n9, n10, n11);
+  NodeContainer nodecm4 = NodeContainer (n9, n10, n11);
 
-  NodeContainer nodech1;
-  nodech1.Create (nodecm1, nodecm2);
+  NodeContainer nodech1 = NodeContainer (nodecm1, nodecm2);
 
-  NodeContainer nodech2;
-  nodech2.Create (nodecm3, nodecm4);
+  NodeContainer nodech2 = NodeContainer (nodecm3, nodecm4);
 
-  NodeContainer Allnodes;
-  Allnodes.Create (nodech1, nodech2);
+  NodeContainer Allnodes = NodeContainer (nodech1, nodech2);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
