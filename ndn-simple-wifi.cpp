@@ -76,7 +76,10 @@ main(int argc, char* argv[])
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
 
   NodeContainer nodes;
-  nodes.Create(numberOfnodes);
+  nodes.Create (numberOfnodes);
+
+  NodeContainer ap;
+  ap.Create (1);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
@@ -92,8 +95,14 @@ main(int argc, char* argv[])
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
   wifiPhyHelper.SetChannel(wifiChannel.Create());
 
+  Ssid ssid = Ssid ("ssid");
+
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  wifiMacHelper.SetType("ns3::ApWifiMac", "Ssid", SsidValue (ssid));
+  NetDeviceContainer apDev = wifi.Install (wifiPhyHelper, wifiMacHelper, ap);
+  wifiMacHelper.SetType("ns3::StaWifiMac", "ActiveProbing", BooleanValue (true),
+                        "Ssid", SsidValue (ssid));
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhyHelper, wifiMacHelper, nodes);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfnodes; i++)
@@ -107,10 +116,11 @@ main(int argc, char* argv[])
 
   ////////////////
   // 1. Install Wifi
-  NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
-
+  //NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
+  
   // 2. Install Mobility model
   mobility.Install(nodes);
+  mobility.Install(ap);
 
   // 3. Install NDN stack
   NS_LOG_INFO("Installing NDN stack");
@@ -120,6 +130,7 @@ main(int argc, char* argv[])
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
   ndnHelper.SetDefaultRoutes(true);
   ndnHelper.Install(nodes);
+  ndnHelper.Install(ap);
 
   // Set BestRoute strategy
   //ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
@@ -128,9 +139,11 @@ main(int argc, char* argv[])
   BasicEnergySourceHelper basicEnergySourceHelper;
   basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (0.1));
   EnergySourceContainer sources = basicEnergySourceHelper.Install (nodes);
+  EnergySourceContainer sourceAP = basicEnergySourceHelper.Install (ap);
 
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
-  DeviceEnergyModelContainer deviceEnergyModels = wifiRadioEnergyModelHelper.Install (wifiNetDevices, sources);
+  DeviceEnergyModelContainer deviceEnergyModels = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
+  DeviceEnergyModelContainer deviceEnergyModels = wifiRadioEnergyModelHelper.Install (apDev, sourcesAP);
   
   // 4. Set up applications
   /*
@@ -150,15 +163,18 @@ main(int argc, char* argv[])
   proapp.Start (Seconds (0.0));
   proapp.Stop (Seconds (30.0));      
   */
-  PacketSocketAddress socket;
-  socket.SetAllDevices ();
-  socket.SetPhysicalAddress (wifiNetDevices.Get (0)->GetAddress ());
-  socket.SetProtocol (0);
+
 
   for (uint16_t i = 0; i <= numberOfnodes; i++)
     {
+      PacketSocketAddress socket;
+      socket.SetAllDevices ();
+      //socket.SetSingleDevice (wifiDev.Get (u)->GetIfIndex ());
+      socket.SetPhysicalAddress (staDevs.Get (i)->GetAddress ());
+      socket.SetProtocol (1);
+
       TypeId tid = TypeId::LookupByName ("ns3::PacketSocketFactory");
-      Ptr<Socket> recvSink = Socket::CreateSocket (nodes.Get (0), tid);
+      Ptr<Socket> recvSink = Socket::CreateSocket (ap.Get (0), tid);
       recvSink->Bind (socket);
 
       OnOffHelper onoff ("ns3::PacketSocketFacotry", Address (socket));
