@@ -164,11 +164,13 @@ main(int argc, char* argv[])
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
       IdleCurrent = ptr->GetIdleCurrentA ();
+      TxCurrent = ptr->GetTxCurrentA ();
+      RxCurrent = ptr->GetRxCurrentA ();
       NS_LOG_UNCOND ("Idle Current: " << IdleCurrent);
+      NS_LOG_UNCOND ("TX Current: " << TxCurrent);
+      NS_LOG_UNCOND ("RX Current: " << RxCurrent);
       basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
     }
-
-  std::cout << "Avg Idle time(ms): " << avgIdle/numberOfnodes;
 
   Simulator::Stop(Seconds(30.0));
 
