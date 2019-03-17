@@ -154,71 +154,71 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
+
   auto proapp = producerHelper.Install (n0);
   proapp.Start (Seconds (0.0));
-  proapp.Stop (Seconds (15.0));
+  proapp.Stop (Seconds (30.0));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
+
   auto cunappn0 = consumerHelper.Install (n1);
   cunappn0.Start (Seconds (0.0));
-  cunappn0.Stop (Seconds (1.0));
+  cunappn0.Stop (Seconds (2.0));
 
   auto cunappn1 = consumerHelper.Install (n2);
-  cunappn1.Start (Seconds (1.1));
-  cunappn1.Stop (Seconds (2.0));
+  cunappn1.Start (Seconds (2.1));
+  cunappn1.Stop (Seconds (4.0));
 
   auto cunappn2 = consumerHelper.Install (n3);
-  cunappn2.Start (Seconds (2.1));
-  cunappn2.Stop (Seconds (3.0));
+  cunappn2.Start (Seconds (4.1));
+  cunappn2.Stop (Seconds (6.0));
 
   auto cunappn3 = consumerHelper.Install (n4);
-  cunappn3.Start (Seconds (3.1));
-  cunappn3.Stop (Seconds (4.0));
+  cunappn3.Start (Seconds (6.1));
+  cunappn3.Stop (Seconds (8.0));
 
   auto cunappn4 = consumerHelper.Install (n5);
-  cunappn4.Start (Seconds (4.1));
-  cunappn4.Stop (Seconds (5.0));
+  cunappn4.Start (Seconds (8.1));
+  cunappn4.Stop (Seconds (10.0));
 
   auto cunappn5 = consumerHelper.Install (n6);
-  cunappn5.Start (Seconds (5.1));
-  cunappn5.Stop (Seconds (6.0));
+  cunappn5.Start (Seconds (10.1));
+  cunappn5.Stop (Seconds (12.0));
 
   auto cunappn6 = consumerHelper.Install (n7);
-  cunappn6.Start (Seconds (6.1));
-  cunappn6.Stop (Seconds (7.0));
+  cunappn6.Start (Seconds (12.1));
+  cunappn6.Stop (Seconds (14.0));
 
   auto cunappn7 = consumerHelper.Install (n8);
-  cunappn7.Start (Seconds (7.1));
-  cunappn7.Stop (Seconds (8.0));
+  cunappn7.Start (Seconds (14.1));
+  cunappn7.Stop (Seconds (16.0));
 
   auto cunappn8 = consumerHelper.Install (n9);
-  cunappn8.Start (Seconds (9.1));
-  cunappn8.Stop (Seconds (10.0));
+  cunappn8.Start (Seconds (16.1));
+  cunappn8.Stop (Seconds (18.0));
 
   auto cunappn9 = consumerHelper.Install (n10);
-  cunappn9.Start (Seconds (10.1));
-  cunappn9.Stop (Seconds (11.0));
+  cunappn9.Start (Seconds (18.1));
+  cunappn9.Stop (Seconds (20.0));
 
   auto cunappn10 = consumerHelper.Install (n11);
-  cunappn10.Start (Seconds (11.1));
-  cunappn10.Stop (Seconds (12.0));
+  cunappn10.Start (Seconds (20.1));
+  cunappn10.Stop (Seconds (22.0));
 
-  Simulator::Stop(Seconds(15.0));
+  Simulator::Stop(Seconds(30.0));
   Simulator::Run();
 
 //  for (uint16_t i = 0; i <= numberOfnodes; i++)
-//    {
-  Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (0));
-      //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
-  Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
-  Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
-
-  NS_ASSERT (basicRadioModels != NULL);
-//    }
-
-  //basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-
+  for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
+    {
+      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sourceIter);
+      basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
+      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel");
+      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
+      NS_ASSERT (basicRadioModels != NULL);
+      basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+    }
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
     {
       double energyConsumed = (*iter)->GetTotalEnergyConsumption ();
