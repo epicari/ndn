@@ -74,7 +74,7 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
   
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
-
+/*
   NodeContainer n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11;
   n0.Create (1);
   n1.Create (1);
@@ -90,18 +90,16 @@ main(int argc, char* argv[])
   n11.Create (1);
 
   NodeContainer nodecm1 = NodeContainer (n0, n1, n2);
-
   NodeContainer nodecm2 = NodeContainer (n3, n4, n5);
-
   NodeContainer nodecm3 = NodeContainer (n6, n7, n8);
-
   NodeContainer nodecm4 = NodeContainer (n9, n10, n11);
-
   NodeContainer nodech1 = NodeContainer (nodecm1, nodecm2);
-
   NodeContainer nodech2 = NodeContainer (nodecm3, nodecm4);
-
   NodeContainer Allnodes = NodeContainer (nodech1, nodech2);
+*/
+
+  NodeContainer nodes;
+  nodes.Create (numberOfnodes);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
@@ -117,14 +115,9 @@ main(int argc, char* argv[])
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
   wifiPhyHelper.SetChannel(wifiChannel.Create());
 
-  Ssid ssid = Ssid ("ssid");
-
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhyHelper, wifiMacHelper, Allnodes);
-
-//  wifiMacHelper.SetType("ns3::AdhocWifiMac");
-//  NetDeviceContainer wifiDev = wifi.Install (wifiPhyHelper, wifiMacHelper, Allnodes);
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhyHelper, wifiMacHelper, nodes);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfnodes; i++)
@@ -135,7 +128,7 @@ main(int argc, char* argv[])
   MobilityHelper mobility;
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator(positionAlloc);
-  mobility.Install(Allnodes);
+  mobility.Install(nodes);
 
   NS_LOG_INFO("Installing NDN stack");
   ndn::StackHelper ndnHelper;
@@ -143,7 +136,7 @@ main(int argc, char* argv[])
   // (MyNetDeviceFaceCallback));
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
   ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.Install(Allnodes);
+  ndnHelper.Install(nodes);
 
   //ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
 
@@ -158,56 +151,52 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
 
-  auto proapp = producerHelper.Install (n0);
+  auto proapp = producerHelper.Install (nodes.Get (0));
   proapp.Start (Seconds (0.0));
   proapp.Stop (Seconds (30.0));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
 
-  auto cunappn0 = consumerHelper.Install (n1);
+  auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Start (Seconds (0.0));
   cunappn0.Stop (Seconds (2.0));
 
-  auto cunappn1 = consumerHelper.Install (n2);
+  auto cunappn1 = consumerHelper.Install (nodes.Get (2));
   cunappn1.Start (Seconds (2.1));
   cunappn1.Stop (Seconds (4.0));
 
-  auto cunappn2 = consumerHelper.Install (n3);
+  auto cunappn2 = consumerHelper.Install (nodes.Get (3));
   cunappn2.Start (Seconds (4.1));
   cunappn2.Stop (Seconds (6.0));
 
-  auto cunappn3 = consumerHelper.Install (n4);
+  auto cunappn3 = consumerHelper.Install (nodes.Get (4));
   cunappn3.Start (Seconds (6.1));
   cunappn3.Stop (Seconds (8.0));
 
-  auto cunappn4 = consumerHelper.Install (n5);
+  auto cunappn4 = consumerHelper.Install (nodes.Get (5));
   cunappn4.Start (Seconds (8.1));
   cunappn4.Stop (Seconds (10.0));
 
-  auto cunappn5 = consumerHelper.Install (n6);
+  auto cunappn5 = consumerHelper.Install (nodes.Get (6));
   cunappn5.Start (Seconds (10.1));
   cunappn5.Stop (Seconds (12.0));
 
-  auto cunappn6 = consumerHelper.Install (n7);
+  auto cunappn6 = consumerHelper.Install (nodes.Get (7));
   cunappn6.Start (Seconds (12.1));
   cunappn6.Stop (Seconds (14.0));
 
-  auto cunappn7 = consumerHelper.Install (n8);
+  auto cunappn7 = consumerHelper.Install (nodes.Get (8));
   cunappn7.Start (Seconds (14.1));
   cunappn7.Stop (Seconds (16.0));
 
-  auto cunappn8 = consumerHelper.Install (n9);
+  auto cunappn8 = consumerHelper.Install (nodes.Get (9));
   cunappn8.Start (Seconds (16.1));
   cunappn8.Stop (Seconds (18.0));
 
-  auto cunappn9 = consumerHelper.Install (n10);
+  auto cunappn9 = consumerHelper.Install (nodes.Get (10));
   cunappn9.Start (Seconds (18.1));
   cunappn9.Stop (Seconds (20.0));
-
-  auto cunappn10 = consumerHelper.Install (n11);
-  cunappn10.Start (Seconds (20.1));
-  cunappn10.Stop (Seconds (22.0));
 
   Simulator::Stop(Seconds(30.0));
   Simulator::Run();
@@ -215,9 +204,9 @@ main(int argc, char* argv[])
 //  for (uint16_t i = 0; i <= numberOfnodes; i++)
   for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
     {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources);
+      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (*sourceIter);
       basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
-      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
+      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(*sourceIter);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
       basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
