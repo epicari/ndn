@@ -127,14 +127,14 @@ main(int argc, char* argv[])
   //consumerHelper.Install (nodes);
 
 
-  consumerHelper.SetAttribute("Batches", StringValue("1s 1"));
+  consumerHelper.SetAttribute("Batches", StringValue("0.5s 1"));
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
-  cunappn0.Stop (Seconds (2.0));
+  cunappn0.Stop (Seconds (1.0));
 
-  consumerHelper.SetAttribute("Batches", StringValue("3s 1"));
+  consumerHelper.SetAttribute("Batches", StringValue("1.5s 1"));
   auto cunappn1 = consumerHelper.Install (nodes.Get (2));
-  cunappn1.Start (Seconds (2.1));
-  cunappn1.Stop (Seconds (4.1));
+  cunappn1.Start (Seconds (1.1));
+  cunappn1.Stop (Seconds (2.1));
 /*
   consumerHelper.SetAttribute("Batches", StringValue("21s 1"));
   auto cunappn2 = consumerHelper.Install (nodes.Get (3));
