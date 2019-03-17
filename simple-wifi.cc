@@ -42,7 +42,16 @@ main(int argc, char* argv[])
   CommandLine cmd;
   cmd.Parse(argc, argv);
   
-  Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
+  // disable fragmentation for frames below 2200 bytes
+  Config::SetDefault ("ns3::WifiRemoteStationManager::FragmentationThreshold",
+                      StringValue ("2200"));
+  // turn off RTS/CTS for frames below 2200 bytes
+  Config::SetDefault ("ns3::WifiRemoteStationManager::RtsCtsThreshold",
+                      StringValue ("2200"));
+  // Fix non-unicast data rate to be the same as that of unicast
+  Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",
+                      StringValue (phyMode));
+  Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
 
   NodeContainer nodes;
   nodes.Create (numberOfnodes);
@@ -63,8 +72,8 @@ main(int argc, char* argv[])
   wifiPhy.Set ("TxPowerStart", DoubleValue (10.0));
   wifiPhy.Set ("TxPowerEnd", DoubleValue (10.0));
   wifiPhy.Set ("TxPowerLevels", UintegerValue (1));
-  wifiPhy.Set ("TxGain", DoubleValue (0));
-  wifiPhy.Set ("RxGain", DoubleValue (0));
+  wifiPhy.Set ("TxGain", DoubleValue (1));
+  wifiPhy.Set ("RxGain", DoubleValue (-10));
   wifiPhy.Set ("RxNoiseFigure", DoubleValue (10));
   wifiPhy.Set ("CcaMode1Threshold", DoubleValue (-79));
   wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
@@ -73,15 +82,12 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
   NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
 
-  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-  for (uint16_t i = 0; i < numberOfnodes; i++)
-    {
-      positionAlloc->Add (Vector(2 * i, 2 * i, 0));
-    }
-
   MobilityHelper mobility;
-  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-  mobility.SetPositionAllocator(positionAlloc);
+  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
+                                 "X", StringValue ("100.0"),
+                                 "Y", StringValue ("100.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.Install(nodes);
 
   InternetStackHelper stack;
@@ -97,6 +103,8 @@ main(int argc, char* argv[])
   EnergySourceContainer sources = basicEnergySourceHelper.Install (nodes);
 
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
+  wifiRadioEnergyModelHelper.Set ("TxCurrentA", DoubleValue (0.0174));
+  wifiRadioEnergyModelHelper.Set ("RxCurrentA", DoubleValue (0.0197));
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
 
   PacketSinkHelper producerHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
@@ -104,6 +112,7 @@ main(int argc, char* argv[])
 
   UdpClientHelper consumerHelper (inetAddr, port);
   consumerHelper.SetAttribute ("PacketSize", UintegerValue (1024));
+  //consumerHelper.Install (nodes);
 
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (10.0));
