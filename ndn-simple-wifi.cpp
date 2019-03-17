@@ -38,6 +38,7 @@ main(int argc, char* argv[])
   
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 26;
+  double totalConsumption = 0.0;
   double simTime = 270.0;
 
   CommandLine cmd;
@@ -220,7 +221,7 @@ main(int argc, char* argv[])
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
-      double totalConsumption += ptr->GetTotalEnergyConsumption ();
+      totalConsumption += ptr->GetTotalEnergyConsumption ();
       NS_LOG_UNCOND ("AVG Energy Consumption: "<< totalConsumption/u);
     }
 
