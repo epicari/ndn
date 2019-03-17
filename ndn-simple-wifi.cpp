@@ -252,7 +252,7 @@ main(int argc, char* argv[])
                 << "s Total energy consumed by radio = " << totalEnergy << "J");
       NS_LOG_UNCOND ("Tx energy: " << Simulator::Now ().GetSeconds () * txCurrent
                 << "s " );               
-      NS_LOG_UNCOND ("Rx energy: " << Simulator::Now ().GetSeconds () * txCurrent
+      NS_LOG_UNCOND ("Rx energy: " << Simulator::Now ().GetSeconds () * rxCurrent
                 << "s " );
 //    }
 
