@@ -179,7 +179,7 @@ main(int argc, char* argv[])
   auto cunappn5 = consumerHelper.Install (nodes.Get (6));
   cunappn5.Start (Seconds (50.5));
   cunappn5.Stop (Seconds (60.5));
-
+/*
   auto cunappn6 = consumerHelper.Install (nodes.Get (7));
   cunappn6.Start (Seconds (60.6));
   cunappn6.Stop (Seconds (70.6));
@@ -195,7 +195,7 @@ main(int argc, char* argv[])
   auto cunappn9 = consumerHelper.Install (nodes.Get (10));
   cunappn9.Start (Seconds (90.9));
   cunappn9.Stop (Seconds (100.9));
-
+*/
   Simulator::Stop(Seconds(101.0));
   Simulator::Run();
 
