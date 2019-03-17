@@ -163,11 +163,11 @@ main(int argc, char* argv[])
   auto cunappn1 = consumerHelper.Install (nodes.Get (2));
   cunappn1.Start (Seconds (30.1));
   cunappn1.Stop (Seconds (60.1));
-/*
-  auto cunappn2 = consumerHelper.Install (nodes.Get (3));
-  cunappn2.Start (Seconds (3.1));
-  cunappn2.Stop (Seconds (4.0));
 
+  auto cunappn2 = consumerHelper.Install (nodes.Get (3));
+  cunappn2.Start (Seconds (60.2));
+  cunappn2.Stop (Seconds (90.2));
+/*
   auto cunappn3 = consumerHelper.Install (nodes.Get (4));
   cunappn3.Start (Seconds (4.1));
   cunappn3.Stop (Seconds (5.0));
@@ -196,7 +196,7 @@ main(int argc, char* argv[])
   cunappn9.Start (Seconds (10.1));
   cunappn9.Stop (Seconds (11.0));
 */
-  Simulator::Stop(Seconds(90.0));
+  Simulator::Stop(Seconds(100.0));
   Simulator::Run();
 
   //for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
