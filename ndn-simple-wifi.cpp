@@ -201,12 +201,12 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(30.0));
   Simulator::Run();
 
-//  for (uint16_t i = 0; i <= numberOfnodes; i++)
-  for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
+  //for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
+  for (uint16_t i = 0; i <= numberOfnodes; i++)
     {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (*sourceIter);
+      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (nodes.Get(i));
       basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
-      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(*sourceIter);
+      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
       basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
