@@ -121,112 +121,132 @@ main(int argc, char* argv[])
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Batches", StringValue("1s 1 10s 1 20s 1 30s 1 40s 1 
-                              50s 1 60s 1 70s 1 80s 1 90s 1 100s 1 110s 1 120s 1
-                              130s 1 140s 1 150s 1 160s 1 170s 1 180s 1 190s 1
-                              200s 1 210s 1 220s 1 230s 1 240s 1"));
   //consumerHelper.SetAttribute("Frequency", StringValue("100"));  
-  consumerHelper.Install (nodes);
-/*
+  //consumerHelper.Install (nodes);
+  
+  consumerHelper.SetAttribute("Batches", StringValue("1s 1");
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (10.0));
 
+  consumerHelper.SetAttribute("Batches", StringValue("11s 1");
   auto cunappn1 = consumerHelper.Install (nodes.Get (2));
   cunappn1.Start (Seconds (10.1));
   cunappn1.Stop (Seconds (20.1));
 
+  consumerHelper.SetAttribute("Batches", StringValue("21s 1");
   auto cunappn2 = consumerHelper.Install (nodes.Get (3));
   cunappn2.Start (Seconds (20.2));
   cunappn2.Stop (Seconds (30.2));
 
+  consumerHelper.SetAttribute("Batches", StringValue("31s 1");
   auto cunappn3 = consumerHelper.Install (nodes.Get (4));
   cunappn3.Start (Seconds (30.3));
   cunappn3.Stop (Seconds (40.3));
 
+  consumerHelper.SetAttribute("Batches", StringValue("41s 1");
   auto cunappn4 = consumerHelper.Install (nodes.Get (5));
   cunappn4.Start (Seconds (40.4));
   cunappn4.Stop (Seconds (50.4));
 
+  consumerHelper.SetAttribute("Batches", StringValue("51s 1");
   auto cunappn5 = consumerHelper.Install (nodes.Get (6));
   cunappn5.Start (Seconds (50.5));
   cunappn5.Stop (Seconds (60.5));
 
+  consumerHelper.SetAttribute("Batches", StringValue("61s 1");
   auto cunappn6 = consumerHelper.Install (nodes.Get (7));
   cunappn6.Start (Seconds (60.6));
   cunappn6.Stop (Seconds (70.6));
 
+  consumerHelper.SetAttribute("Batches", StringValue("71s 1");
   auto cunappn7 = consumerHelper.Install (nodes.Get (8));
   cunappn7.Start (Seconds (70.7));
   cunappn7.Stop (Seconds (80.7));
 
+  consumerHelper.SetAttribute("Batches", StringValue("81s 1");
   auto cunappn8 = consumerHelper.Install (nodes.Get (9));
   cunappn8.Start (Seconds (80.8));
   cunappn8.Stop (Seconds (90.8));
 
+  consumerHelper.SetAttribute("Batches", StringValue("91s 1");
   auto cunappn9 = consumerHelper.Install (nodes.Get (10));
   cunappn9.Start (Seconds (90.9));
   cunappn9.Stop (Seconds (100.9));
 
+  consumerHelper.SetAttribute("Batches", StringValue("110s 1");
   auto cunappn10 = consumerHelper.Install (nodes.Get (11));
   cunappn10.Start (Seconds (101.0));
   cunappn10.Stop (Seconds (111.0));
 
+  consumerHelper.SetAttribute("Batches", StringValue("120s 1");
   auto cunappn11 = consumerHelper.Install (nodes.Get (12));
   cunappn11.Start (Seconds (111.1));
   cunappn11.Stop (Seconds (121.1));
 
+  consumerHelper.SetAttribute("Batches", StringValue("130s 1");
   auto cunappn12 = consumerHelper.Install (nodes.Get (13));
   cunappn12.Start (Seconds (121.2));
   cunappn12.Stop (Seconds (131.2));
 
+  consumerHelper.SetAttribute("Batches", StringValue("140s 1");
   auto cunappn13 = consumerHelper.Install (nodes.Get (14));
   cunappn13.Start (Seconds (131.3));
   cunappn13.Stop (Seconds (141.3));
 
+  consumerHelper.SetAttribute("Batches", StringValue("150s 1");
   auto cunappn14 = consumerHelper.Install (nodes.Get (15));
   cunappn14.Start (Seconds (141.4));
   cunappn14.Stop (Seconds (151.4));
 
+  consumerHelper.SetAttribute("Batches", StringValue("160s 1");
   auto cunappn15 = consumerHelper.Install (nodes.Get (16));
   cunappn15.Start (Seconds (151.5));
   cunappn15.Stop (Seconds (161.5));
 
+  consumerHelper.SetAttribute("Batches", StringValue("170s 1");
   auto cunappn16 = consumerHelper.Install (nodes.Get (17));
   cunappn16.Start (Seconds (161.6));
   cunappn16.Stop (Seconds (171.6));
 
+  consumerHelper.SetAttribute("Batches", StringValue("180s 1");
   auto cunappn17 = consumerHelper.Install (nodes.Get (18));
   cunappn17.Start (Seconds (171.7));
   cunappn17.Stop (Seconds (181.7));
 
+  consumerHelper.SetAttribute("Batches", StringValue("190s 1");
   auto cunappn18 = consumerHelper.Install (nodes.Get (19));
   cunappn18.Start (Seconds (181.8));
   cunappn18.Stop (Seconds (191.8));
 
+  consumerHelper.SetAttribute("Batches", StringValue("200s 1");
   auto cunappn19 = consumerHelper.Install (nodes.Get (20));
   cunappn19.Start (Seconds (191.9));
   cunappn19.Stop (Seconds (201.9));
 
+  consumerHelper.SetAttribute("Batches", StringValue("210s 1");
   auto cunappn20 = consumerHelper.Install (nodes.Get (21));
   cunappn20.Start (Seconds (202.0));
   cunappn20.Stop (Seconds (212.0));
 
+  consumerHelper.SetAttribute("Batches", StringValue("220s 1");
   auto cunappn21 = consumerHelper.Install (nodes.Get (22));
   cunappn21.Start (Seconds (212.1));
   cunappn21.Stop (Seconds (222.2));
 
+  consumerHelper.SetAttribute("Batches", StringValue("230s 1");
   auto cunappn22 = consumerHelper.Install (nodes.Get (23));
   cunappn22.Start (Seconds (222.3));
   cunappn22.Stop (Seconds (242.3));
 
+  consumerHelper.SetAttribute("Batches", StringValue("240s 1");
   auto cunappn23 = consumerHelper.Install (nodes.Get (24));
   cunappn23.Start (Seconds (242.4));
   cunappn23.Stop (Seconds (252.4));
 
+  consumerHelper.SetAttribute("Batches", StringValue("250s 1");
   auto cunappn24 = consumerHelper.Install (nodes.Get (25));
   cunappn24.Start (Seconds (252.5));
   cunappn24.Stop (Seconds (262.5));
-*/
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
