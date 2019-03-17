@@ -52,7 +52,7 @@ main(int argc, char* argv[])
   
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 26;
-  double totalConsumption = 0.0;
+  //double totalConsumption = 0.0;
   double simTime = 270.0;
 
   CommandLine cmd;
