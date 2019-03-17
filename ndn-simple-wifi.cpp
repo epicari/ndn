@@ -244,7 +244,12 @@ main(int argc, char* argv[])
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
       NS_ASSERT (basicRadioModels != NULL);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
-      ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+      //ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+      double totalEnergy = ptr->GetTotalEnergyConsumption ();
+      double txCurrent = ptr->GetTxCurrentA ();
+      double rxCurrent = ptr->GetRxCurrentA ();
+      NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
+                << "s Total energy consumed by radio = " << totalEnergy << "J");
 //    }
 
   Simulator::Destroy();
