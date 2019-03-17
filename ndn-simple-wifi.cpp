@@ -33,13 +33,6 @@ namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 
 void
-RemainingEnergy (double oldValue, double remainingEnergy)
-{
-  NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                 << "s Current remaining energy = " << remainingEnergy << "J");
-}
-
-void
 TotalEnergy (double oldValue, double totalEnergy)
 {
   NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
@@ -67,6 +60,8 @@ main(int argc, char* argv[])
   // Fix non-unicast data rate to be the same as that of unicast
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",
                       StringValue (phyMode));
+  Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
+
   NodeContainer nodes;
   nodes.Create (numberOfnodes);
 
@@ -95,26 +90,21 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
   NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
 
-  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-  for (uint16_t i = 0; i < numberOfnodes; i++)
-    {
-      positionAlloc->Add (Vector(2 * i, 2 * i, 0));
-    }
-
   MobilityHelper mobility;
-  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-  mobility.SetPositionAllocator(positionAlloc);
+  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
+                                 "X", StringValue ("100.0"),
+                                 "Y", StringValue ("100.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.Install(nodes);
 
   NS_LOG_INFO("Installing NDN stack");
   ndn::StackHelper ndnHelper;
-  // ndnHelper.AddNetDeviceFaceCreateCallback (WifiNetDevice::GetTypeId (), MakeCallback
-  // (MyNetDeviceFaceCallback));
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
   ndnHelper.SetDefaultRoutes(true);
   ndnHelper.Install(nodes);
 
-  //ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
 
   BasicEnergySourceHelper basicEnergySourceHelper;
   basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (0.1));
@@ -132,9 +122,10 @@ main(int argc, char* argv[])
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  //consumerHelper.Install (nodes);
+  consumerHelper.SetAttribute("Frequency", StringValue("100"));
+  consumerHelper.Install (nodes);
 
+/*
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (10.0));
 
@@ -233,28 +224,21 @@ main(int argc, char* argv[])
   auto cunappn24 = consumerHelper.Install (nodes.Get (25));
   cunappn24.Start (Seconds (252.5));
   cunappn24.Stop (Seconds (262.5));
+*/
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
+
+  Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(0));
+  Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
+  Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
   
-//  for (uint16_t u = 1; u <= numberOfnodes; u++)
-//    {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(0));
-      basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
-      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
-      NS_ASSERT (basicRadioModels != NULL);
-      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
-      //ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-      double totalEnergy = ptr->GetTotalEnergyConsumption ();
-      double txCurrent = ptr->GetTxCurrentA ();
-      double rxCurrent = ptr->GetRxCurrentA ();
-      NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                << "s Total energy consumed by radio = " << totalEnergy << "J");
-      NS_LOG_UNCOND ("Tx energy: " << Simulator::Now ().GetSeconds () * txCurrent
-                << "s " );               
-      NS_LOG_UNCOND ("Rx energy: " << Simulator::Now ().GetSeconds () * rxCurrent
-                << "s " );
-//    }
+  NS_ASSERT (basicRadioModels != NULL);
+  //ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+  double totalEnergy = ptr->GetTotalEnergyConsumption ();
+
+  NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
+            << "s Total energy consumed by radio = " << totalEnergy << "J");
 
   Simulator::Destroy();
 
