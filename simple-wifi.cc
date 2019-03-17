@@ -89,7 +89,8 @@ main(int argc, char* argv[])
 
   Ipv4AddressHelper address;
   address.SetBase ("10.1.1.0", "255.255.255.0");
-  inetface = address.Assign (wifiDev);
+  Ipv4InterfaceContainer inetface = address.Assign (wifiDev);
+  Ipv4Address inetAddr = inetface.GetAddress (0);
 
   BasicEnergySourceHelper basicEnergySourceHelper;
   basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (0.1));
@@ -101,7 +102,7 @@ main(int argc, char* argv[])
   PacketSinkHelper producerHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
   producerHelper.Install (nodes.Get (0));
 
-  OnOffHelper consumerHelper ("ns3::UdpSocketFactory", InetSocketAddress (inetface, port));
+  OnOffHelper consumerHelper ("ns3::UdpSocketFactory", InetSocketAddress (inetAddr, port));
   consumerHelper.SetAttribute ("PacketSize", UintegerValue (1024));
   consumerHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"));
   consumerHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.0]"));
