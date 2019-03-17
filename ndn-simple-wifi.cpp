@@ -153,7 +153,7 @@ main(int argc, char* argv[])
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
       double energyTx = ptr->GetTxCurrentA ();
-      NS_LOG_UNCOND ("Avg Tx energy (mJ): " << energyTx);
+      NS_LOG_UNCOND ("Avg Tx energy (mJ): " << energyTx/7);
     }
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
