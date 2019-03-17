@@ -124,7 +124,7 @@ main(int argc, char* argv[])
   consumerHelper.SetPrefix("/test/prefix");
   //consumerHelper.SetAttribute("Frequency", StringValue("10"));
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1"));  
-  consumerHelper.Install (nodes);
+  //consumerHelper.Install (nodes);
 
 
   consumerHelper.SetAttribute("Batches", StringValue("1s 1"));
