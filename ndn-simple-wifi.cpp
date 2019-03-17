@@ -54,7 +54,7 @@ main(int argc, char* argv[])
   uint16_t numberOfnodes = 26;
   //double totalConsumption = 0.0;
   double simTime = 270.0;
-  Time time = Simulator::Now ().GetSeconds ();
+  double time = Simulator::Now ().GetSeconds ();
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
