@@ -68,7 +68,8 @@ main(int argc, char* argv[])
   uint16_t numberOfnodes = 10;
   //double IdleCurrent = 0.0;
   //double TxCurrent = 0.0;
-  //double RxCurrent = 0.0;
+  double RxCurrent = 0.0;
+  double simTime = 60;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -156,10 +157,12 @@ main(int argc, char* argv[])
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
 
-  auto cunappn0 = consumerHelper.Install (nodes.Get (1));
-  cunappn0.Start (Seconds (0.0));
-  cunappn0.Stop (Seconds (10.0));
-
+  for (uint16_t u = 0; u <= numberOfnodes; ++u)
+    {
+      auto cunappn0 = consumerHelper.Install (nodes.Get (u));
+      cunappn0.Stop (Seconds (10.0));
+    }
+/*
   auto cunappn1 = consumerHelper.Install (nodes.Get (2));
   cunappn1.Start (Seconds (10.1));
   cunappn1.Stop (Seconds (20.1));
@@ -179,7 +182,7 @@ main(int argc, char* argv[])
   auto cunappn5 = consumerHelper.Install (nodes.Get (6));
   cunappn5.Start (Seconds (50.5));
   cunappn5.Stop (Seconds (60.5));
-/*
+
   auto cunappn6 = consumerHelper.Install (nodes.Get (7));
   cunappn6.Start (Seconds (60.6));
   cunappn6.Stop (Seconds (70.6));
@@ -196,7 +199,7 @@ main(int argc, char* argv[])
   cunappn9.Start (Seconds (90.9));
   cunappn9.Stop (Seconds (100.9));
 */
-  Simulator::Stop(Seconds(101.0));
+  Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
   //for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
@@ -206,7 +209,9 @@ main(int argc, char* argv[])
   Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
   Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
   NS_ASSERT (basicRadioModels != NULL);
-  //basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+  basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+  RxCurrent = ptr->GetTxCurrentA();
+  NS_LOG_UNCOND ("Rx Current A: " << RxCurrent);
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
     {
