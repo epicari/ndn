@@ -207,7 +207,7 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
-  for (uint16_t u = 0; u <= numberOfnodes; u++)
+  for (uint16_t u = 0; u <= numberOfnodes; ++u)
     {
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
@@ -216,6 +216,14 @@ main(int argc, char* argv[])
       totalConsumption += ptr->GetTotalEnergyConsumption ();
       NS_LOG_UNCOND ("AVG Energy Consumption: "<< totalConsumption/u);
     }
+
+  Ptr<BasicEnergySource> basicEnergySourceA = DynamicCast<BasicEnergySource> (sources.Get(0));
+  Ptr<DeviceEnergyModel> basicRadioModelsB = basicEnergySourceA->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
+  Ptr<WifiRadioEnergyModel> ptrA = DynamicCast<WifiRadioEnergyModel> (basicRadioModelsB);
+  NS_ASSERT (basicRadioModelsB != NULL);
+  double totalConsumptionA += ptrA->GetTotalEnergyConsumption ();
+  NS_LOG_UNCOND ("Energy Consumption: "<< totalConsumptionA);
+
 
   Simulator::Destroy();
 
