@@ -107,6 +107,11 @@ main(int argc, char* argv[])
   consumerHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"));
   consumerHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.0]"));
 
+  for (uint32_t u = 0; u < nodes.GetN (); ++u)
+    {
+      auto consumer = consumerHelper.Install (nodes.Get (u));
+    }
+/*
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (10.0));
 
@@ -205,7 +210,7 @@ main(int argc, char* argv[])
   auto cunappn24 = consumerHelper.Install (nodes.Get (25));
   cunappn24.Start (Seconds (252.5));
   cunappn24.Stop (Seconds (262.5));
-
+*/
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
