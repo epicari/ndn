@@ -32,72 +32,18 @@ namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 
-//
-// DISCLAIMER:  Note that this is an extremely simple example, containing just 2 wifi nodes
-// communicating directly over AdHoc channel.
-//
-
-// Ptr<ndn::NetDeviceFace>
-// MyNetDeviceFaceCallback (Ptr<Node> node, Ptr<ndn::L3Protocol> ndn, Ptr<NetDevice> device)
-// {
-//   // NS_LOG_DEBUG ("Create custom network device " << node->GetId ());
-//   Ptr<ndn::NetDeviceFace> face = CreateObject<ndn::MyNetDeviceFace> (node, device);
-//   ndn->AddFace (face);
-//   return face;
-// }
-
-void
-RemainingEnergy (double oldValue, double remainingEnergy)
-{
-  NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                 << "s Current remaining energy = " << remainingEnergy << "J");
-}
-
-void
-TotalEnergy (double oldValue, double totalEnergy)
-{
-  NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                 << "s Total energy consumed by radio = " << totalEnergy << "J");
-}
-
 int
 main(int argc, char* argv[])
 {
   
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 10;
-  //double IdleCurrent = 0.0;
-  double TxCurrent = 0.0;
-  double RxCurrent = 0.0;
   double simTime = 60;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
   
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
-/*
-  NodeContainer n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11;
-  n0.Create (1);
-  n1.Create (1);
-  n2.Create (1);
-  n3.Create (1);
-  n4.Create (1);
-  n5.Create (1);
-  n6.Create (1);
-  n7.Create (1);
-  n8.Create (1);
-  n9.Create (1);
-  n10.Create (1);
-  n11.Create (1);
-
-  NodeContainer nodecm1 = NodeContainer (n0, n1, n2);
-  NodeContainer nodecm2 = NodeContainer (n3, n4, n5);
-  NodeContainer nodecm3 = NodeContainer (n6, n7, n8);
-  NodeContainer nodecm4 = NodeContainer (n9, n10, n11);
-  NodeContainer nodech1 = NodeContainer (nodecm1, nodecm2);
-  NodeContainer nodech2 = NodeContainer (nodecm3, nodecm4);
-  NodeContainer Allnodes = NodeContainer (nodech1, nodech2);
-*/
 
   NodeContainer nodes;
   nodes.Create (numberOfnodes);
@@ -200,19 +146,10 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
-  //for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
-
   Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(0));
-  //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
   Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
   Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
   NS_ASSERT (basicRadioModels != NULL);
-  basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-  RxCurrent = ptr->GetRxCurrentA();
-  TxCurrent = ptr->GetTxCurrentA();
-
-  NS_LOG_UNCOND ("Rx Current A: " << RxCurrent);
-  NS_LOG_UNCOND ("Tx Current A: " << TxCurrent);
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
     {
