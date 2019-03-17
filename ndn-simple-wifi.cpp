@@ -32,6 +32,13 @@ namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 
+void
+TotalEnergy (double oldValue, double totalEnergy)
+{
+  NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
+                 << "s Total energy consumed by radio = " << totalEnergy << "J");
+}
+
 int
 main(int argc, char* argv[])
 {
@@ -43,9 +50,16 @@ main(int argc, char* argv[])
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
-  
-  Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
 
+  // disable fragmentation for frames below 2200 bytes
+  Config::SetDefault ("ns3::WifiRemoteStationManager::FragmentationThreshold",
+                      StringValue ("2200"));
+  // turn off RTS/CTS for frames below 2200 bytes
+  Config::SetDefault ("ns3::WifiRemoteStationManager::RtsCtsThreshold",
+                      StringValue ("2200"));
+  // Fix non-unicast data rate to be the same as that of unicast
+  Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",
+                      StringValue (phyMode));
   NodeContainer nodes;
   nodes.Create (numberOfnodes);
 
@@ -57,7 +71,6 @@ main(int argc, char* argv[])
 
   YansWifiChannelHelper wifiChannel;
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
-  wifiChannel.AddPropagationLoss("ns3::ThreeLogDistancePropagationLossModel");
   wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel");
 
   YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default();
@@ -65,8 +78,8 @@ main(int argc, char* argv[])
   wifiPhy.Set ("TxPowerStart", DoubleValue (10.0));
   wifiPhy.Set ("TxPowerEnd", DoubleValue (10.0));
   wifiPhy.Set ("TxPowerLevels", UintegerValue (1));
-  wifiPhy.Set ("TxGain", DoubleValue (0));
-  wifiPhy.Set ("RxGain", DoubleValue (0));
+  wifiPhy.Set ("TxGain", DoubleValue (1));
+  wifiPhy.Set ("RxGain", DoubleValue (-10));
   wifiPhy.Set ("RxNoiseFigure", DoubleValue (10));
   wifiPhy.Set ("CcaMode1Threshold", DoubleValue (-79));
   wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
@@ -101,6 +114,7 @@ main(int argc, char* argv[])
   EnergySourceContainer sources = basicEnergySourceHelper.Install (nodes);
 
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
+  deviceEnergy.Set ("TxCurrentA", DoubleValue (0.0174));
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
@@ -221,8 +235,7 @@ main(int argc, char* argv[])
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
-      totalConsumption += ptr->GetTotalEnergyConsumption ();
-      NS_LOG_UNCOND ("AVG Energy Consumption: "<< totalConsumption/u);
+      ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
     }
 
   Simulator::Destroy();
