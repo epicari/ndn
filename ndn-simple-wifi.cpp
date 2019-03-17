@@ -157,11 +157,9 @@ main(int argc, char* argv[])
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
 
-  for (uint16_t u = 0; u <= numberOfnodes; ++u)
-    {
-      auto cunappn0 = consumerHelper.Install (nodes.Get (u));
-      cunappn0.Stop (Seconds (10.0));
-    }
+
+  auto cunappn0 = consumerHelper.Install (nodes.Get (1));
+  cunappn0.Stop (Seconds (10.0));
 /*
   auto cunappn1 = consumerHelper.Install (nodes.Get (2));
   cunappn1.Start (Seconds (10.1));
