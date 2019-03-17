@@ -45,8 +45,8 @@ main(int argc, char* argv[])
   
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 26;
-  //double totalConsumption = 0.0;
-  double simTime = 250.0;
+  double totalConsumption = 0.0;
+  double simTime = 270.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -123,7 +123,7 @@ main(int argc, char* argv[])
   consumerHelper.SetPrefix("/test/prefix");
   //consumerHelper.SetAttribute("Frequency", StringValue("100"));  
   //consumerHelper.Install (nodes);
-  
+
   consumerHelper.SetAttribute("Batches", StringValue("1s 1");
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (10.0));
@@ -251,16 +251,29 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
-  Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(0));
-  Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
-  Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
-  
-  NS_ASSERT (basicRadioModels != NULL);
-  //ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-  double totalEnergy = ptr->GetTotalEnergyConsumption ();
+  for (uint16_t u = 0; u < numberOfnodes.GetN(); u++)
+    {
+      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
+      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
+      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
+      
+      NS_ASSERT (basicRadioModels != NULL);
+      //ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
 
-  NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-            << "s Total energy consumed by radio = " << totalEnergy << "J");
+      if (u == 0)
+        {
+          double producerEnergy = ptr->GetTotalEnergyConsumption ();
+          NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
+                << "s energy consumed by radio = " << energyConsumption << "J");
+        }
+
+      double energyConsumption = ptr->GetTotalEnergyConsumption ();
+      totalConsumption += ptr->GetTotalEnergyConsumption ();
+
+      NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
+                << "s energy consumed by radio = " << energyConsumption << "J");
+      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << totalConsumption * simTime << "J");
+    }
 
   Simulator::Destroy();
 
