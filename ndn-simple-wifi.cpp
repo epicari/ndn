@@ -153,10 +153,9 @@ main(int argc, char* argv[])
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
+  consumerHelper.SetAttribute("Frequency", StringValue("10"));
 
   auto proapp = producerHelper.Install (nodes.Get (0));
-  proapp.Start (Seconds (1.0));
-  proapp.Stop (Seconds (30.0));
 
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Start (Seconds (1.0));
