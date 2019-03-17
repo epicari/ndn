@@ -221,7 +221,7 @@ main (int argc, char *argv[])
 */
   uint16_t Port = 80;
   ApplicationContainer sinkApp;
-  ApplicationContainer client;
+  ApplicationContainer client1, client2, client3;
 
   PacketSinkHelper pktSinkHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), Port));
   sinkApp.Add (pktSinkHelper.Install (c.Get (0)));
