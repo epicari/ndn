@@ -122,7 +122,7 @@ main(int argc, char* argv[])
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfnodes; i++)
     {
-      positionAlloc->Add (Vector(5 * i, 2 * i, 0));
+      positionAlloc->Add (Vector(2 * i, 2 * i, 0));
     }
 
   MobilityHelper mobility;
@@ -151,12 +151,12 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
 
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  consumerHelper.SetPrefix("/test/prefix");
+
   auto proapp = consumerHelper.Install (nodes.Get (0));
   proapp.Start (Seconds (0.0));
   proapp.Stop (Seconds (30.0));
-
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
 
   auto cunappn0 = producerHelper.Install (nodes.Get (1));
   cunappn0.Start (Seconds (0.0));
