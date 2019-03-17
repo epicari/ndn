@@ -158,11 +158,11 @@ main(int argc, char* argv[])
 
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Start (Seconds (0.0));
-  cunappn0.Stop (Seconds (10.0));
+  cunappn0.Stop (Seconds (30.0));
 
   auto cunappn1 = consumerHelper.Install (nodes.Get (2));
-  cunappn1.Start (Seconds (10.1));
-  cunappn1.Stop (Seconds (20.1));
+  cunappn1.Start (Seconds (30.1));
+  cunappn1.Stop (Seconds (60.1));
 /*
   auto cunappn2 = consumerHelper.Install (nodes.Get (3));
   cunappn2.Start (Seconds (3.1));
@@ -196,13 +196,13 @@ main(int argc, char* argv[])
   cunappn9.Start (Seconds (10.1));
   cunappn9.Stop (Seconds (11.0));
 */
-  Simulator::Stop(Seconds(30.0));
+  Simulator::Stop(Seconds(90.0));
   Simulator::Run();
 
   //for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
 
   Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (nodes.Get(0));
-  basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
+  //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
   Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
   Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
   NS_ASSERT (basicRadioModels != NULL);
