@@ -167,36 +167,36 @@ main(int argc, char* argv[])
   auto cunappn2 = consumerHelper.Install (nodes.Get (3));
   cunappn2.Start (Seconds (20.2));
   cunappn2.Stop (Seconds (30.2));
-/*
+
   auto cunappn3 = consumerHelper.Install (nodes.Get (4));
-  cunappn3.Start (Seconds (4.1));
-  cunappn3.Stop (Seconds (5.0));
+  cunappn3.Start (Seconds (30.3));
+  cunappn3.Stop (Seconds (40.3));
 
   auto cunappn4 = consumerHelper.Install (nodes.Get (5));
-  cunappn4.Start (Seconds (5.1));
-  cunappn4.Stop (Seconds (6.0));
+  cunappn4.Start (Seconds (40.4));
+  cunappn4.Stop (Seconds (50.4));
 
   auto cunappn5 = consumerHelper.Install (nodes.Get (6));
-  cunappn5.Start (Seconds (6.1));
-  cunappn5.Stop (Seconds (7.0));
+  cunappn5.Start (Seconds (50.5));
+  cunappn5.Stop (Seconds (60.5));
 
   auto cunappn6 = consumerHelper.Install (nodes.Get (7));
-  cunappn6.Start (Seconds (7.1));
-  cunappn6.Stop (Seconds (8.0));
+  cunappn6.Start (Seconds (60.6));
+  cunappn6.Stop (Seconds (70.6));
 
   auto cunappn7 = consumerHelper.Install (nodes.Get (8));
-  cunappn7.Start (Seconds (8.1));
-  cunappn7.Stop (Seconds (9.0));
+  cunappn7.Start (Seconds (70.7));
+  cunappn7.Stop (Seconds (80.7));
 
   auto cunappn8 = consumerHelper.Install (nodes.Get (9));
-  cunappn8.Start (Seconds (9.1));
-  cunappn8.Stop (Seconds (10.0));
+  cunappn8.Start (Seconds (80.8));
+  cunappn8.Stop (Seconds (90.8));
 
   auto cunappn9 = consumerHelper.Install (nodes.Get (10));
-  cunappn9.Start (Seconds (10.1));
-  cunappn9.Stop (Seconds (11.0));
-*/
-  Simulator::Stop(Seconds(50.0));
+  cunappn9.Start (Seconds (90.9));
+  cunappn9.Stop (Seconds (100.9));
+
+  Simulator::Stop(Seconds(101.0));
   Simulator::Run();
 
   //for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
@@ -206,7 +206,7 @@ main(int argc, char* argv[])
   Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
   Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
   NS_ASSERT (basicRadioModels != NULL);
-  basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+  //basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
     {
