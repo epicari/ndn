@@ -46,7 +46,7 @@ main(int argc, char* argv[])
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 26;
   //double totalConsumption = 0.0;
-  double simTime = 270.0;
+  double simTime = 120.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -121,9 +121,10 @@ main(int argc, char* argv[])
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("100"));
-  consumerHelper.Install (nodes);
-
+  consumerHelper.SetAttribute("Batches", StringValue("1s 1 11s 1 21s 1 31s 1 41s 1 
+                              51s 1 61s 1 71s 1 81s 1 91s 1 101s 1 110s 1"));
+  //consumerHelper.SetAttribute("Frequency", StringValue("100"));  
+  //consumerHelper.Install (nodes);
 /*
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (10.0));
