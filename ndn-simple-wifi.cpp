@@ -123,7 +123,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  //consumerHelper.SetAttribute("Frequency", StringValue("10"));
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1"));  
   //consumerHelper.Install (nodes);
 
