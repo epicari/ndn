@@ -157,9 +157,9 @@ main(int argc, char* argv[])
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
 
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
-  cunappn0.Start (Seconds (1.0));
-  cunappn0.Stop (Seconds (2.0));
-
+  cunappn0.Start (Seconds (0.0));
+  cunappn0.Stop (Seconds (1.0));
+/*
   auto cunappn1 = consumerHelper.Install (nodes.Get (2));
   cunappn1.Start (Seconds (2.1));
   cunappn1.Stop (Seconds (3.0));
@@ -195,7 +195,7 @@ main(int argc, char* argv[])
   auto cunappn9 = consumerHelper.Install (nodes.Get (10));
   cunappn9.Start (Seconds (10.1));
   cunappn9.Stop (Seconds (11.0));
-
+*/
   Simulator::Stop(Seconds(30.0));
   Simulator::Run();
 
