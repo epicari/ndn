@@ -25,18 +25,16 @@
 #include "ns3/internet-module.h"
 #include "ns3/energy-module.h"
 #include "ns3/wifi-radio-energy-model-helper.h"
-#include "ns3/ndnSIM-module.h"
 
 using namespace std;
 namespace ns3 {
-
-NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 
 int
 main(int argc, char* argv[])
 {
   
   std::string phyMode ("DsssRate1Mbps");
+  uint16_t port = 1234;
   uint16_t numberOfnodes = 26;
   double totalConsumption = 0.0;
   double simTime = 270.0;
@@ -86,15 +84,12 @@ main(int argc, char* argv[])
   mobility.SetPositionAllocator(positionAlloc);
   mobility.Install(nodes);
 
-  NS_LOG_INFO("Installing NDN stack");
-  ndn::StackHelper ndnHelper;
-  // ndnHelper.AddNetDeviceFaceCreateCallback (WifiNetDevice::GetTypeId (), MakeCallback
-  // (MyNetDeviceFaceCallback));
-  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.Install(nodes);
+  InternetStackHelper stack;
+  stack.Install (nodes);
 
-  //ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
+  Ipv4AddressHelper address;
+  address.SetBase ("10.1.1.0", "255.255.255.0");
+  inetface = address.Assign (wifiDev);
 
   BasicEnergySourceHelper basicEnergySourceHelper;
   basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (0.1));
@@ -103,15 +98,13 @@ main(int argc, char* argv[])
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
 
-  ndn::AppHelper producerHelper("ns3::ndn::Producer");
-  producerHelper.SetPrefix("/");
-  producerHelper.SetAttribute("PayloadSize", StringValue("1000"));
+  PacketSinkHelper producerHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
   producerHelper.Install (nodes.Get (0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("10"));
-
+  OnOffHelper consumerHelper ("ns3::UdpSocketFactory", InetSocketAddress (inetface, port));
+  consumerHelper.SetAttribute ("PacketSize", UintegerValue (1024));
+  consumerHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"));
+  consumerHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.0]"));
 
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (10.0));
