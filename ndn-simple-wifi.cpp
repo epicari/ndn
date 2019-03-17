@@ -150,12 +150,11 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
+  producerHelper.Install (nodes.Get (0));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-
-  auto proapp = producerHelper.Install (nodes.Get (0));
 
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Start (Seconds (1.0));
