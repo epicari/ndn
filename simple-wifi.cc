@@ -111,9 +111,9 @@ main(int argc, char* argv[])
   producerHelper.Install (nodes.Get (0));
 
   UdpClientHelper consumerHelper (inetAddr, port);
-  consumerHelper.SetAttribute ("PacketSize", UintegerValue (1024));
-  //consumerHelper.Install (nodes);
-
+  consumerHelper.SetAttribute ("PacketSize", UintegerValue (2000));
+  consumerHelper.Install (nodes);
+/*
  //consumerHelper.SetAttribute("Batches", StringValue("0.5s 1"));
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (1.0));
@@ -237,7 +237,7 @@ main(int argc, char* argv[])
   auto cunappn24 = consumerHelper.Install (nodes.Get (25));
   cunappn24.Start (Seconds (26.4));
   cunappn24.Stop (Seconds (27.4));
-
+*/
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
