@@ -67,7 +67,7 @@ main(int argc, char* argv[])
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 10;
   //double IdleCurrent = 0.0;
-  //double TxCurrent = 0.0;
+  double TxCurrent = 0.0;
   double RxCurrent = 0.0;
   double simTime = 60;
 
@@ -202,14 +202,17 @@ main(int argc, char* argv[])
 
   //for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
 
-  Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (nodes.Get(0));
+  Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(0));
   //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
   Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
   Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
   NS_ASSERT (basicRadioModels != NULL);
   basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-  RxCurrent = ptr->GetTxCurrentA();
+  RxCurrent = ptr->GetRxCurrentA();
+  TxCurrent = ptr->GetTxCurrentA();
+
   NS_LOG_UNCOND ("Rx Current A: " << RxCurrent);
+  NS_LOG_UNCOND ("Tx Current A: " << TxCurrent);
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
     {
