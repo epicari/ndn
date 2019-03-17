@@ -126,7 +126,7 @@ main(int argc, char* argv[])
   auto cunappn5 = consumerHelper.Install (nodes.Get (6));
   cunappn5.Start (Seconds (50.5));
   cunappn5.Stop (Seconds (60.5));
-/*
+
   auto cunappn6 = consumerHelper.Install (nodes.Get (7));
   cunappn6.Start (Seconds (60.6));
   cunappn6.Stop (Seconds (70.6));
@@ -138,7 +138,7 @@ main(int argc, char* argv[])
   auto cunappn8 = consumerHelper.Install (nodes.Get (9));
   cunappn8.Start (Seconds (80.8));
   cunappn8.Stop (Seconds (90.8));
-
+/*
   auto cunappn9 = consumerHelper.Install (nodes.Get (10));
   cunappn9.Start (Seconds (90.9));
   cunappn9.Stop (Seconds (100.9));
@@ -146,7 +146,7 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
-  for (uint16_t u = 0; u <= 7; u++)
+  for (uint16_t u = 0; u <= numberOfnodes; u++)
     {
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
