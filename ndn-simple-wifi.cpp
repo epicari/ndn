@@ -221,7 +221,7 @@ main(int argc, char* argv[])
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
       double totalConsumption += ptr->GetTotalEnergyConsumption ();
-      NS_LOG_UNCOND ("Total Energy Consumption: "<< totalConsumption/u);
+      NS_LOG_UNCOND ("AVG Energy Consumption: "<< totalConsumption/u);
     }
 
   Simulator::Destroy();
