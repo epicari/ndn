@@ -119,12 +119,12 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("PayloadSize", StringValue("1000"));
   producerHelper.Install (nodes.Get (0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Batches", StringValue("1s 1 11s 1 21s 1 31s 1 41s 1 
                               51s 1 61s 1 71s 1 81s 1 91s 1 101s 1 110s 1"));
   //consumerHelper.SetAttribute("Frequency", StringValue("100"));  
-  //consumerHelper.Install (nodes);
+  consumerHelper.Install (nodes);
 /*
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (10.0));
