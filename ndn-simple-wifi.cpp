@@ -154,15 +154,10 @@ main(int argc, char* argv[])
       NS_ASSERT (basicRadioModels != NULL);
       double energyTx = ptr->GetTxCurrentA ();
       double energyRx = ptr->GetRxCurrentA ();
+      double totalConsumption = ptr->GetTotalEnergyConsumption ();
       NS_LOG_UNCOND ("Tx energy (mJ): " << energyTx);
       NS_LOG_UNCOND ("Rx energy (mJ): " << energyRx);
-    }
-
-  for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
-    {
-      double energyConsumed = (*iter)->GetTotalEnergyConsumption ();
-      NS_LOG_UNCOND ("Total energy consumed by radio = " << energyConsumed << "J");
-      NS_ASSERT (energyConsumed <= 0.1);
+      NS_LOG_UNCOND ("Total Energy Consumption: "<< totalConsumption);
     }
 
   Simulator::Destroy();
