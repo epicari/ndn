@@ -37,8 +37,8 @@ main(int argc, char* argv[])
 {
   
   std::string phyMode ("DsssRate1Mbps");
-  uint16_t numberOfnodes = 11;
-  double simTime = 101.0;
+  uint16_t numberOfnodes = 26;
+  double simTime = 270.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -151,6 +151,66 @@ main(int argc, char* argv[])
   cunappn9.Start (Seconds (90.9));
   cunappn9.Stop (Seconds (100.9));
 
+  auto cunappn10 = consumerHelper.Install (nodes.Get (11));
+  cunappn10.Start (Seconds (101.0));
+  cunappn10.Stop (Seconds (111.0));
+
+  auto cunappn11 = consumerHelper.Install (nodes.Get (12));
+  cunappn11.Start (Seconds (111.1));
+  cunappn11.Stop (Seconds (121.1));
+
+  auto cunappn12 = consumerHelper.Install (nodes.Get (13));
+  cunappn12.Start (Seconds (121.2));
+  cunappn12.Stop (Seconds (131.2));
+
+  auto cunappn13 = consumerHelper.Install (nodes.Get (14));
+  cunappn13.Start (Seconds (131.3));
+  cunappn13.Stop (Seconds (141.3));
+
+  auto cunappn14 = consumerHelper.Install (nodes.Get (15));
+  cunappn14.Start (Seconds (141.4));
+  cunappn14.Stop (Seconds (151.4));
+
+  auto cunappn15 = consumerHelper.Install (nodes.Get (16));
+  cunappn15.Start (Seconds (151.5));
+  cunappn15.Stop (Seconds (161.5));
+
+  auto cunappn16 = consumerHelper.Install (nodes.Get (17));
+  cunappn16.Start (Seconds (161.6));
+  cunappn16.Stop (Seconds (171.6));
+
+  auto cunappn17 = consumerHelper.Install (nodes.Get (18));
+  cunappn17.Start (Seconds (171.7));
+  cunappn17.Stop (Seconds (181.7));
+
+  auto cunappn18 = consumerHelper.Install (nodes.Get (19));
+  cunappn18.Start (Seconds (181.8));
+  cunappn18.Stop (Seconds (191.8));
+
+  auto cunappn19 = consumerHelper.Install (nodes.Get (20));
+  cunappn19.Start (Seconds (191.9));
+  cunappn19.Stop (Seconds (201.9));
+
+  auto cunappn20 = consumerHelper.Install (nodes.Get (21));
+  cunappn20.Start (Seconds (202.0));
+  cunappn20.Stop (Seconds (212.0));
+
+  auto cunappn21 = consumerHelper.Install (nodes.Get (22));
+  cunappn21.Start (Seconds (212.1));
+  cunappn21.Stop (Seconds (222.2));
+
+  auto cunappn22 = consumerHelper.Install (nodes.Get (23));
+  cunappn22.Start (Seconds (222.3));
+  cunappn22.Stop (Seconds (242.3));
+
+  auto cunappn23 = consumerHelper.Install (nodes.Get (24));
+  cunappn23.Start (Seconds (242.4));
+  cunappn23.Stop (Seconds (252.4));
+
+  auto cunappn24 = consumerHelper.Install (nodes.Get (25));
+  cunappn24.Start (Seconds (252.5));
+  cunappn24.Stop (Seconds (262.5));
+
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
@@ -160,12 +220,8 @@ main(int argc, char* argv[])
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
-      double energyTx = ptr->GetTxCurrentA ();
-      double energyRx = ptr->GetRxCurrentA ();
-      double totalConsumption = ptr->GetTotalEnergyConsumption ();
-      NS_LOG_UNCOND ("Tx energy (mJ): " << energyTx);
-      NS_LOG_UNCOND ("Rx energy (mJ): " << energyRx);
-      NS_LOG_UNCOND ("Total Energy Consumption: "<< totalConsumption);
+      double totalConsumption += ptr->GetTotalEnergyConsumption ();
+      NS_LOG_UNCOND ("Total Energy Consumption: "<< totalConsumption/u);
     }
 
   Simulator::Destroy();
