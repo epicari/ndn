@@ -38,7 +38,7 @@ main(int argc, char* argv[])
   
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 10;
-  double simTime = 60;
+  double simTime = 120;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -122,11 +122,11 @@ main(int argc, char* argv[])
   auto cunappn4 = consumerHelper.Install (nodes.Get (5));
   cunappn4.Start (Seconds (40.4));
   cunappn4.Stop (Seconds (50.4));
-/*
+
   auto cunappn5 = consumerHelper.Install (nodes.Get (6));
   cunappn5.Start (Seconds (50.5));
   cunappn5.Stop (Seconds (60.5));
-
+/*
   auto cunappn6 = consumerHelper.Install (nodes.Get (7));
   cunappn6.Start (Seconds (60.6));
   cunappn6.Stop (Seconds (70.6));
@@ -145,11 +145,16 @@ main(int argc, char* argv[])
 */
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
-
-  Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(0));
-  Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
-  Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
-  NS_ASSERT (basicRadioModels != NULL);
+  
+  for (uint16_t u = 0; u <= 7; u++)
+    {
+      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
+      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
+      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
+      NS_ASSERT (basicRadioModels != NULL);
+      double energyTx = ptr->GetTxCurrentA ();
+      NS_LOG_UNCOND ("Avg Tx energy (mJ): " << energyTx);
+    }
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
     {
