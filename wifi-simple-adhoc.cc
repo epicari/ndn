@@ -116,6 +116,7 @@ main (int argc, char *argv[])
   //double interval = 1.0; // seconds
   bool verbose = false;
   uint16_t numberOfnodes = 10;
+  double simTime = 60;
 
   CommandLine cmd;
   cmd.AddValue ("phyMode", "Wifi Phy mode", phyMode);
@@ -186,6 +187,7 @@ main (int argc, char *argv[])
   NS_LOG_INFO ("Assign IP Addresses.");
   ipv4.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer i = ipv4.Assign (devices);
+  Ipv4Address sinknodeAddr = i.GetAddress (0);
 
   BasicEnergySourceHelper basicEnergySourceHelper;
   basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (0.1));
@@ -221,30 +223,38 @@ main (int argc, char *argv[])
   ApplicationContainer sinkApp;
   ApplicationContainer client;
 
-  for (uint16_t u = 0; u <= numberOfnodes; ++u)
-    {
-      PacketSinkHelper pktSinkHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), Port));
-      sinkApp.Add (pktSinkHelper.Install (c.Get (0)));
-      
-      UdpClientHelper udpClientHelper (i.GetAddress (u), Port);
-      udpClientHelper.SetAttribute ("PacketSize", UintegerValue (104));
-      client.Add (udpClientHelper.Install (c.Get (u)));
-    }
+  PacketSinkHelper pktSinkHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), Port));
+  sinkApp.Add (pktSinkHelper.Install (c.Get (0)));
 
-  client.Start (Seconds (0.0));
-  client.Stop (Seconds (30.0));
   sinkApp.Start (Seconds (0.0));
-  sinkApp.Stop (Seconds (30.0));
+  sinkApp.Stop (Seconds (simTime));
+  
+  UdpClientHelper udpClientHelper (i.GetAddress (sinknodeAddr), Port);
+  udpClientHelper.SetAttribute ("PacketSize", UintegerValue (104));
+  
+  client1.Add (udpClientHelper.Install (c.Get (1)));
+  client1.Start (Seconds (0.0));
+  client1.Stop (Seconds (1.0));
 
-  Simulator::Stop (Seconds(30.0));
+  client2.Add (udpClientHelper.Install (c.Get (2)));
+  client2.Start (Seconds (1.1));
+  client2.Stop (Seconds (2.1));
+
+  client3.Add (udpClientHelper.Install (c.Get (3)));
+  client3.Start (Seconds (2.2));
+  client3.Stop (Seconds (3.2));
+
+  Simulator::Stop (Seconds(simTime));
   Simulator::Run ();
 
   Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get (0));
       //basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
   Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
   Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
-
   NS_ASSERT (basicRadioModels != NULL);
+
+  double RxCurrentA = ptr->GetRxCurrentA();
+  NS_LOG_UNCOND("Rx Current: " << RxCurrentA);
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergyModels.Begin (); iter != deviceEnergyModels.End (); iter ++)
     {
