@@ -46,7 +46,7 @@ main(int argc, char* argv[])
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 3;
   double totalConsumption = 0.0;
-  double simTime = 5.0;
+  double simTime = 270.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -276,7 +276,7 @@ main(int argc, char* argv[])
 
       NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
                 << "s energy consumed by radio = " << energyConsumption << "J");
-      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << totalConsumption * simTime << "J");
+      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << totalConsumption * Simulator::Now ().GetSeconds () << "J");
     }
 
   Simulator::Destroy();
