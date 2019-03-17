@@ -33,6 +33,13 @@ namespace ns3 {
 NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 
 void
+RemainingEnergy (double oldValue, double remainingEnergy)
+{
+  NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
+                 << "s Current remaining energy = " << remainingEnergy << "J");
+}
+
+void
 TotalEnergy (double oldValue, double totalEnergy)
 {
   NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
@@ -114,7 +121,8 @@ main(int argc, char* argv[])
   EnergySourceContainer sources = basicEnergySourceHelper.Install (nodes);
 
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
-  deviceEnergy.Set ("TxCurrentA", DoubleValue (0.0174));
+  wifiRadioEnergyModelHelper.Set ("TxCurrentA", DoubleValue (0.0174));
+  wifiRadioEnergyModelHelper.Set ("RxCurrentA", DoubleValue (0.0197));
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
@@ -229,14 +237,15 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
-  for (uint16_t u = 1; u <= numberOfnodes; u++)
-    {
+//  for (uint16_t u = 1; u <= numberOfnodes; u++)
+//    {
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(0));
+      basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
-      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
+      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-    }
+//    }
 
   Simulator::Destroy();
 
