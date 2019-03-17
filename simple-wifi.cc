@@ -221,7 +221,7 @@ main(int argc, char* argv[])
   Ptr<DeviceEnergyModel> basicRadioModelsB = basicEnergySourceA->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
   Ptr<WifiRadioEnergyModel> ptrA = DynamicCast<WifiRadioEnergyModel> (basicRadioModelsB);
   NS_ASSERT (basicRadioModelsB != NULL);
-  double totalConsumptionA += ptrA->GetTotalEnergyConsumption ();
+  double totalConsumptionA = ptrA->GetTotalEnergyConsumption ();
   NS_LOG_UNCOND ("Energy Consumption: "<< totalConsumptionA);
 
 
