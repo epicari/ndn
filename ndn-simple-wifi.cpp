@@ -127,7 +127,6 @@ main(int argc, char* argv[])
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1"));  
   //consumerHelper.Install (nodes);
 
-
   //consumerHelper.SetAttribute("Batches", StringValue("0.5s 1"));
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (1.0));
