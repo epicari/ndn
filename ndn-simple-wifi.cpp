@@ -154,8 +154,8 @@ main(int argc, char* argv[])
       NS_ASSERT (basicRadioModels != NULL);
       double energyTx = ptr->GetTxCurrentA ();
       double energyRx = ptr->GetRxCurrentA ();
-      NS_LOG_UNCOND ("Avg Tx energy (mJ): " << energyTx/numberOfnodes);
-      NS_LOG_UNCOND ("Avg Rx energy (mJ): " << energyRx/numberOfnodes);
+      NS_LOG_UNCOND ("Tx energy (mJ): " << energyTx);
+      NS_LOG_UNCOND ("Rx energy (mJ): " << energyRx);
     }
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
