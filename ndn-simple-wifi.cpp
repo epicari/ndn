@@ -54,6 +54,7 @@ main(int argc, char* argv[])
   uint16_t numberOfnodes = 26;
   //double totalConsumption = 0.0;
   double simTime = 270.0;
+  Time time = Simulator::Now ().GetSeconds ();
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -250,6 +251,9 @@ main(int argc, char* argv[])
       double rxCurrent = ptr->GetRxCurrentA ();
       NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
                 << "s Total energy consumed by radio = " << totalEnergy << "J");
+      NS_LOG_UNCOND ("Tx energy: " << Simulator::Now ().GetSeconds () * txCurrent
+                << "s " );               
+      NS_LOG_UNCOND ("Rx energy: " << time * txCurrent << "s " );
 //    }
 
   Simulator::Destroy();
