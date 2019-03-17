@@ -37,7 +37,7 @@ main(int argc, char* argv[])
 {
   
   std::string phyMode ("DsssRate1Mbps");
-  uint16_t numberOfnodes = 10;
+  uint16_t numberOfnodes = 11;
   double simTime = 120;
 
   CommandLine cmd;
@@ -138,11 +138,11 @@ main(int argc, char* argv[])
   auto cunappn8 = consumerHelper.Install (nodes.Get (9));
   cunappn8.Start (Seconds (80.8));
   cunappn8.Stop (Seconds (90.8));
-/*
+
   auto cunappn9 = consumerHelper.Install (nodes.Get (10));
   cunappn9.Start (Seconds (90.9));
   cunappn9.Stop (Seconds (100.9));
-*/
+
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
@@ -153,14 +153,15 @@ main(int argc, char* argv[])
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       NS_ASSERT (basicRadioModels != NULL);
       double energyTx = ptr->GetTxCurrentA ();
-      NS_LOG_UNCOND ("Avg Tx energy (mJ): " << energyTx/7);
+      double energyRx = ptr->GetRxCurrentA ();
+      NS_LOG_UNCOND ("Avg Tx energy (mJ): " << energyTx/numberOfnodes);
+      NS_LOG_UNCOND ("Avg Rx energy (mJ): " << energyRx/numberOfnodes);
     }
 
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
     {
       double energyConsumed = (*iter)->GetTotalEnergyConsumption ();
-      NS_LOG_UNCOND ("End of simulation (" << Simulator::Now ().GetSeconds ()
-                      << "s) Total energy consumed by radio = " << energyConsumed << "J");
+      NS_LOG_UNCOND ("Total energy consumed by radio = " << energyConsumed << "J");
       NS_ASSERT (energyConsumed <= 0.1);
     }
 
