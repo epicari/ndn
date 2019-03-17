@@ -133,8 +133,8 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  consumerHelper.Install (nodes);
-/*
+  //consumerHelper.Install (nodes);
+
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (10.0));
 
@@ -233,7 +233,7 @@ main(int argc, char* argv[])
   auto cunappn24 = consumerHelper.Install (nodes.Get (25));
   cunappn24.Start (Seconds (252.5));
   cunappn24.Stop (Seconds (262.5));
-*/
+
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
