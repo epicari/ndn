@@ -119,22 +119,23 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("PayloadSize", StringValue("1000"));
   producerHelper.Install (nodes.Get (0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
+  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("10"));  
+  //consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  //consumerHelper.SetAttribute("Batches", StringValue("1s 1"));  
   consumerHelper.Install (nodes);
 
-/*
+
   consumerHelper.SetAttribute("Batches", StringValue("1s 1"));
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
-  cunappn0.Stop (Seconds (10.0));
+  cunappn0.Stop (Seconds (2.0));
 
-  consumerHelper.SetAttribute("Batches", StringValue("11s 1"));
+  consumerHelper.SetAttribute("Batches", StringValue("3s 1"));
   auto cunappn1 = consumerHelper.Install (nodes.Get (2));
-  cunappn1.Start (Seconds (10.1));
-  cunappn1.Stop (Seconds (20.1));
-
+  cunappn1.Start (Seconds (2.1));
+  cunappn1.Stop (Seconds (4.1));
+/*
   consumerHelper.SetAttribute("Batches", StringValue("21s 1"));
   auto cunappn2 = consumerHelper.Install (nodes.Get (3));
   cunappn2.Start (Seconds (20.2));
