@@ -119,11 +119,13 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("PayloadSize", StringValue("1000"));
   producerHelper.Install (nodes.Get (0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   consumerHelper.SetPrefix("/test/prefix");
-  //consumerHelper.SetAttribute("Frequency", StringValue("100"));  
-  //consumerHelper.Install (nodes);
+  consumerHelper.SetAttribute("Frequency", StringValue("10"));  
+  consumerHelper.Install (nodes);
 
+/*
   consumerHelper.SetAttribute("Batches", StringValue("1s 1"));
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (10.0));
@@ -247,6 +249,7 @@ main(int argc, char* argv[])
   auto cunappn24 = consumerHelper.Install (nodes.Get (25));
   cunappn24.Start (Seconds (252.5));
   cunappn24.Stop (Seconds (262.5));
+*/
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
@@ -264,7 +267,7 @@ main(int argc, char* argv[])
         {
           double producerEnergy = ptr->GetTotalEnergyConsumption ();
           NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                << "s energy consumed by radio = " << producerEnergy << "J");
+                << "s producer energy consumed by radio = " << producerEnergy << "J");
         }
 
       double energyConsumption = ptr->GetTotalEnergyConsumption ();
