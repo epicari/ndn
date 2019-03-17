@@ -123,8 +123,8 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
   NetDeviceContainer wifiDev = wifi.Install (wifiPhyHelper, wifiMacHelper, Allnodes);
 
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhyHelper, wifiMacHelper, Allnodes);
+//  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+//  NetDeviceContainer wifiDev = wifi.Install (wifiPhyHelper, wifiMacHelper, Allnodes);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfnodes; i++)
