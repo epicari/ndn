@@ -38,7 +38,7 @@ main(int argc, char* argv[])
   
   std::string phyMode ("DsssRate1Mbps");
   uint16_t numberOfnodes = 11;
-  double simTime = 120;
+  double simTime = 101.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -59,12 +59,20 @@ main(int argc, char* argv[])
   wifiChannel.AddPropagationLoss("ns3::ThreeLogDistancePropagationLossModel");
   wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel");
 
-  YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
-  wifiPhyHelper.SetChannel(wifiChannel.Create());
+  YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default();
+  wifiPhy.SetChannel(wifiChannel.Create());
+  wifiPhy.Set ("TxPowerStart", DoubleValue (10.0));
+  wifiPhy.Set ("TxPowerEnd", DoubleValue (10.0));
+  wifiPhy.Set ("TxPowerLevels", UintegerValue (1));
+  wifiPhy.Set ("TxGain", DoubleValue (0));
+  wifiPhy.Set ("RxGain", DoubleValue (0));
+  wifiPhy.Set ("RxNoiseFigure", DoubleValue (10));
+  wifiPhy.Set ("CcaMode1Threshold", DoubleValue (-79));
+  wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
 
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhyHelper, wifiMacHelper, nodes);
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfnodes; i++)
