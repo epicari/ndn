@@ -158,12 +158,12 @@ main(int argc, char* argv[])
 
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Start (Seconds (0.0));
-  cunappn0.Stop (Seconds (1.0));
-/*
-  auto cunappn1 = consumerHelper.Install (nodes.Get (2));
-  cunappn1.Start (Seconds (2.1));
-  cunappn1.Stop (Seconds (3.0));
+  cunappn0.Stop (Seconds (10.0));
 
+  auto cunappn1 = consumerHelper.Install (nodes.Get (2));
+  cunappn1.Start (Seconds (10.1));
+  cunappn1.Stop (Seconds (20.1));
+/*
   auto cunappn2 = consumerHelper.Install (nodes.Get (3));
   cunappn2.Start (Seconds (3.1));
   cunappn2.Stop (Seconds (4.0));
@@ -200,15 +200,14 @@ main(int argc, char* argv[])
   Simulator::Run();
 
   //for (EnergySourceContainer::Iterator sourceIter = sources.Begin (); sourceIter != sources.End (); sourceIter ++)
-  for (uint16_t i = 0; i <= numberOfnodes; i++)
-    {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (nodes.Get(i));
-      basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
-      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
-      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
-      NS_ASSERT (basicRadioModels != NULL);
-      basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-    }
+
+  Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (nodes.Get(i));
+  basicEnergySource->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergy));
+  Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
+  Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
+  NS_ASSERT (basicRadioModels != NULL);
+  basicRadioModels->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+
   for (DeviceEnergyModelContainer::Iterator iter = deviceEnergy.Begin (); iter != deviceEnergy.End (); iter ++)
     {
       double energyConsumed = (*iter)->GetTotalEnergyConsumption ();
