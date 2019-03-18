@@ -120,14 +120,15 @@ main(int argc, char* argv[])
   wifiRadioEnergyModelHelper.Set ("TxCurrentA", DoubleValue (0.0174));
   wifiRadioEnergyModelHelper.Set ("RxCurrentA", DoubleValue (0.0197));
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
-/*
+
   PacketSinkHelper producerHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
   producerHelper.Install (nodes.Get (0));
 
   UdpClientHelper consumerHelper (inetAddr, port);
   consumerHelper.SetAttribute ("PacketSize", UintegerValue (104));
   consumerHelper.Install (nodes);
-*/
+
+/*
   TypeId tid = TypeId::LookupByName ("ns3::UdpSocketFactory");
   Ptr<Socket> recvSink = Socket::CreateSocket (nodes.Get (0), tid);
   InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), 80);
@@ -138,7 +139,7 @@ main(int argc, char* argv[])
   InetSocketAddress remote = InetSocketAddress (Ipv4Address::GetBroadcast (), 80);
   source->SetAllowBroadcast (true);
   source->Connect (remote);
-
+*/
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
