@@ -44,9 +44,9 @@ main(int argc, char* argv[])
 {
   
   std::string phyMode ("DsssRate1Mbps");
-  uint16_t numberOfnodes = 26;
+  uint16_t numberOfnodes = 50;
   double totalConsumption = 0.0;
-  double simTime = 30.0;
+  double simTime = 60.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);

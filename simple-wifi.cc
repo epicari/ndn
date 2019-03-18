@@ -63,9 +63,9 @@ main(int argc, char* argv[])
   
   std::string phyMode ("DsssRate1Mbps");
   uint16_t port = 1234;
-  uint16_t numberOfnodes = 26;
+  uint16_t numberOfnodes = 50;
   double totalConsumption = 0.0;
-  double simTime = 30.0;
+  double simTime = 60.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -135,15 +135,18 @@ main(int argc, char* argv[])
   wifiRadioEnergyModelHelper.Set ("RxCurrentA", DoubleValue (0.0197));
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
 
-/*
-  PacketSinkHelper producerHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
+
+//  PacketSinkHelper producerHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
+//  producerHelper.Install (nodes.Get (0));
+
+  UdpServerHelper producerHelper (Ipv4Address::GetAny (), port));
   producerHelper.Install (nodes.Get (0));
 
   UdpClientHelper consumerHelper (inetAddr, port);
   consumerHelper.SetAttribute ("PacketSize", UintegerValue (104));
   consumerHelper.Install (nodes);
-*/
 
+/*
   TypeId tid = TypeId::LookupByName ("ns3::TcpSocketFactory");
   Ptr<Socket> recvSink = Socket::CreateSocket (nodes.Get (0), tid);
   InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), port);
@@ -157,7 +160,7 @@ main(int argc, char* argv[])
       source->SetAllowBroadcast (true);
       source->Connect (remote);
     }
-
+*/
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
