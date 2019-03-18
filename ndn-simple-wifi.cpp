@@ -116,10 +116,10 @@ main(int argc, char* argv[])
   wifiRadioEnergyModelHelper.Set ("RxCurrentA", DoubleValue (0.0197));
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
 
-  ndn::AppHelper producerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   //ndn::AppHelper producerHelper("ns3::ndn::ConsumerZipfMandelbrot");
-  ndn::AppHelper consumerHelper("ns3::ndn::Producer");
+  ndn::AppHelper producerHelper("ns3::ndn::Producer");
 
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("Frequency", StringValue("1"));
