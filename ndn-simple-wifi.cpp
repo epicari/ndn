@@ -128,7 +128,8 @@ main(int argc, char* argv[])
   //consumerHelper.SetAttribute("Frequency", StringValue("1"));
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1"));  
   //consumerHelper.Install (nodes);
-  producerHelper.Install (nodes.Get (0));
+  auto proapp = producerHelper.Install (nodes.Get (0));
+  proapp.Stop (Seconds (27.4));
 
   //consumerHelper.SetAttribute("Batches", StringValue("0.5s 1"));
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
@@ -258,15 +259,15 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
-  for (uint32_t u = 0; u < nodes.GetN (); u++)
+  for (uint32_t u = 0; u < nodes.GetN (); ++u)
     {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
+      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(0));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       
       NS_ASSERT (basicRadioModels != NULL);
       //ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-
+/*
       if (u == 0)
         {
           double producerEnergy = ptr->GetTotalEnergyConsumption ();
@@ -274,7 +275,7 @@ main(int argc, char* argv[])
                 << "s producer energy consumed by radio = " << producerEnergy << "J");
           continue;
         }
-
+*/
       double energyConsumption = ptr->GetTotalEnergyConsumption ();
       totalConsumption += ptr->GetTotalEnergyConsumption ();
 
