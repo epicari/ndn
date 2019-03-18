@@ -103,8 +103,8 @@ main(int argc, char* argv[])
   ndnHelper.SetDefaultRoutes(true);
   ndnHelper.Install(nodes);
 
-  ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
-  //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/multicast");
+  //ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/multicast");
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/ncc");
 
   BasicEnergySourceHelper basicEnergySourceHelper;
@@ -126,16 +126,17 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("Frequency", StringValue("100"));
   producerHelper.SetAttribute("NumberOfContents", StringValue("100"));
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1"));  
-  consumerHelper.SetAttribute("PayloadSize", StringValue("64"));  
+  
   consumerHelper.SetPrefix("/test/prefix");
-
-  auto cunapp = consumerHelper.Install (nodes);
+  consumerHelper.SetAttribute("PayloadSize", StringValue("64"));  
+  
+  //auto cunapp = consumerHelper.Install (nodes);
   auto proapp = producerHelper.Install (nodes.Get (0));
-  //proapp.Stop (Seconds (27.4));
-  proapp.Stop (Seconds (simTime));
-  cunapp.Stop (Seconds (simTime));
+  proapp.Stop (Seconds (27.4));
+  //proapp.Stop (Seconds (simTime));
+  //cunapp.Stop (Seconds (simTime));
 
-/*
+
   //consumerHelper.SetAttribute("Batches", StringValue("0.5s 1"));
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (1.0));
@@ -259,7 +260,7 @@ main(int argc, char* argv[])
   auto cunappn24 = consumerHelper.Install (nodes.Get (25));
   cunappn24.Start (Seconds (26.4));
   cunappn24.Stop (Seconds (27.4));
-*/
+
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
