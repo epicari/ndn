@@ -136,14 +136,16 @@ main(int argc, char* argv[])
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
 
 
-//  PacketSinkHelper producerHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
-//  producerHelper.Install (nodes.Get (0));
-
-  UdpServerHelper producerHelper (Ipv4Address::GetAny (), port));
+  PacketSinkHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
   producerHelper.Install (nodes.Get (0));
 
-  UdpClientHelper consumerHelper (inetAddr, port);
-  consumerHelper.SetAttribute ("PacketSize", UintegerValue (104));
+  //UdpServerHelper producerHelper (port);
+  //producerHelper.Install (nodes.Get (0));
+
+  //UdpClientHelper consumerHelper (inetAddr, port);
+  BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Address (inetAddr, port));
+  consumerHelper.SetAttribute ("MaxBytes", UintegerValue (1000));
+  consumerHelper.SetAttribute ("SendSize", UintegerValue (64));
   consumerHelper.Install (nodes);
 
 /*
