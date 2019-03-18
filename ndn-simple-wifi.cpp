@@ -272,6 +272,9 @@ main(int argc, char* argv[])
       
       NS_ASSERT (basicRadioModels != NULL);
       //ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+      
+      WifiPhyState state = ptr->GetCurrentState ();
+      NS_LOG_UNCOND ("node number: " << u << ", Radio state is " << state);
 
       if (u == 0)
         {
