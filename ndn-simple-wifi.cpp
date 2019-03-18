@@ -120,7 +120,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::Producer");
 
   producerHelper.SetPrefix("/");
-  consumerHelper.SetAttribute("PayloadSize", StringValue("1000"));
+  consumerHelper.SetAttribute("PayloadSize", StringValue("64"));
 
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   
@@ -279,7 +279,7 @@ main(int argc, char* argv[])
 
       NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
                 << "s energy consumed by radio = " << energyConsumption << "J");
-      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << totalConsumption * Simulator::Now ().GetSeconds () << "J");
+      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << totalConsumption / u << "J");
     }
 
   Simulator::Destroy();
