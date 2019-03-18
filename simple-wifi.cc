@@ -148,11 +148,14 @@ main(int argc, char* argv[])
   InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), port);
   recvSink->Bind (local);
   recvSink->SetRecvCallback (MakeCallback (&ReceivePacket));
-
-  Ptr<Socket> source = Socket::CreateSocket (nodes, tid);
-  InetSocketAddress remote = InetSocketAddress (Ipv4Address::GetBroadcast (), port);
-  source->SetAllowBroadcast (true);
-  source->Connect (remote);
+  
+  for (uint16_t u = 1; u < nodes.GetN (); u++)
+    {
+      Ptr<Socket> source = Socket::CreateSocket (nodes.Get (u), tid);
+      InetSocketAddress remote = InetSocketAddress (Ipv4Address::GetBroadcast (), port);
+      source->SetAllowBroadcast (true);
+      source->Connect (remote);
+    }
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
