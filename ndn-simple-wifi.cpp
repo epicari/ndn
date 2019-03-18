@@ -259,15 +259,15 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
-  for (uint32_t u = 1; u < nodes.GetN (); u++)
+  for (uint32_t u = 0; u < nodes.GetN (); u++)
     {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(0));
+      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       
       NS_ASSERT (basicRadioModels != NULL);
       //ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-/*
+
       if (u == 0)
         {
           double producerEnergy = ptr->GetTotalEnergyConsumption ();
@@ -275,7 +275,7 @@ main(int argc, char* argv[])
                 << "s producer energy consumed by radio = " << producerEnergy << "J");
           continue;
         }
-*/
+
       double energyConsumption = ptr->GetTotalEnergyConsumption ();
       totalConsumption += ptr->GetTotalEnergyConsumption ();
 
