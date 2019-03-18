@@ -181,8 +181,8 @@ main(int argc, char* argv[])
       totalConsumption += ptr->GetTotalEnergyConsumption ();
 
       NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                << "s energy consumed by radio = " << energyConsumption * 100 << "J");
-      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << (totalConsumption / u) * 100 << "J");
+                << "s energy consumed by radio = " << energyConsumption * 100 << "mJ");
+      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << (totalConsumption / u) * 100 << "mJ");
     }
 
   Simulator::Destroy();
