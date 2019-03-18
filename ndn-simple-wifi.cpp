@@ -129,12 +129,12 @@ main(int argc, char* argv[])
   consumerHelper.SetAttribute("PayloadSize", StringValue("64"));  
   consumerHelper.SetPrefix("/test/prefix");
 
-  auto cunapp = consumerHelper.Install (nodes);
+  //auto cunapp = consumerHelper.Install (nodes);
   auto proapp = producerHelper.Install (nodes.Get (0));
-  proapp.Stop (Seconds (simTime));
-  cunapp.Stop (Seconds (simTime));
+  proapp.Stop (Seconds (27.4));
+  //cunapp.Stop (Seconds (simTime));
 
-/*
+
   //consumerHelper.SetAttribute("Batches", StringValue("0.5s 1"));
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
   cunappn0.Stop (Seconds (1.0));
@@ -258,7 +258,7 @@ main(int argc, char* argv[])
   auto cunappn24 = consumerHelper.Install (nodes.Get (25));
   cunappn24.Start (Seconds (26.4));
   cunappn24.Stop (Seconds (27.4));
-*/
+
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
