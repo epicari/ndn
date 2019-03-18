@@ -115,17 +115,20 @@ main(int argc, char* argv[])
   wifiRadioEnergyModelHelper.Set ("RxCurrentA", DoubleValue (0.0197));
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
 
-  ndn::AppHelper producerHelper("ns3::ndn::Producer");
-  producerHelper.SetPrefix("/");
-  producerHelper.SetAttribute("PayloadSize", StringValue("1000"));
-  producerHelper.Install (nodes.Get (0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper producerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper consumerHelper("ns3::ndn::Producer");
+
+  producerHelper.SetPrefix("/");
+  consumerHelper.SetAttribute("PayloadSize", StringValue("1000"));
+
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
+  
   consumerHelper.SetPrefix("/test/prefix");
-  //consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  //consumerHelper.SetAttribute("Frequency", StringValue("1"));
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1"));  
   //consumerHelper.Install (nodes);
+  producerHelper.Install (nodes.Get (0));
 
   //consumerHelper.SetAttribute("Batches", StringValue("0.5s 1"));
   auto cunappn0 = consumerHelper.Install (nodes.Get (1));
@@ -257,20 +260,20 @@ main(int argc, char* argv[])
 
   for (uint32_t u = 0; u < nodes.GetN (); u++)
     {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
+      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(0));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
       Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
       
       NS_ASSERT (basicRadioModels != NULL);
       //ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-
+/*
       if (u == 0)
         {
           double producerEnergy = ptr->GetTotalEnergyConsumption ();
           NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
                 << "s producer energy consumed by radio = " << producerEnergy << "J");
         }
-
+*/
       double energyConsumption = ptr->GetTotalEnergyConsumption ();
       totalConsumption += ptr->GetTotalEnergyConsumption ();
 
