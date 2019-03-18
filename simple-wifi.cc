@@ -62,7 +62,7 @@ main(int argc, char* argv[])
 {
   
   std::string phyMode ("DsssRate1Mbps");
-  //uint16_t port = 1234;
+  uint16_t port = 1234;
   uint16_t numberOfnodes = 26;
   double totalConsumption = 0.0;
   double simTime = 30.0;
@@ -143,14 +143,14 @@ main(int argc, char* argv[])
   consumerHelper.Install (nodes);
 */
 
-  TypeId tid = TypeId::LookupByName ("ns3::UdpSocketFactory");
+  TypeId tid = TypeId::LookupByName ("ns3::TcpSocketFactory");
   Ptr<Socket> recvSink = Socket::CreateSocket (nodes.Get (0), tid);
-  InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), 80);
+  InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), port);
   recvSink->Bind (local);
   recvSink->SetRecvCallback (MakeCallback (&ReceivePacket));
 
   Ptr<Socket> source = Socket::CreateSocket (nodes, tid);
-  InetSocketAddress remote = InetSocketAddress (Ipv4Address::GetBroadcast (), 80);
+  InetSocketAddress remote = InetSocketAddress (Ipv4Address::GetBroadcast (), port);
   source->SetAllowBroadcast (true);
   source->Connect (remote);
 
