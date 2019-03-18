@@ -134,6 +134,7 @@ main(int argc, char* argv[])
   wifiRadioEnergyModelHelper.Set ("TxCurrentA", DoubleValue (0.0174));
   wifiRadioEnergyModelHelper.Set ("RxCurrentA", DoubleValue (0.0197));
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
+
 /*
   PacketSinkHelper producerHelper ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
   producerHelper.Install (nodes.Get (0));

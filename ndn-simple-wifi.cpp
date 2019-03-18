@@ -122,7 +122,7 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
 
   producerHelper.SetPrefix("/");
-  producerHelper.SetAttribute("Frequency", StringValue("1"));
+  //producerHelper.SetAttribute("Frequency", StringValue("1"));
   //producerHelper.SetAttribute("NumberOfContents", StringValue("100"));
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1"));  
   
