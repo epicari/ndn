@@ -119,7 +119,7 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));  
-  auto proapp = producerHelper.Install (nodes.Get (0));
+  auto proapp = producerHelper.Install (nodes);
   //proapp.Stop (Seconds (simTime));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
@@ -129,9 +129,8 @@ main(int argc, char* argv[])
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
 
-  auto cunapp = consumerHelper.Install (nodes);
+  auto cunapp = consumerHelper.Install (nodes.Get (0));
   //cunapp.Stop (Seconds (simTime));
-
 
   Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
