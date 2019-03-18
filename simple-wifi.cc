@@ -173,7 +173,7 @@ main(int argc, char* argv[])
         {
           double producerEnergy = ptr->GetTotalEnergyConsumption ();
           NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                << "s producer energy consumed by radio = " << producerEnergy << "J");
+                << "s producer energy consumed by radio = " << producerEnergy * 100 << "mJ");
           continue;
         }
 
