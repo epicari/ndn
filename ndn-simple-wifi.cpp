@@ -117,14 +117,14 @@ main(int argc, char* argv[])
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
 
 
-  //ndn::AppHelper producerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper producerHelper("ns3::ndn::ConsumerCbr");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
-  ndn::AppHelper producerHelper("ns3::ndn::ConsumerZipfMandelbrot");
+  //ndn::AppHelper producerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   ndn::AppHelper consumerHelper("ns3::ndn::Producer");
 
   producerHelper.SetPrefix("/");
-  producerHelper.SetAttribute("Frequency", StringValue("10"));
-  producerHelper.SetAttribute("NumberOfContents", StringValue("10"));
+  //producerHelper.SetAttribute("Frequency", StringValue("10"));
+  //producerHelper.SetAttribute("NumberOfContents", StringValue("10"));
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1"));  
   consumerHelper.SetAttribute("PayloadSize", StringValue("64"));  
   consumerHelper.SetPrefix("/test/prefix");
