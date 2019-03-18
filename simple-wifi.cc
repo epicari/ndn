@@ -29,6 +29,20 @@
 using namespace std;
 namespace ns3 {
 
+static inline std::string
+PrintReceivedPacket (Address& from)
+{
+  InetSocketAddress iaddr = InetSocketAddress::ConvertFrom (from);
+
+  std::ostringstream oss;
+  oss << "--\nReceived one packet! Socket: " << iaddr.GetIpv4 ()
+      << " port: " << iaddr.GetPort ()
+      << " at time = " << Simulator::Now ().GetSeconds ()
+      << "\n--";
+
+  return oss.str ();
+}
+
 void
 ReceivePacket (Ptr<Socket> socket)
 {
