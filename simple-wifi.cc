@@ -111,7 +111,7 @@ main(int argc, char* argv[])
   producerHelper.Install (nodes.Get (0));
 
   UdpClientHelper consumerHelper (inetAddr, port);
-  consumerHelper.SetAttribute ("PacketSize", UintegerValue (2000));
+  consumerHelper.SetAttribute ("PacketSize", UintegerValue (104));
   consumerHelper.Install (nodes);
 /*
  //consumerHelper.SetAttribute("Batches", StringValue("0.5s 1"));
@@ -255,6 +255,7 @@ main(int argc, char* argv[])
           double producerEnergy = ptr->GetTotalEnergyConsumption ();
           NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
                 << "s producer energy consumed by radio = " << producerEnergy << "J");
+          continue;
         }
 
       double energyConsumption = ptr->GetTotalEnergyConsumption ();
