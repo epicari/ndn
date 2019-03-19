@@ -108,7 +108,7 @@ main(int argc, char* argv[])
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/ncc");
 
   BasicEnergySourceHelper basicEnergySourceHelper;
-  basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (0.1));
+  basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (1.0));
   EnergySourceContainer sources = basicEnergySourceHelper.Install (nodes);
 
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;

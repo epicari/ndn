@@ -143,7 +143,7 @@ main(int argc, char* argv[])
   //producerHelper.Install (nodes.Get (0));
 
   //UdpClientHelper consumerHelper (inetAddr, port);
-  BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Address (inetAddr, port));
+  BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (inetAddr, port));
   consumerHelper.SetAttribute ("MaxBytes", UintegerValue (1000));
   consumerHelper.SetAttribute ("SendSize", UintegerValue (64));
   consumerHelper.Install (nodes);
