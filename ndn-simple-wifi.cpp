@@ -44,9 +44,9 @@ main(int argc, char* argv[])
 {
   
   std::string phyMode ("DsssRate1Mbps");
-  uint16_t numberOfnodes = 50;
+  uint16_t numberOfnodes = 30;
   double totalConsumption = 0.0;
-  double simTime = 60.0;
+  double simTime = 30.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -108,7 +108,7 @@ main(int argc, char* argv[])
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/ncc");
 
   BasicEnergySourceHelper basicEnergySourceHelper;
-  basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (1.0));
+  basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (0.1));
   EnergySourceContainer sources = basicEnergySourceHelper.Install (nodes);
 
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
@@ -132,7 +132,7 @@ main(int argc, char* argv[])
   auto cunapp = consumerHelper.Install (nodes.Get (0));
   //cunapp.Stop (Seconds (simTime));
 
-  Simulator::Stop(Seconds(simTime + 1));
+  Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
   for (uint32_t u = 0; u < nodes.GetN (); u++)
