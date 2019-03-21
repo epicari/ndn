@@ -121,8 +121,8 @@ main(int argc, char* argv[])
 */
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("100.0"),
-                                 "Y", StringValue ("100.0"),
+                                 "X", StringValue ("1000.0"),
+                                 "Y", StringValue ("1000.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                              "Mode", StringValue ("Time"),
@@ -162,12 +162,14 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1 10s 1 20s 1 30s 1"));
-  //ndn::AppHelper producerHelper("ns3::ndn::ConsumerZipfMandelbrot");
+  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
+  //consumerHelper.SetAttribute("NumberOfContents", StringValue("100"));
   auto cunapp = consumerHelper.Install (sinkNode);
   //cunapp.Stop (Seconds (simTime));
 
+  ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
