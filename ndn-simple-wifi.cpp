@@ -36,13 +36,12 @@ NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 template <int node>
 void RemainingEnergyTrace (double oldValue, double newValue)
 {
-  NS_LOG_UNCOND (Simulator::Now ().GetSeconds () << "s    remaining energy=" << newValue << "J");
-}
+  std::stringstream ss;
+  ss << "energy_" << node << ".log";
 
-template <int node>
-void PhyStateTrace (std::string context, Time start, Time duration, WifiPhyState state)
-{
-  NS_LOG_UNCOND (Simulator::Now ().GetSeconds () << "    state=" << state << " start=" << start << " duration=" << duration);
+  static std::fstream f (ss.str ().c_str (), std::ios::out);
+
+  f << Simulator::Now ().GetSeconds () << "s,    remaining energy=" << newValue << std::endl;
 }
 
 int
@@ -59,7 +58,7 @@ main(int argc, char* argv[])
   double txPowerEnd = 15.0;
   double idleCurrent = 0.273;
   double txCurrent = 0.380;
-  double simTime = 15.0;
+  double simTime = 10.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -143,6 +142,7 @@ main(int argc, char* argv[])
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/multicast");
 
   EnergySourceContainer eSources;
+  EnergySourceContainer eSourceSink;
   BasicEnergySourceHelper basicEnergySourceHelper;
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
   basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (initialEnergy));
@@ -176,6 +176,10 @@ main(int argc, char* argv[])
         }
     }
 
+  eSourceSink.Add (basicEnergySourceHelper.Install (sinkNode.Get (0)));
+  Ptr<WifiNetDevice> wnsink;
+  wnsink = sinkNode.Get (0)->GetDevice (0)->GetObject<WifiNetDevice> ();
+
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));  
@@ -199,12 +203,8 @@ main(int argc, char* argv[])
   eSources.Get (2)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<2>));
   eSources.Get (3)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<3>));
   eSources.Get (4)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<4>));
-
-  Config::Connect ("/NodeList/0/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<0>));
-  Config::Connect ("/NodeList/1/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<1>));
-  Config::Connect ("/NodeList/2/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<2>));
-  Config::Connect ("/NodeList/3/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<3>));
-  Config::Connect ("/NodeList/4/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<4>));
+  
+  eSourceSink.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime + 1));
