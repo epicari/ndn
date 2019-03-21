@@ -130,7 +130,9 @@ main(int argc, char* argv[])
   mobility.InstallAll ();
 
   ndn::StackHelper ndnHelper;
-  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
+  //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
+  ndnHelper.setCsSize(2); // allow just 2 entries to be cached
+  ndnHelper.setPolicy("nfd::cs::lru");
   ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
 
@@ -175,17 +177,19 @@ main(int argc, char* argv[])
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test/prefix");
-  producerHelper.SetAttribute("PayloadSize", StringValue("64"));  
+  producerHelper.SetAttribute("PayloadSize", StringValue("64"));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(1.0)));  
   ApplicationContainer proapp = producerHelper.Install (cm1);
   //proapp.Start (Seconds (0.0));
   //proapp.Stop (Seconds (10.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper consumerHelper("ns3::ndn::OneInterestRequester");
+  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1 10s 1 20s 1 30s 1"));
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  consumerHelper.SetAttribute("Frequency", StringValue("1"));
   //consumerHelper.SetAttribute("NumberOfContents", StringValue("1"));
   ApplicationContainer cunapp = consumerHelper.Install (sinkNode.Get (0));
   //cunapp.Start (Seconds (1.0));
