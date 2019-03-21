@@ -158,7 +158,6 @@ main(int argc, char* argv[])
   basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (initialEnergy));
   basicEnergySourceHelper.Set ("BasicEnergySupplyVoltageV", DoubleValue (voltage));
 
-  WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
   wifiRadioEnergyModelHelper.Set ("TxCurrentA", DoubleValue (txCurrent));
   wifiRadioEnergyModelHelper.Set ("IdleCurrentA", DoubleValue (idleCurrent));
 
@@ -206,8 +205,16 @@ main(int argc, char* argv[])
   //cunapp.Stop (Seconds (10.0));
 
   eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
+  eSources.Get (1)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<1>));
+  eSources.Get (2)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<2>));
+  eSources.Get (3)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<3>));
+  eSources.Get (4)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<4>));
 
   Config::Connect ("/NodeList/0/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<0>));
+  Config::Connect ("/NodeList/1/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<1>));
+  Config::Connect ("/NodeList/2/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<2>));
+  Config::Connect ("/NodeList/3/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<3>));
+  Config::Connect ("/NodeList/4/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<4>));
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime + 1));
