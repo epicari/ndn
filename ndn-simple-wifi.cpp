@@ -197,14 +197,14 @@ main(int argc, char* argv[])
   ApplicationContainer cunapp = consumerHelper.Install (sinkNode.Get (0));
   //cunapp.Start (Seconds (1.0));
   //cunapp.Stop (Seconds (10.0));
-
+/*
   eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
   eSources.Get (1)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<1>));
   eSources.Get (2)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<2>));
   eSources.Get (3)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<3>));
   eSources.Get (4)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<4>));
-  
-  eSourceSink.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<5>));
+*/
+  eSourceSink.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime + 1));
