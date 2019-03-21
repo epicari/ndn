@@ -44,17 +44,6 @@ void RemainingEnergyTrace (double oldValue, double newValue)
   f << Simulator::Now ().GetSeconds () << "s,    remaining energy=" << newValue << std::endl;
 }
 
-template <int node>
-void TotalEnergy (double oldValue, double newValue)
-{
-  std::stringstream ss;
-  ss << "Totalenergy_" << node << ".log";
-
-  static std::fstream f (ss.str ().c_str (), std::ios::out);
-
-  f << Simulator::Now ().GetSeconds () << "s,    Total energy consumed by radio=" << newValue << std::endl;
-}
-
 int
 main(int argc, char* argv[])
 {
@@ -82,7 +71,6 @@ main(int argc, char* argv[])
   // Fix non-unicast data rate to be the same as that of unicast
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",
                       StringValue (phyMode));
-  Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
 
   Config::SetDefault ("ns3::RandomWalk2dMobilityModel::Mode", StringValue ("Time"));
   Config::SetDefault ("ns3::RandomWalk2dMobilityModel::Time", StringValue ("2s"));
@@ -183,6 +171,12 @@ main(int argc, char* argv[])
               wifiRadioEnergyModelHelper.Install (wnd, eSources.Get (eSources.GetN () - 1));
             }
         }
+      
+      Ptr<BasicEnergySource> basicSourcePtr = DynamicCast<BasicEnergySource> (eSources.Get (0));
+      Ptr<DeviceEnergyModel> deviceEnergyPtr = basicSourcePtr->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
+      Ptr<WifiRadioEnergyModel> radioEnergyPtr = DynamicCast<WifiRadioEnergyModel> (deviceEnergyPtr);
+      double totalEnergy = radioEnergyPtr->GetTotalEnergyConsumption ();
+      NS_LOG_UNCOND ("Total energy consumed" << totalEnergy);
     }
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
@@ -204,7 +198,6 @@ main(int argc, char* argv[])
   //cunapp.Stop (Seconds (10.0));
 
   eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
-  eSources.Get (0)->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy<0>));
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime + 1));
