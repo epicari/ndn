@@ -171,8 +171,8 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix("/test/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));  
   ApplicationContainer proapp = producerHelper.Install (nodes);
-  proapp.Start (Seconds (0.0));
-  proapp.Stop (Seconds (simTime));
+  //proapp.Start (Seconds (0.0));
+  //proapp.Stop (Seconds (simTime));
 
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
@@ -183,11 +183,11 @@ main(int argc, char* argv[])
   consumerHelper.SetAttribute("NumberOfContents", StringValue("1"));
   ApplicationContainer cunapp = consumerHelper.Install (sinkNode);
   sink = StaticCast<PacketSink> (cunapp.Get (0));
-  cunapp.Start (Seconds (1.0));
-  cunapp.Stop (Seconds (simTime));
+  //cunapp.Start (Seconds (1.0));
+  //cunapp.Stop (Seconds (simTime));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
-  Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
+  Simulator::Schedule (Seconds (0.1), &CalculateThroughput);
   Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
 
