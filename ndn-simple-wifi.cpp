@@ -183,7 +183,7 @@ main(int argc, char* argv[])
   //proapp.Start (Seconds (0.0));
   //proapp.Stop (Seconds (10.0));
 
-  ndn::AppHelper consumerHelper("ns3::ndn::OneInterestRequester");
+  ndn::AppHelper consumerHelper("OneInterestRequester");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1 10s 1 20s 1 30s 1"));
