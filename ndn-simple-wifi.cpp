@@ -204,7 +204,7 @@ main(int argc, char* argv[])
   //cunapp.Stop (Seconds (10.0));
 
   eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
-  eSources.Get (0)->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
+  eSources.Get (0)->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy<0>));
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime + 1));
