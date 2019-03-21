@@ -143,8 +143,8 @@ main(int argc, char* argv[])
 
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("1000.0"),
-                                 "Y", StringValue ("1000.0"),
+                                 "X", StringValue ("100.0"),
+                                 "Y", StringValue ("100.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                              "Mode", StringValue ("Time"),
@@ -208,7 +208,7 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
-  for (uint32_t u = 1; u < nodes.GetN (); u++)
+  for (uint32_t u = 0; u < nodes.GetN (); u++)
     {
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
       Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
@@ -230,7 +230,10 @@ main(int argc, char* argv[])
 
       NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
                 << "s energy consumed by radio = " << energyConsumption * 100 << "mJ");
-      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << (totalConsumption / u) * 100 << "mJ");
+      if (u == 0)
+        NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << (totalConsumption) * 100 << "mJ");
+      else
+        NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << (totalConsumption / u) * 100 << "mJ");   
     }
 
   Ptr<BasicEnergySource> basicEnergySrcSink = DynamicCast<BasicEnergySource> (srcSink.Get (0));
