@@ -121,8 +121,6 @@ main(int argc, char* argv[])
                              "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
                              "Bounds", StringValue ("0|200|0|200"));
   mobility.InstallAll ();
-  Config::Connect ("/NodeList/*/$ns3::MobilityModel/CourseChange",
-                   MakeCallback (&CourseChange));
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
