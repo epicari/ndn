@@ -61,16 +61,6 @@ ReceivePacket (Ptr<Socket> socket)
     }
 }
 
-static void 
-CourseChange (std::string foo, Ptr<const MobilityModel> mobility)
-{
-  Vector pos = mobility->GetPosition ();
-  Vector vel = mobility->GetVelocity ();
-  std::cout << Simulator::Now () << ", model=" << mobility << ", POS: x=" << pos.x << ", y=" << pos.y
-            << ", z=" << pos.z << "; VEL:" << vel.x << ", y=" << vel.y
-            << ", z=" << vel.z << std::endl;
-}
-
 void
 CalculateThroughput ()
 {
@@ -85,7 +75,7 @@ template <int node>
 void RemainingEnergyTrace (double oldValue, double newValue)
 {
   std::stringstream ss;
-  ss << "energy_" << node << ".log";
+  ss << "tcp_ip_energy_" << node << ".log";
 
   static std::fstream f (ss.str ().c_str (), std::ios::out);
 
@@ -97,6 +87,7 @@ main(int argc, char* argv[])
 {
   
   std::string phyMode = "HtMcs7";
+  uint16_t port = 1234;
   uint16_t numberOfnodes = 10;
   uint16_t sNode = 1;
   double voltage = 3.0;
