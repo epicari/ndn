@@ -170,7 +170,7 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));  
-  ApplicationContainer proapp = producerHelper.Install (nodes);
+  ApplicationContainer proapp = producerHelper.Install (sinkNode);
   //proapp.Start (Seconds (0.0));
   //proapp.Stop (Seconds (simTime));
 
@@ -181,7 +181,7 @@ main(int argc, char* argv[])
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
   consumerHelper.SetAttribute("NumberOfContents", StringValue("1"));
-  ApplicationContainer cunapp = consumerHelper.Install (sinkNode);
+  ApplicationContainer cunapp = consumerHelper.Install (nodes);
   sink = StaticCast<PacketSink> (cunapp.Get (0));
   //cunapp.Start (Seconds (1.0));
   //cunapp.Stop (Seconds (simTime));
