@@ -35,22 +35,6 @@ NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 static bool g_verbose = true;
 
 void
-DevTxTrace (std::string context, Ptr<const Packet> p)
-{
-  if (g_verbose)
-    {
-      std::cout << " TX p: " << *p << std::endl;
-    }
-}
-void
-DevRxTrace (std::string context, Ptr<const Packet> p)
-{
-  if (g_verbose)
-    {
-      std::cout << " RX p: " << *p << std::endl;
-    }
-}
-void
 PhyRxOkTrace (std::string context, Ptr<const Packet> packet, double snr, WifiMode mode, WifiPreamble preamble)
 {
   if (g_verbose)
