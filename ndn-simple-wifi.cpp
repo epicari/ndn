@@ -52,7 +52,7 @@ TotalEnergy (double oldValue, double totalEnergy)
   totalConsumption += totalEnergy;
   
   NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                 << "s Total energy consumed by radio = " << totalConsumption << "J");
+                 << "s Total energy consumed by radio = " << totalEnergy << "J");
 }
 
 int
@@ -60,7 +60,7 @@ main(int argc, char* argv[])
 {
   
   std::string phyMode = "HtMcs7";
-  uint16_t numberOfnodes = 5;
+  uint16_t numberOfnodes = 10;
   uint16_t sNode = 1;
   double voltage = 3.0;
   double initialEnergy = 7.5;
@@ -204,10 +204,10 @@ main(int argc, char* argv[])
   //cunapp.Stop (Seconds (10.0));
 
   eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
-  eSources.Get (0)->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy<0>));
+  eSources.Get (0)->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
-  Simulator::Stop(Seconds(simTime));
+  Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
 /*
   for (uint32_t u = 0; u < nodes.GetN (); u++)
