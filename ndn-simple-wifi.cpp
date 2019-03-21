@@ -158,7 +158,7 @@ main(int argc, char* argv[])
                                        "IdleCurrent", DoubleValue (idleCurrent),
                                        "Eta", DoubleValue (eta));
 
-  for (NodeContainer::Iterator n = nodes.Begin (); n != nodes.End (); n++)
+  for (NodeContainer::Iterator n = sinkNode.Begin (); n != sinkNode.End (); n++)
     {
       eSources.Add (basicEnergySourceHelper.Install (*n));
 
@@ -175,10 +175,6 @@ main(int argc, char* argv[])
             }
         }
     }
-
-  eSourceSink.Add (basicEnergySourceHelper.Install (sinkNode.Get (0)));
-  Ptr<WifiNetDevice> wnsink;
-  wnsink = sinkNode.Get (0)->GetDevice (0)->GetObject<WifiNetDevice> ();
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test/prefix");
