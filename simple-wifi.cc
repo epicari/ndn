@@ -87,6 +87,7 @@ main(int argc, char* argv[])
 {
   
   std::string phyMode = "HtMcs7";
+  std::string tcpVariant = "TcpNewReno";
   uint16_t port = 1234;
   uint16_t numberOfnodes = 10;
   uint16_t sNode = 1;
