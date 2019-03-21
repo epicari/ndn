@@ -81,17 +81,31 @@ CalculateThroughput ()
   Simulator::Schedule (MilliSeconds (100), &CalculateThroughput);
 }
 
+template <int node>
+void RemainingEnergyTrace (double oldValue, double newValue)
+{
+  std::stringstream ss;
+  ss << "energy_" << node << ".log";
+
+  static std::fstream f (ss.str ().c_str (), std::ios::out);
+
+  f << Simulator::Now ().GetSeconds () << "s,    remaining energy=" << newValue << std::endl;
+}
+
 int
 main(int argc, char* argv[])
 {
   
   std::string phyMode = "HtMcs7";
-  std::string tcpVariant = "TcpNewReno";
-  uint16_t port = 1234;
-  uint16_t numberOfnodes = 30;
+  uint16_t numberOfnodes = 10;
   uint16_t sNode = 1;
-  double totalConsumption = 0.0;
-  double simTime = 30.0;
+  double voltage = 3.0;
+  double initialEnergy = 7.5;
+  double txPowerStart = 0.0;
+  double txPowerEnd = 15.0;
+  double idleCurrent = 0.273;
+  double txCurrent = 0.380;
+  double simTime = 10.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -133,10 +147,11 @@ main(int argc, char* argv[])
 
   NodeContainer nodes;
   nodes.Create (numberOfnodes);
+  
   NodeContainer sinkNode;
   sinkNode.Create (sNode);
 
-  NodeContainer allNodes = NodeContainer (nodes, sinkNode);
+  NodeContainer cm1 = NodeContainer (nodes.Get (0), nodes.Get (1), nodes.Get (2), nodes.Get (3), nodes.Get (4));
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
@@ -150,9 +165,9 @@ main(int argc, char* argv[])
 
   YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default();
   wifiPhy.SetChannel(wifiChannel.Create());
-  wifiPhy.Set ("TxPowerStart", DoubleValue (10.0));
-  wifiPhy.Set ("TxPowerEnd", DoubleValue (10.0));
-  wifiPhy.Set ("TxPowerLevels", UintegerValue (1));
+  wifiPhy.Set ("TxPowerStart", DoubleValue (txPowerStart));
+  wifiPhy.Set ("TxPowerEnd", DoubleValue (txPowerEnd));
+  wifiPhy.Set ("TxPowerLevels", UintegerValue (16));
   wifiPhy.Set ("TxGain", DoubleValue (1));
   wifiPhy.Set ("RxGain", DoubleValue (-10));
   wifiPhy.Set ("RxNoiseFigure", DoubleValue (10));
@@ -161,18 +176,14 @@ main(int argc, char* argv[])
   wifiPhy.SetErrorRateModel ("ns3::YansErrorRateModel");
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
-  NetDeviceContainer wifiSink = wifi.Install (wifiPhy, wifiMacHelper, sinkNode);
-/*
-  MobilityHelper mobility;
-  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("100.0"),
-                                 "Y", StringValue ("100.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
-  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  mobility.Install(nodes);
-*/
+  Ssid ssid1 = Ssid ("ssid1");
+
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  wifiMacHelper.SetType("ns3::ApWifiMac", "Ssid", SsidValue (ssid1));
+  NetDeviceContainer wifiAPch1 = wifi.Install (wifiPhy, wifiMacHelper, sinkNode.Get (0));
+
+  wifiMacHelper.SetType("ns3::StaWifiMac", "Ssid", SsidValue (ssid1));
+  NetDeviceContainer wifiSTAch1 = wifi.Install (wifiPhy, wifiMacHelper, cm1);
 
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
@@ -185,8 +196,6 @@ main(int argc, char* argv[])
                              "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
                              "Bounds", StringValue ("0|200|0|200"));
   mobility.InstallAll ();
-  Config::Connect ("/NodeList/*/$ns3::MobilityModel/CourseChange",
-                   MakeCallback (&CourseChange));
 
   InternetStackHelper stack;
   DsdvHelper dsdv;
@@ -195,21 +204,44 @@ main(int argc, char* argv[])
 
   Ipv4AddressHelper address;
   address.SetBase ("10.1.1.0", "255.255.255.0");
-  Ipv4InterfaceContainer inetface = address.Assign (wifiDev);
+  Ipv4InterfaceContainer inetface = address.Assign (wifiSTAch1);
   address.SetBase ("10.10.1.0", "255.255.255.0");
-  Ipv4InterfaceContainer inetfaceSink = address.Assign (wifiSink);
+  Ipv4InterfaceContainer inetfaceSink = address.Assign (wifiAPch1);
   Ipv4Address inetAddr = inetfaceSink.GetAddress (0);
 
+  EnergySourceContainer eSources;
   BasicEnergySourceHelper basicEnergySourceHelper;
-  basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (0.1));
-  EnergySourceContainer sources = basicEnergySourceHelper.Install (nodes);
-  EnergySourceContainer srcSink = basicEnergySourceHelper.Install (sinkNode);
-
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
-  wifiRadioEnergyModelHelper.Set ("TxCurrentA", DoubleValue (0.0174));
-  wifiRadioEnergyModelHelper.Set ("RxCurrentA", DoubleValue (0.0197));
-  DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
-  DeviceEnergyModelContainer sinkEnergy = wifiRadioEnergyModelHelper.Install (wifiSink, srcSink);
+  basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (initialEnergy));
+  basicEnergySourceHelper.Set ("BasicEnergySupplyVoltageV", DoubleValue (voltage));
+
+  wifiRadioEnergyModelHelper.Set ("TxCurrentA", DoubleValue (txCurrent));
+  wifiRadioEnergyModelHelper.Set ("IdleCurrentA", DoubleValue (idleCurrent));
+
+  double eta = DbmToW (txPowerStart) / ((txCurrent - idleCurrent) * voltage);
+
+  wifiRadioEnergyModelHelper.SetTxCurrentModel ("ns3::LinearWifiTxCurrentModel",
+                                       "Voltage", DoubleValue (voltage),
+                                       "IdleCurrent", DoubleValue (idleCurrent),
+                                       "Eta", DoubleValue (eta));
+
+  for (NodeContainer::Iterator n = sinkNode.Begin (); n != sinkNode.End (); n++)
+    {
+      eSources.Add (basicEnergySourceHelper.Install (*n));
+
+      Ptr<WifiNetDevice> wnd;
+
+      for (uint32_t i = 0; i < (*n)->GetNDevices (); ++i)
+        {
+          wnd = (*n)->GetDevice (i)->GetObject<WifiNetDevice> ();
+          // if it is a WifiNetDevice
+          if (wnd != 0)
+            {
+              // this device draws power from the last created energy source
+              wifiRadioEnergyModelHelper.Install (wnd, eSources.Get (eSources.GetN () - 1));
+            }
+        }
+    }
 
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
   ApplicationContainer sinkApp = producerHelper.Install (sinkNode);
@@ -233,60 +265,20 @@ main(int argc, char* argv[])
   ApplicationContainer serverApp = server.Install (nodes);
   serverApp.Start (Seconds (1.0));
 
-/*
-  TypeId tid = TypeId::LookupByName ("ns3::TcpSocketFactory");
-  Ptr<Socket> recvSink = Socket::CreateSocket (nodes.Get (0), tid);
-  InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), port);
-  recvSink->Bind (local);
-  recvSink->SetRecvCallback (MakeCallback (&ReceivePacket));
+  eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
   
-  for (uint16_t u = 1; u < nodes.GetN (); u++)
-    {
-      Ptr<Socket> source = Socket::CreateSocket (nodes.Get (u), tid);
-      InetSocketAddress remote = InetSocketAddress (Ipv4Address::GetBroadcast (), port);
-      source->SetAllowBroadcast (true);
-      source->Connect (remote);
-    }
-*/
   Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
-  Simulator::Stop(Seconds(simTime));
+  Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
   
   double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * simTime));
   std::cout << "\nAverage throughput: " << averageThroughput << " Mbit/s" << std::endl;
 
-  for (uint32_t u = 0; u < nodes.GetN (); u++)
-    {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
-      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
-      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
-      
-      NS_ASSERT (basicRadioModels != NULL);
-      //ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
-/*
-      if (u == 0)
-        {
-          double producerEnergy = ptr->GetTotalEnergyConsumption ();
-          NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                << "s producer energy consumed by radio = " << producerEnergy * 100 << "mJ");
-          continue;
-        }
-*/
-      double energyConsumption = ptr->GetTotalEnergyConsumption ();
-      totalConsumption += ptr->GetTotalEnergyConsumption ();
-      uint16_t n = u+1;
-
-      NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                << "s energy consumed by radio = " << energyConsumption * 100 << "mJ");
-      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << (totalConsumption / n) * 100 << "mJ");
-    }
-
-  Ptr<BasicEnergySource> basicEnergySrcSink = DynamicCast<BasicEnergySource> (srcSink.Get (0));
-  Ptr<DeviceEnergyModel> basicRadioSrcSink = basicEnergySrcSink->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
-  Ptr<WifiRadioEnergyModel> wifisrcSink = DynamicCast<WifiRadioEnergyModel> (basicRadioSrcSink);
-  double energyConsumptionSink = wifisrcSink->GetTotalEnergyConsumption ();
-  NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                << "s energy consumed by radio = " << energyConsumptionSink * 100 << "mJ");
+  Ptr<BasicEnergySource> basicSourcePtr = DynamicCast<BasicEnergySource> (eSources.Get (0));
+  Ptr<DeviceEnergyModel> deviceEnergyPtr = basicSourcePtr->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
+  Ptr<WifiRadioEnergyModel> radioEnergyPtr = DynamicCast<WifiRadioEnergyModel> (deviceEnergyPtr);
+  double totalEnergy = radioEnergyPtr->GetTotalEnergyConsumption ();
+  NS_LOG_UNCOND ("Total energy consumed= " << totalEnergy << "J");
 
   Simulator::Destroy();
 
