@@ -198,8 +198,6 @@ main(int argc, char* argv[])
   mobility.InstallAll ();
 
   InternetStackHelper stack;
-  DsdvHelper dsdv;
-  stack.SetRoutingHelper (dsdv);
   stack.InstallAll ();
 
   Ipv4AddressHelper address;
