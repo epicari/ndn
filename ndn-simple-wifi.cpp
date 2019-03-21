@@ -33,8 +33,6 @@ namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 
-double totalConsumption = 0.0;
-
 template <int node>
 void RemainingEnergyTrace (double oldValue, double newValue)
 {
@@ -47,12 +45,14 @@ void RemainingEnergyTrace (double oldValue, double newValue)
 }
 
 void
-TotalEnergy (double oldValue, double totalEnergy)
+TotalEnergy (double oldValue, double newValue)
 {
-  totalConsumption += totalEnergy;
-  
-  NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                 << "s Total energy consumed by radio = " << totalEnergy << "J");
+  std::stringstream ss;
+  ss << "Totalenergy_" << node << ".log";
+
+  static std::fstream f (ss.str ().c_str (), std::ios::out);
+
+  f << Simulator::Now ().GetSeconds () << "s,    Total energy consumed by radio=" << newValue << std::endl;
 }
 
 int
