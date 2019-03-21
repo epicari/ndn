@@ -53,7 +53,7 @@ int
 main(int argc, char* argv[])
 {
   
-  std::string phyMode ("DsssRate1Mbps");
+  std::string phyMode = "HtMcs7";
   uint16_t numberOfnodes = 30;
   uint16_t sNode = 1;
   double totalConsumption = 0.0;
@@ -86,14 +86,14 @@ main(int argc, char* argv[])
   NodeContainer allNodes = NodeContainer (nodes, sinkNode);
 
   WifiHelper wifi;
-  wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
+  wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode", StringValue (phyMode), 
-                                "ControlMode", StringValue (phyMode));
+                                "ControlMode", StringValue ("HtMcs0"));
 
   YansWifiChannelHelper wifiChannel;
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
-  wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel");
+  wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
 
   YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default();
   wifiPhy.SetChannel(wifiChannel.Create());
@@ -104,7 +104,8 @@ main(int argc, char* argv[])
   wifiPhy.Set ("RxGain", DoubleValue (-10));
   wifiPhy.Set ("RxNoiseFigure", DoubleValue (10));
   wifiPhy.Set ("CcaMode1Threshold", DoubleValue (-79));
-  wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79));
+  wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
+  wifiPhy.SetErrorRateModel ("ns3::YansErrorRateModel");
 
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");

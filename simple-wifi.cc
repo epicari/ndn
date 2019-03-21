@@ -72,7 +72,8 @@ int
 main(int argc, char* argv[])
 {
   
-  std::string phyMode ("DsssRate1Mbps");
+  std::string phyMode = "HtMcs7";
+  std::string tcpVariant = "TcpNewReno";
   uint16_t port = 1234;
   uint16_t numberOfnodes = 30;
   uint16_t sNode = 1;
@@ -82,6 +83,25 @@ main(int argc, char* argv[])
   CommandLine cmd;
   cmd.Parse(argc, argv);
   
+  tcpVariant = std::string ("ns3::") + tcpVariant;
+  // Select TCP variant
+  if (tcpVariant.compare ("ns3::TcpWestwoodPlus") == 0)
+    {
+      // TcpWestwoodPlus is not an actual TypeId name; we need TcpWestwood here
+      Config::SetDefault ("ns3::TcpL4Protocol::SocketType", TypeIdValue (TcpWestwood::GetTypeId ()));
+      // the default protocol type in ns3::TcpWestwood is WESTWOOD
+      Config::SetDefault ("ns3::TcpWestwood::ProtocolType", EnumValue (TcpWestwood::WESTWOODPLUS));
+    }
+  else
+    {
+      TypeId tcpTid;
+      NS_ABORT_MSG_UNLESS (TypeId::LookupByNameFailSafe (tcpVariant, &tcpTid), "TypeId " << tcpVariant << " not found");
+      Config::SetDefault ("ns3::TcpL4Protocol::SocketType", TypeIdValue (TypeId::LookupByName (tcpVariant)));
+    }
+
+  /* Configure TCP Options */
+  Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (64));
+
   // disable fragmentation for frames below 2200 bytes
   Config::SetDefault ("ns3::WifiRemoteStationManager::FragmentationThreshold",
                       StringValue ("2200"));
@@ -106,15 +126,14 @@ main(int argc, char* argv[])
   NodeContainer allNodes = NodeContainer (nodes, sinkNode);
 
   WifiHelper wifi;
-  wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
+  wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode", StringValue (phyMode), 
-                                "ControlMode", StringValue (phyMode));
+                                "ControlMode", StringValue ("HtMcs0"));
 
   YansWifiChannelHelper wifiChannel;
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
-  wifiChannel.AddPropagationLoss("ns3::ThreeLogDistancePropagationLossModel");
-  wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel");
+  wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
 
   YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default();
   wifiPhy.SetChannel(wifiChannel.Create());
@@ -125,7 +144,8 @@ main(int argc, char* argv[])
   wifiPhy.Set ("RxGain", DoubleValue (-10));
   wifiPhy.Set ("RxNoiseFigure", DoubleValue (10));
   wifiPhy.Set ("CcaMode1Threshold", DoubleValue (-79));
-  wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79));
+  wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
+  wifiPhy.SetErrorRateModel ("ns3::YansErrorRateModel");
 
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
@@ -191,7 +211,7 @@ main(int argc, char* argv[])
 //  consumerHelper.Install (nodes);
 
   OnOffHelper server ("ns3::TcpSocketFactory", (InetSocketAddress (inetAddr, port)));
-  server.SetAttribute ("PacketSize", UintegerValue (104));
+  server.SetAttribute ("PacketSize", UintegerValue (64));
   server.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   server.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
   server.Install (nodes);
