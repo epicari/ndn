@@ -26,6 +26,7 @@
 #include "ns3/energy-module.h"
 #include "ns3/wifi-radio-energy-model-helper.h"
 #include "ns3/ndnSIM-module.h"
+#include "ns3/point-to-point-module.h"
 
 using namespace std;
 namespace ns3 {
@@ -101,7 +102,7 @@ main(int argc, char* argv[])
   NodeContainer sinkNode;
   sinkNode.Create (sNode);
 
-  NodeContainer remote;
+  NodeContainer remoteSink;
   remoteSink.Create (remoteNode);
 
   NodeContainer cm1 = NodeContainer (nodes.Get (0), nodes.Get (1), nodes.Get (2), nodes.Get (3), nodes.Get (4));
