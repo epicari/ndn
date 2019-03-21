@@ -234,7 +234,7 @@ main(int argc, char* argv[])
     }
 
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
-  ApplicationContainer sinkApp = producerHelper.Install (sinkNode);
+  ApplicationContainer sinkApp = producerHelper.Install (sinkNode.Get (0));
   sink = StaticCast<PacketSink> (sinkApp.Get (0));
   sinkApp.Start (Seconds (0.0));
 
