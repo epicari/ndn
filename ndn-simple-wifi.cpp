@@ -131,10 +131,10 @@ main(int argc, char* argv[])
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes(true);
+  //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
 
-  //ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/self-learning");
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/ncc");
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/multicast");
@@ -202,29 +202,7 @@ main(int argc, char* argv[])
   Ptr<WifiRadioEnergyModel> radioEnergyPtr = DynamicCast<WifiRadioEnergyModel> (deviceEnergyPtr);
   double totalEnergy = radioEnergyPtr->GetTotalEnergyConsumption ();
   NS_LOG_UNCOND ("Total energy consumed= " << totalEnergy << "J");
-/*
-  for (uint32_t u = 0; u < nodes.GetN (); u++)
-    {
-      Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
-      Ptr<DeviceEnergyModel> basicRadioModels = basicEnergySource->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
-      Ptr<WifiRadioEnergyModel> ptr = DynamicCast<WifiRadioEnergyModel> (basicRadioModels);
-      NS_ASSERT (basicRadioModels != NULL);
-      double energyConsumption = ptr->GetTotalEnergyConsumption ();
-      totalConsumption += ptr->GetTotalEnergyConsumption ();
-      uint16_t n = u+1;
 
-      NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                << "s energy consumed by radio = " << energyConsumption * 100 << "mJ");
-      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << (totalConsumption / n) * 100 << "mJ");
-    }
-
-    Ptr<BasicEnergySource> basicEnergySrcSink = DynamicCast<BasicEnergySource> (srcSink.Get (0));
-    Ptr<DeviceEnergyModel> basicRadioSrcSink = basicEnergySrcSink->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
-    Ptr<WifiRadioEnergyModel> wifisrcSink = DynamicCast<WifiRadioEnergyModel> (basicRadioSrcSink);
-    double energyConsumptionSink = wifisrcSink->GetTotalEnergyConsumption ();
-    NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                  << "s energy consumed by radio = " << energyConsumptionSink * 100 << "mJ");
-*/
   Simulator::Destroy();
 
   return 0;
