@@ -140,7 +140,7 @@ main(int argc, char* argv[])
 
   //wifiMacHelper.SetType("ns3::StaWifiMac", "Ssid", SsidValue (ssid));
   NetDeviceContainer wifiSTA = wifi.Install (wifiPhy, wifiMacHelper, nodes);
-  
+
   Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/RxOk", MakeCallback (&PhyRxOkTrace));
   Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/RxError", MakeCallback (&PhyRxErrorTrace));
   Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/Tx", MakeCallback (&PhyTxTrace));
@@ -172,8 +172,8 @@ main(int argc, char* argv[])
   ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
 
-  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
-  //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/multicast");
+  //ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/multicast");
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/ncc");
 
   BasicEnergySourceHelper basicEnergySourceHelper;
@@ -199,7 +199,7 @@ main(int argc, char* argv[])
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1 10s 1 20s 1 30s 1"));
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("1"));
+  consumerHelper.SetAttribute("Frequency", StringValue("10"));
   //consumerHelper.SetAttribute("NumberOfContents", StringValue("1"));
   ApplicationContainer cunapp = consumerHelper.Install (sinkNode);
   //cunapp.Start (Seconds (1.0));
