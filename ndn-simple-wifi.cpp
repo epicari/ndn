@@ -191,9 +191,9 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
 
-  double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * simulationTime));
+  double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * simTime));
   std::cout << "\nAverage throughput: " << averageThroughput << " Mbit/s" << std::endl;
-  
+
   for (uint32_t u = 0; u < nodes.GetN (); u++)
     {
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
