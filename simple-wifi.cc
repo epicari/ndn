@@ -190,7 +190,7 @@ main(int argc, char* argv[])
 //  consumerHelper.SetAttribute ("SendSize", UintegerValue (64));
 //  consumerHelper.Install (nodes);
 
-  OnOffHelper server ("ns3::TcpSocketFactory", (InetSocketAddress (apInterface.GetAddress (0), 9)));
+  OnOffHelper server ("ns3::TcpSocketFactory", (InetSocketAddress (inetAddr, port)));
   server.SetAttribute ("PacketSize", UintegerValue (104));
   server.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   server.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
