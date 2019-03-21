@@ -171,12 +171,6 @@ main(int argc, char* argv[])
               wifiRadioEnergyModelHelper.Install (wnd, eSources.Get (eSources.GetN () - 1));
             }
         }
-      
-      Ptr<BasicEnergySource> basicSourcePtr = DynamicCast<BasicEnergySource> (eSources.Get (0));
-      Ptr<DeviceEnergyModel> deviceEnergyPtr = basicSourcePtr->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
-      Ptr<WifiRadioEnergyModel> radioEnergyPtr = DynamicCast<WifiRadioEnergyModel> (deviceEnergyPtr);
-      double totalEnergy = radioEnergyPtr->GetTotalEnergyConsumption ();
-      NS_LOG_UNCOND ("Total energy consumed" << totalEnergy);
     }
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
@@ -202,6 +196,13 @@ main(int argc, char* argv[])
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
+
+  EnergySourceContainer eSourcesink = basicEnergySourceHelper.Install (sinkNode);
+  Ptr<BasicEnergySource> basicSourcePtr = DynamicCast<BasicEnergySource> (eSourcesink.Get (0));
+  Ptr<DeviceEnergyModel> deviceEnergyPtr = basicSourcePtr->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
+  Ptr<WifiRadioEnergyModel> radioEnergyPtr = DynamicCast<WifiRadioEnergyModel> (deviceEnergyPtr);
+  double totalEnergy = radioEnergyPtr->GetTotalEnergyConsumption ();
+  NS_LOG_UNCOND ("Total energy consumed" << totalEnergy);
 /*
   for (uint32_t u = 0; u < nodes.GetN (); u++)
     {
