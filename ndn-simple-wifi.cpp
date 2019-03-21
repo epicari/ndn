@@ -197,8 +197,7 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
 
-  EnergySourceContainer eSourcesink = basicEnergySourceHelper.Install (sinkNode.Get (0));
-  Ptr<BasicEnergySource> basicSourcePtr = DynamicCast<BasicEnergySource> (eSourcesink.Get (0));
+  Ptr<BasicEnergySource> basicSourcePtr = DynamicCast<BasicEnergySource> (eSources.Get (0));
   Ptr<DeviceEnergyModel> deviceEnergyPtr = basicSourcePtr->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
   Ptr<WifiRadioEnergyModel> radioEnergyPtr = DynamicCast<WifiRadioEnergyModel> (deviceEnergyPtr);
   double totalEnergy = radioEnergyPtr->GetTotalEnergyConsumption ();
