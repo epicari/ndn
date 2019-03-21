@@ -197,7 +197,7 @@ main(int argc, char* argv[])
   eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
-  Simulator::Stop(Seconds(simTime + 1));
+  Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 /*
   for (uint32_t u = 0; u < nodes.GetN (); u++)
