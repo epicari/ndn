@@ -36,23 +36,13 @@ NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 template <int node>
 void RemainingEnergyTrace (double oldValue, double newValue)
 {
-  std::stringstream ss;
-  ss << "energy_" << node << ".log";
-
-  static std::fstream f (ss.str ().c_str (), std::ios::out);
-
-  f << Simulator::Now ().GetSeconds () << "    remaining energy=" << newValue << std::endl;
+  NS_LOG_UNCOND (Simulator::Now ().GetSeconds () << "s    remaining energy=" << newValue << "J");
 }
 
 template <int node>
 void PhyStateTrace (std::string context, Time start, Time duration, WifiPhyState state)
 {
-  std::stringstream ss;
-  ss << "state_" << node << ".log";
-
-  static std::fstream f (ss.str ().c_str (), std::ios::out);
-
-  f << Simulator::Now ().GetSeconds () << "    state=" << state << " start=" << start << " duration=" << duration << std::endl;
+  NS_LOG_UNCOND (Simulator::Now ().GetSeconds () << "    state=" << state << " start=" << start << " duration=" << duration);
 }
 
 int
@@ -60,8 +50,8 @@ main(int argc, char* argv[])
 {
   
   std::string phyMode = "HtMcs7";
-  uint16_t numberOfnodes = 10;
-  uint16_t sNode = 2;
+  uint16_t numberOfnodes = 5;
+  uint16_t sNode = 1;
   //double totalConsumption = 0.0;
   double voltage = 3.0;
   double initialEnergy = 7.5;
