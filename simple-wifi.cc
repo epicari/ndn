@@ -228,7 +228,7 @@ main(int argc, char* argv[])
   Ptr<WifiRadioEnergyModel> wifisrcSink = DynamicCast<WifiRadioEnergyModel> (basicRadioSrcSink);
   double energyConsumptionSink = wifisrcSink->GetTotalEnergyConsumption ();
   NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
-                << "s energy consumed by radio = " << energyConsumption * 100 << "mJ");
+                << "s energy consumed by radio = " << energyConsumptionSink * 100 << "mJ");
 
   Simulator::Destroy();
 
