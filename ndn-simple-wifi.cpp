@@ -63,7 +63,7 @@ main(int argc, char* argv[])
   uint16_t numberOfnodes = 10;
   uint16_t sNode = 2;
   uint16_t remoteNode = 1;
-  double totalConsumption = 0.0;
+  //double totalConsumption = 0.0;
   double voltage = 3.0;
   double initialEnergy = 7.5;
   double txPowerStart = 0.0;
@@ -206,12 +206,9 @@ main(int argc, char* argv[])
   //cunapp.Start (Seconds (1.0));
   //cunapp.Stop (Seconds (10.0));
 
-  for (NodeContainer::Iterator n = nodes.Begin (); n != nodes.End (); n++)
-    {
-      eSources.Get (n)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace));
+    eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace));
 
-      Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace));
-    }
+    Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace));
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime + 1));
