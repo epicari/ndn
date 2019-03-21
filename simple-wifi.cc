@@ -236,10 +236,7 @@ main(int argc, char* argv[])
 
       NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
                 << "s energy consumed by radio = " << energyConsumption * 100 << "mJ");
-      if (u == 0)
-        NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << (totalConsumption) * 100 << "mJ");
-      else
-        NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << (totalConsumption / u) * 100 << "mJ");   
+      NS_LOG_UNCOND ("Total AVG energy consumed by radio = " << (totalConsumption / u+1) * 100 << "mJ");
     }
 
   Ptr<BasicEnergySource> basicEnergySrcSink = DynamicCast<BasicEnergySource> (srcSink.Get (0));
