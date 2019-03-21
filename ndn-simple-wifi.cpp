@@ -32,6 +32,57 @@ namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 
+static bool g_verbose = true;
+
+void
+DevTxTrace (std::string context, Ptr<const Packet> p)
+{
+  if (g_verbose)
+    {
+      std::cout << " TX p: " << *p << std::endl;
+    }
+}
+void
+DevRxTrace (std::string context, Ptr<const Packet> p)
+{
+  if (g_verbose)
+    {
+      std::cout << " RX p: " << *p << std::endl;
+    }
+}
+void
+PhyRxOkTrace (std::string context, Ptr<const Packet> packet, double snr, WifiMode mode, WifiPreamble preamble)
+{
+  if (g_verbose)
+    {
+      std::cout << "PHYRXOK mode=" << mode << " snr=" << snr << " " << *packet << std::endl;
+    }
+}
+void
+PhyRxErrorTrace (std::string context, Ptr<const Packet> packet, double snr)
+{
+  if (g_verbose)
+    {
+      std::cout << "PHYRXERROR snr=" << snr << " " << *packet << std::endl;
+    }
+}
+void
+PhyTxTrace (std::string context, Ptr<const Packet> packet, WifiMode mode, WifiPreamble preamble, uint8_t txPower)
+{
+  if (g_verbose)
+    {
+      std::cout << "PHYTX mode=" << mode << " " << *packet << std::endl;
+    }
+}
+void
+PhyStateTrace (std::string context, Time start, Time duration, WifiPhyState state)
+{
+  if (g_verbose)
+    {
+      std::cout << " state=" << state << " start=" << start << " duration=" << duration << std::endl;
+    }
+}
+
 void
 TotalEnergy (double oldValue, double totalEnergy)
 {
@@ -98,9 +149,21 @@ main(int argc, char* argv[])
   wifiPhy.SetErrorRateModel ("ns3::YansErrorRateModel");
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
-  NetDeviceContainer wifiSink = wifi.Install (wifiPhy, wifiMacHelper, sinkNode);
+  Ssid ssid = Ssid ("ssid");
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  wifiMacHelper.SetType("ns3::ApWifiMac", "Ssid", SsidValue (ssid));
+  NetDeviceContainer wifiAP = wifi.Install (wifiPhy, wifiMacHelper, sinkNode);
+
+  wifiMacHelper.SetType("ns3::StaWifiMac", "Ssid", SsidValue (ssid));
+  NetDeviceContainer wifiSTA = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+
+  Config::Connect ("/NodeList/*/DeviceList/*/Mac/MacTx", MakeCallback (&DevTxTrace));
+  Config::Connect ("/NodeList/*/DeviceList/*/Mac/MacRx", MakeCallback (&DevRxTrace));
+  Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/RxOk", MakeCallback (&PhyRxOkTrace));
+  Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/RxError", MakeCallback (&PhyRxErrorTrace));
+  Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/Tx", MakeCallback (&PhyTxTrace));
+  Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace));
+
 /*
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
@@ -139,8 +202,8 @@ main(int argc, char* argv[])
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
   wifiRadioEnergyModelHelper.Set ("TxCurrentA", DoubleValue (0.0174));
   wifiRadioEnergyModelHelper.Set ("RxCurrentA", DoubleValue (0.0197));
-  DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
-  DeviceEnergyModelContainer sinkEnergy = wifiRadioEnergyModelHelper.Install (wifiSink, srcSink);
+  DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiSTA, sources);
+  DeviceEnergyModelContainer sinkEnergy = wifiRadioEnergyModelHelper.Install (wifiAP, srcSink);
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test/prefix");
