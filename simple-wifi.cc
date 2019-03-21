@@ -185,10 +185,16 @@ main(int argc, char* argv[])
   //producerHelper.Install (nodes.Get (0));
 
   //UdpClientHelper consumerHelper (inetAddr, port);
-  BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (inetAddr, port));
-  consumerHelper.SetAttribute ("MaxBytes", UintegerValue (1000));
-  consumerHelper.SetAttribute ("SendSize", UintegerValue (64));
-  consumerHelper.Install (nodes);
+//  BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (inetAddr, port));
+//  consumerHelper.SetAttribute ("MaxBytes", UintegerValue (1000));
+//  consumerHelper.SetAttribute ("SendSize", UintegerValue (64));
+//  consumerHelper.Install (nodes);
+
+  OnOffHelper server ("ns3::TcpSocketFactory", (InetSocketAddress (apInterface.GetAddress (0), 9)));
+  server.SetAttribute ("PacketSize", UintegerValue (104));
+  server.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
+  server.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+  server.Install (nodes);
 
 /*
   TypeId tid = TypeId::LookupByName ("ns3::TcpSocketFactory");

@@ -152,7 +152,7 @@ main(int argc, char* argv[])
   wifiRadioEnergyModelHelper.Set ("RxCurrentA", DoubleValue (0.0197));
   DeviceEnergyModelContainer deviceEnergy = wifiRadioEnergyModelHelper.Install (wifiDev, sources);
   DeviceEnergyModelContainer sinkEnergy = wifiRadioEnergyModelHelper.Install (wifiSink, srcSink);
-/*
+
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));  
@@ -168,14 +168,6 @@ main(int argc, char* argv[])
   consumerHelper.SetAttribute("NumberOfContents", StringValue("1"));
   auto cunapp = consumerHelper.Install (sinkNode);
   //cunapp.Stop (Seconds (simTime));
-*/
-  PacketSinkHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
-  producerHelper.Install (sinkNode);
-
-  BulkSendHelper consumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (inetAddr, port));
-  consumerHelper.SetAttribute ("MaxBytes", UintegerValue (1000));
-  consumerHelper.SetAttribute ("SendSize", UintegerValue (64));
-  consumerHelper.Install (nodes);
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
