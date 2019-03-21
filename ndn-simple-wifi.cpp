@@ -62,7 +62,6 @@ main(int argc, char* argv[])
   std::string phyMode = "HtMcs7";
   uint16_t numberOfnodes = 10;
   uint16_t sNode = 2;
-  uint16_t remoteNode = 1;
   //double totalConsumption = 0.0;
   double voltage = 3.0;
   double initialEnergy = 7.5;
