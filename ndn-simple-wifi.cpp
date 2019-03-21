@@ -30,6 +30,9 @@
 using namespace std;
 namespace ns3 {
 
+Ptr<PacketSink> sink;
+uint64_t lastTotalRx = 0;
+
 NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 
 void
@@ -47,6 +50,16 @@ CourseChange (std::string foo, Ptr<const MobilityModel> mobility)
   std::cout << Simulator::Now () << ", model=" << mobility << ", POS: x=" << pos.x << ", y=" << pos.y
             << ", z=" << pos.z << "; VEL:" << vel.x << ", y=" << vel.y
             << ", z=" << vel.z << std::endl;
+}
+
+void
+CalculateThroughput ()
+{
+  Time now = Simulator::Now ();                                         /* Return the simulator's virtual time. */
+  double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8 / 1e5;     /* Convert Application RX Packets to MBits. */
+  std::cout << now.GetSeconds () << "s: \t" << cur << " Mbit/s" << std::endl;
+  lastTotalRx = sink->GetTotalRx ();
+  Simulator::Schedule (MilliSeconds (100), &CalculateThroughput);
 }
 
 int
@@ -157,8 +170,9 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));  
-  auto proapp = producerHelper.Install (nodes);
-  //proapp.Stop (Seconds (simTime));
+  ApplicationContainer proapp = producerHelper.Install (nodes);
+  proapp.Start (Seconds (0.0));
+  proapp.Stop (Seconds (simTime));
 
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
@@ -167,13 +181,19 @@ main(int argc, char* argv[])
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
   consumerHelper.SetAttribute("NumberOfContents", StringValue("1"));
-  auto cunapp = consumerHelper.Install (sinkNode);
-  //cunapp.Stop (Seconds (simTime));
+  ApplicationContainer cunapp = consumerHelper.Install (sinkNode);
+  sink = StaticCast<PacketSink> (cunapp.Get (0));
+  cunapp.Start (Seconds (1.0));
+  cunapp.Stop (Seconds (simTime));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
-  Simulator::Stop(Seconds(simTime));
+  Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
+  Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
 
+  double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * simulationTime));
+  std::cout << "\nAverage throughput: " << averageThroughput << " Mbit/s" << std::endl;
+  
   for (uint32_t u = 0; u < nodes.GetN (); u++)
     {
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));

@@ -30,6 +30,9 @@
 using namespace std;
 namespace ns3 {
 
+Ptr<PacketSink> sink;
+uint64_t lastTotalRx = 0;
+
 static inline std::string
 PrintReceivedPacket (Address& from)
 {
@@ -66,6 +69,16 @@ CourseChange (std::string foo, Ptr<const MobilityModel> mobility)
   std::cout << Simulator::Now () << ", model=" << mobility << ", POS: x=" << pos.x << ", y=" << pos.y
             << ", z=" << pos.z << "; VEL:" << vel.x << ", y=" << vel.y
             << ", z=" << vel.z << std::endl;
+}
+
+void
+CalculateThroughput ()
+{
+  Time now = Simulator::Now ();                                         /* Return the simulator's virtual time. */
+  double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8 / 1e5;     /* Convert Application RX Packets to MBits. */
+  std::cout << now.GetSeconds () << "s: \t" << cur << " Mbit/s" << std::endl;
+  lastTotalRx = sink->GetTotalRx ();
+  Simulator::Schedule (MilliSeconds (100), &CalculateThroughput);
 }
 
 int
@@ -199,7 +212,9 @@ main(int argc, char* argv[])
   DeviceEnergyModelContainer sinkEnergy = wifiRadioEnergyModelHelper.Install (wifiSink, srcSink);
 
   PacketSinkHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
-  producerHelper.Install (sinkNode);
+  ApplicationContainer sinkApp = producerHelper.Install (sinkNode);
+  sink = StaticCast<PacketSink> (sinkApp.Get (0));
+  sinkApp.Start (Seconds (0.0));
 
   //UdpServerHelper producerHelper (port);
   //producerHelper.Install (nodes.Get (0));
@@ -214,7 +229,9 @@ main(int argc, char* argv[])
   server.SetAttribute ("PacketSize", UintegerValue (64));
   server.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   server.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
-  server.Install (nodes);
+  //server.Install (nodes);
+  ApplicationContainer serverApp = server.Install (nodes);
+  server.Start (Seconds (1.0));
 
 /*
   TypeId tid = TypeId::LookupByName ("ns3::TcpSocketFactory");
@@ -231,9 +248,13 @@ main(int argc, char* argv[])
       source->Connect (remote);
     }
 */
+  Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
+  double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * simulationTime));
+  std::cout << "\nAverage throughput: " << averageThroughput << " Mbit/s" << std::endl;
+
   for (uint32_t u = 0; u < nodes.GetN (); u++)
     {
       Ptr<BasicEnergySource> basicEnergySource = DynamicCast<BasicEnergySource> (sources.Get(u));
