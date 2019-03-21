@@ -201,7 +201,7 @@ main(int argc, char* argv[])
   Ptr<DeviceEnergyModel> deviceEnergyPtr = basicSourcePtr->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get (0);
   Ptr<WifiRadioEnergyModel> radioEnergyPtr = DynamicCast<WifiRadioEnergyModel> (deviceEnergyPtr);
   double totalEnergy = radioEnergyPtr->GetTotalEnergyConsumption ();
-  NS_LOG_UNCOND ("Total energy consumed" << totalEnergy);
+  NS_LOG_UNCOND ("Total energy consumed= " << totalEnergy << "J");
 /*
   for (uint32_t u = 0; u < nodes.GetN (); u++)
     {
