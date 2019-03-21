@@ -44,8 +44,8 @@ void RemainingEnergyTrace (double oldValue, double newValue)
   f << Simulator::Now ().GetSeconds () << "s,    remaining energy=" << newValue << std::endl;
 }
 
-void
-TotalEnergy (double oldValue, double newValue)
+template <int node>
+void TotalEnergy (double oldValue, double newValue)
 {
   std::stringstream ss;
   ss << "Totalenergy_" << node << ".log";
