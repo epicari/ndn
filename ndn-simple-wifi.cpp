@@ -33,6 +33,8 @@ namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 
+double totalConsumption = 0.0;
+
 template <int node>
 void RemainingEnergyTrace (double oldValue, double newValue)
 {
@@ -44,6 +46,15 @@ void RemainingEnergyTrace (double oldValue, double newValue)
   f << Simulator::Now ().GetSeconds () << "s,    remaining energy=" << newValue << std::endl;
 }
 
+void
+TotalEnergy (double oldValue, double totalEnergy)
+{
+  totalConsumption += totalEnergy;
+  
+  NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
+                 << "s Total energy consumed by radio = " << totalConsumption << "J");
+}
+
 int
 main(int argc, char* argv[])
 {
@@ -51,7 +62,6 @@ main(int argc, char* argv[])
   std::string phyMode = "HtMcs7";
   uint16_t numberOfnodes = 5;
   uint16_t sNode = 1;
-  //double totalConsumption = 0.0;
   double voltage = 3.0;
   double initialEnergy = 7.5;
   double txPowerStart = 0.0;
@@ -142,7 +152,6 @@ main(int argc, char* argv[])
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/multicast");
 
   EnergySourceContainer eSources;
-  EnergySourceContainer eSourceSink;
   BasicEnergySourceHelper basicEnergySourceHelper;
   WifiRadioEnergyModelHelper wifiRadioEnergyModelHelper;
   basicEnergySourceHelper.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (initialEnergy));
@@ -195,6 +204,7 @@ main(int argc, char* argv[])
   //cunapp.Stop (Seconds (10.0));
 
   eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
+  eSources.Get (0)->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy<0>));
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
