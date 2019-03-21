@@ -231,7 +231,7 @@ main(int argc, char* argv[])
   server.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
   //server.Install (nodes);
   ApplicationContainer serverApp = server.Install (nodes);
-  server.Start (Seconds (1.0));
+  serverApp.Start (Seconds (1.0));
 
 /*
   TypeId tid = TypeId::LookupByName ("ns3::TcpSocketFactory");
