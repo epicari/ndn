@@ -111,8 +111,8 @@ main(int argc, char* argv[])
 
   YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default();
   wifiPhy.SetChannel(wifiChannel.Create());
-  wifiPhy.Set ("TxPowerStart", DoubleValue (0.0));
-  wifiPhy.Set ("TxPowerEnd", DoubleValue (15.0));
+  wifiPhy.Set ("TxPowerStart", DoubleValue (txPowerStart));
+  wifiPhy.Set ("TxPowerEnd", DoubleValue (txPowerEnd));
   wifiPhy.Set ("TxPowerLevels", UintegerValue (16));
   wifiPhy.Set ("TxGain", DoubleValue (1));
   wifiPhy.Set ("RxGain", DoubleValue (-10));
@@ -208,9 +208,9 @@ main(int argc, char* argv[])
 
   for (NodeContainer::Iterator n = nodes.Begin (); n != nodes.End (); n++)
     {
-      eSources.Get (n)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<n>));
+      eSources.Get (n)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace));
 
-      Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace<n>));
+      Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/State", MakeCallback (&PhyStateTrace));
     }
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
