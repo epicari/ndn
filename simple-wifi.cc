@@ -249,7 +249,7 @@ main(int argc, char* argv[])
     }
 */
   Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
-  Simulator::Stop(Seconds(simTime + 1));
+  Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
   double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * simTime));

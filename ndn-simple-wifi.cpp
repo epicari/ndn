@@ -188,7 +188,7 @@ main(int argc, char* argv[])
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Schedule (Seconds (0.1), &CalculateThroughput);
-  Simulator::Stop(Seconds(simTime + 1));
+  Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
   double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * simTime));
