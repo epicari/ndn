@@ -183,8 +183,7 @@ main(int argc, char* argv[])
   //proapp.Start (Seconds (0.0));
   //proapp.Stop (Seconds (10.0));
 
-  ndn::AppHelper consumerHelper("OneInterestRequester");
-  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1 10s 1 20s 1 30s 1"));
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
@@ -197,6 +196,7 @@ main(int argc, char* argv[])
 
   eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
 
+  ndn::AppDelayTracer::InstallAll("app-delays-trace.txt");
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
