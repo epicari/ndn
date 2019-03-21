@@ -30,9 +30,6 @@
 using namespace std;
 namespace ns3 {
 
-Ptr<PacketSink> sink;
-uint64_t lastTotalRx = 0;
-
 NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 
 void
@@ -40,26 +37,6 @@ TotalEnergy (double oldValue, double totalEnergy)
 {
   NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
                  << "s Total energy consumed by radio = " << totalEnergy << "J");
-}
-
-static void 
-CourseChange (std::string foo, Ptr<const MobilityModel> mobility)
-{
-  Vector pos = mobility->GetPosition ();
-  Vector vel = mobility->GetVelocity ();
-  std::cout << Simulator::Now () << ", model=" << mobility << ", POS: x=" << pos.x << ", y=" << pos.y
-            << ", z=" << pos.z << "; VEL:" << vel.x << ", y=" << vel.y
-            << ", z=" << vel.z << std::endl;
-}
-
-void
-CalculateThroughput ()
-{
-  Time now = Simulator::Now ();                                         /* Return the simulator's virtual time. */
-  double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8 / 1e5;     /* Convert Application RX Packets to MBits. */
-  std::cout << now.GetSeconds () << "s: \t" << cur << " Mbit/s" << std::endl;
-  lastTotalRx = sink->GetTotalRx ();
-  Simulator::Schedule (MilliSeconds (100), &CalculateThroughput);
 }
 
 int
@@ -174,25 +151,20 @@ main(int argc, char* argv[])
   //proapp.Start (Seconds (0.0));
   //proapp.Stop (Seconds (simTime));
 
-  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
   //consumerHelper.SetAttribute("Batches", StringValue("1s 1 10s 1 20s 1 30s 1"));
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
+  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  consumerHelper.SetAttribute("NumberOfContents", StringValue("1"));
+  //consumerHelper.SetAttribute("NumberOfContents", StringValue("1"));
   ApplicationContainer cunapp = consumerHelper.Install (nodes);
-  sink = StaticCast<PacketSink> (cunapp.Get (0));
   //cunapp.Start (Seconds (1.0));
   //cunapp.Stop (Seconds (simTime));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
-  Simulator::Schedule (Seconds (0.1), &CalculateThroughput);
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
-
-  double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * simTime));
-  std::cout << "\nAverage throughput: " << averageThroughput << " Mbit/s" << std::endl;
 
   for (uint32_t u = 0; u < nodes.GetN (); u++)
     {
@@ -211,6 +183,7 @@ main(int argc, char* argv[])
           continue;
         }
 */
+      ptr->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
       double energyConsumption = ptr->GetTotalEnergyConsumption ();
       totalConsumption += ptr->GetTotalEnergyConsumption ();
       uint16_t n = u+1;
@@ -223,6 +196,7 @@ main(int argc, char* argv[])
   Ptr<BasicEnergySource> basicEnergySrcSink = DynamicCast<BasicEnergySource> (srcSink.Get (0));
   Ptr<DeviceEnergyModel> basicRadioSrcSink = basicEnergySrcSink->FindDeviceEnergyModels ("ns3::WifiRadioEnergyModel").Get(0);
   Ptr<WifiRadioEnergyModel> wifisrcSink = DynamicCast<WifiRadioEnergyModel> (basicRadioSrcSink);
+  wifisrcSink->TraceConnectWithoutContext ("TotalEnergyConsumption", MakeCallback (&TotalEnergy));
   double energyConsumptionSink = wifisrcSink->GetTotalEnergyConsumption ();
   NS_LOG_UNCOND (Simulator::Now ().GetSeconds ()
                 << "s energy consumed by radio = " << energyConsumptionSink * 100 << "mJ");
