@@ -71,7 +71,7 @@ main(int argc, char* argv[])
   // Fix non-unicast data rate to be the same as that of unicast
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",
                       StringValue (phyMode));
-                      
+
   NodeContainer nodes;
   nodes.Create (numberOfnodes);
   
@@ -125,7 +125,7 @@ main(int argc, char* argv[])
                              "Mode", StringValue ("Time"),
                              "Time", StringValue ("10s"),
                              "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                             "Bounds", StringValue ("0|200|0|200"));
+                             "Bounds", StringValue ("0|1200|0|1200"));
   mobility.Install (allNodes);
 
   ndn::StackHelper ndnHelper;
