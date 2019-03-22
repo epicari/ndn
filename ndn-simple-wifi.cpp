@@ -83,6 +83,8 @@ main(int argc, char* argv[])
   NodeContainer sinkNode;
   sinkNode.Create (sNode);
 
+  NodeContainer allNodes = NodeContainer (nodes, sinkNode);
+
   //NodeContainer cm1 = NodeContainer (nodes.Get (0), nodes.Get (1), nodes.Get (2), nodes.Get (3), nodes.Get (4));
 
   WifiHelper wifi;
@@ -112,29 +114,31 @@ main(int argc, char* argv[])
 
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
   //wifiMacHelper.SetType("ns3::ApWifiMac", "Ssid", SsidValue (ssid1));
-  NetDeviceContainer wifiAPch1 = wifi.Install (wifiPhy, wifiMacHelper, sinkNode.Get (0));
+  //NetDeviceContainer wifiAPch1 = wifi.Install (wifiPhy, wifiMacHelper, sinkNode.Get (0));
 
   //wifiMacHelper.SetType("ns3::StaWifiMac", "Ssid", SsidValue (ssid1));
-  NetDeviceContainer wifiSTAch1 = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+  //NetDeviceContainer wifiSTAch1 = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
 
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("100.0"),
-                                 "Y", StringValue ("100.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+                                 "X", StringValue ("1000.0"),
+                                 "Y", StringValue ("1000.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=300|Max=900]"));
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                              "Mode", StringValue ("Time"),
-                             "Time", StringValue ("2s"),
+                             "Time", StringValue ("10s"),
                              "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
                              "Bounds", StringValue ("0|200|0|200"));
-  mobility.InstallAll ();
+  mobility.Install (allNodes);
 
   ndn::StackHelper ndnHelper;
   //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
   ndnHelper.setCsSize(2); // allow just 2 entries to be cached
   ndnHelper.setPolicy("nfd::cs::lru");
-  ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.InstallAll ();
+  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.Install (allNodes);
 
   //ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/self-learning");
@@ -197,7 +201,7 @@ main(int argc, char* argv[])
   eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
 
   ndn::AppDelayTracer::InstallAll("app-delays-trace.txt");
-  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
+  //ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
