@@ -71,12 +71,7 @@ main(int argc, char* argv[])
   // Fix non-unicast data rate to be the same as that of unicast
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",
                       StringValue (phyMode));
-
-  Config::SetDefault ("ns3::RandomWalk2dMobilityModel::Mode", StringValue ("Time"));
-  Config::SetDefault ("ns3::RandomWalk2dMobilityModel::Time", StringValue ("2s"));
-  Config::SetDefault ("ns3::RandomWalk2dMobilityModel::Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"));
-  Config::SetDefault ("ns3::RandomWalk2dMobilityModel::Bounds", StringValue ("0|200|0|200"));
-
+                      
   NodeContainer nodes;
   nodes.Create (numberOfnodes);
   
