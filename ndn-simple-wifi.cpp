@@ -83,7 +83,7 @@ main(int argc, char* argv[])
   NodeContainer sinkNode;
   sinkNode.Create (sNode);
 
-  NodeContainer cm1 = NodeContainer (nodes.Get (0), nodes.Get (1), nodes.Get (2), nodes.Get (3), nodes.Get (4));
+  //NodeContainer cm1 = NodeContainer (nodes.Get (0), nodes.Get (1), nodes.Get (2), nodes.Get (3), nodes.Get (4));
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
@@ -110,12 +110,12 @@ main(int argc, char* argv[])
   WifiMacHelper wifiMacHelper;
   Ssid ssid1 = Ssid ("ssid1");
 
-  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  wifiMacHelper.SetType("ns3::ApWifiMac", "Ssid", SsidValue (ssid1));
+  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  //wifiMacHelper.SetType("ns3::ApWifiMac", "Ssid", SsidValue (ssid1));
   NetDeviceContainer wifiAPch1 = wifi.Install (wifiPhy, wifiMacHelper, sinkNode.Get (0));
 
-  wifiMacHelper.SetType("ns3::StaWifiMac", "Ssid", SsidValue (ssid1));
-  NetDeviceContainer wifiSTAch1 = wifi.Install (wifiPhy, wifiMacHelper, cm1);
+  //wifiMacHelper.SetType("ns3::StaWifiMac", "Ssid", SsidValue (ssid1));
+  NetDeviceContainer wifiSTAch1 = wifi.Install (wifiPhy, wifiMacHelper, nodes);
 
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
@@ -179,7 +179,7 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix("/test/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("64"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(1.0)));  
-  ApplicationContainer proapp = producerHelper.Install (cm1);
+  ApplicationContainer proapp = producerHelper.Install (nodes);
   //proapp.Start (Seconds (0.0));
   //proapp.Stop (Seconds (10.0));
 
@@ -197,6 +197,7 @@ main(int argc, char* argv[])
   eSources.Get (0)->TraceConnectWithoutContext ("RemainingEnergy", MakeCallback (&RemainingEnergyTrace<0>));
 
   ndn::AppDelayTracer::InstallAll("app-delays-trace.txt");
+  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime + 1));
   Simulator::Run();
