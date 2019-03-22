@@ -37,7 +37,7 @@ template <int node>
 void RemainingEnergyTrace (double oldValue, double newValue)
 {
   std::stringstream ss;
-  ss << "energy_" << node << ".log";
+  ss << "50_nodes_energy_" << node << ".log";
 
   static std::fstream f (ss.str ().c_str (), std::ios::out);
 
@@ -49,7 +49,7 @@ main(int argc, char* argv[])
 {
   
   std::string phyMode = "HtMcs7";
-  uint16_t numberOfnodes = 10;
+  uint16_t numberOfnodes = 50;
   uint16_t sNode = 1;
   double voltage = 3.0;
   double initialEnergy = 7.5;
@@ -57,7 +57,7 @@ main(int argc, char* argv[])
   double txPowerEnd = 15.0;
   double idleCurrent = 0.273;
   double txCurrent = 0.380;
-  double simTime = 10.0;
+  double simTime = 30.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
