@@ -17,115 +17,112 @@
  * ndnSIM, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+// ndn-grid.cpp
+
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
+#include "ns3/point-to-point-module.h"
+#include "ns3/point-to-point-layout-module.h"
 #include "ns3/ndnSIM-module.h"
-#include "ns3/yans-wifi-channel.h"
-#include "ns3/yans-wifi-helper.h"
-#include "ns3/on-off-helper.h"
-#include "ns3/packet-socket-helper.h"
-#include "ns3/energy-module.h"
-#include "ns3/mobility-module.h"
-#include "ns3/wifi-module.h"
 
 namespace ns3 {
+
+/**
+ * To run scenario and see what is happening, use the following command:
+ *
+ *     NS_LOG=ndn.Consumer:ndn.Producer ./waf --run=ndn-grid
+ */
+
+class PcapWriter {
+public:
+  PcapWriter(const std::string& file)
+  {
+    PcapHelper helper;
+    m_pcap = helper.CreateFile(file, std::ios::out, PcapHelper::DLT_PPP);
+  }
+
+  void
+  TracePacket(Ptr<const Packet> packet)
+  {
+    static PppHeader pppHeader;
+    pppHeader.SetProtocol(0x0077);
+
+    m_pcap->Write(Simulator::Now(), pppHeader, packet);
+  }
+
+private:
+  Ptr<PcapFileWrapper> m_pcap;
+};
 
 int
 main(int argc, char* argv[])
 {
+  // Setting default parameters for PointToPoint links and channels
+  Config::SetDefault("ns3::PointToPointNetDevice::DataRate", StringValue("1Mbps"));
+  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("10ms"));
+  Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
 
-  // disable fragmentation
-  Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold", 
-                      StringValue("2200"));
-  Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", 
-                      StringValue("2200"));
-  Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", 
-                      StringValue("OfdmRate24Mbps"));
-
+  // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
   CommandLine cmd;
-  cmd.Parse (argc, argv);
+  cmd.Parse(argc, argv);
 
-  NodeContainer nodes;
-  nodes.Create (10);
+  // Creating 3x3 topology
+  PointToPointHelper p2p;
+  PointToPointGridHelper grid(3, 3, p2p);
+  grid.BoundingBox(100, 100, 200, 200);
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
-  ndnHelper.SetDefaultRoutes (true);
-  ndnHelper.Install (nodes);
+  ndnHelper.InstallAll();
+
+  // Set BestRoute strategy
+  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
 
   // Installing global routing interface on all nodes
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-  ndnGlobalRoutingHelper.Install (nodes);
+  ndnGlobalRoutingHelper.InstallAll();
 
-  //ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
+  // Getting containers for the consumer/producer
+  Ptr<Node> producer = grid.GetNode(2, 2);
+  NodeContainer consumerNodes;
+  for (uint16_t u = 0; u < 3; u++)
+    {
+      for (uint16_t n = 0; n < 3; n++)
+        {
+          consumerNodes.Add(grid.GetNode(u, n));
+          if (u == 2 && n == 2)
+            break;
+        }
+    }
 
-  WifiHelper wifi;
-  wifi.SetStandard (WIFI_PHY_STANDARD_80211a);
-  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
-                                "DataMode", StringValue ("OfdmRate6Mbps"));
- 
-  WifiMacHelper wifiMac;
-  wifiMac.SetType ("ns3::AdhocWifiMac");
-
-  YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
-  wifiChannel.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
-  wifiChannel.AddPropagationLoss ("ns3::FriisPropagationLossModel");
-  
-  YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default ();
-  wifiPhy.SetChannel (wifiChannel.Create ());
-
-  NetDeviceContainer netDevices = wifi.Install (wifiPhy, wifiMac, nodes);
-
-  MobilityHelper mobility;
-  
-  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("100.0"),
-                                 "Y", StringValue ("100.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"));
-  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  mobility.Install (nodes);
-/*
-  PacketSocketAddress socket;
-  socket.SetAllDevices();
-  socket.SetPhysicalAddress (netDevices.Get(0)->GetAddress());
-  socket.SetProtocol (0);
-
-  Ptr<Node> sNode = nodes.Get(0);
-  TypeId pstid = TypeId::LookupByName ("ns3::PacketSocketFactory");
-  Ptr<Socket> sinkSocket = Socket::CreateSocket (sNode, pstid);
-  sinkSocket->Bind (socket);
-*/
-/*
-  BasicEnergySourceHelper basicEnergySource;
-  basicEnergySource.Set ("BasicEnergySourceInitialEnergyJ", DoubleValue (100));
-  EnergySourceContainer energySourceContainer;
-  energySourceContainer = basicEnergySource.Install (nodes);
-  WifiRadioEnergyModelHelper wifiRadioEnergyModel;
-  DeviceEnergyModelContainer deviceEnergyContainer;
-  deviceEnergyContainer = wifiRadioEnergyModel.Install (netDevices, energySourceContainer);
-*/
-
-  ndn::AppHelper producerHelper("ns3::ndn::Producer");
-  producerHelper.SetPrefix("/");
-  producerHelper.SetAttribute("PayloadSize", StringValue("64"));
-  producerHelper.Install (nodes.Get(i));
+  // Install NDN applications
+  std::string prefix = "/prefix";
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
-  auto apps = consumerHelper.Install (nodes.Get(j));
-  //apps.Stop (Seconds (0.1));
+  consumerHelper.SetPrefix(prefix);
+  consumerHelper.SetAttribute("Frequency", StringValue("100")); // 100 interests a second
+  consumerHelper.Install(consumerNodes);
 
-  for (uint16_t i = 0; i <= nodes; i++) {
-    auto producer = producerHelper.Install (nodes.Get(i));
-      for (uint16_t j = i+1; j < 11;)
-  }
+  ndn::AppHelper producerHelper("ns3::ndn::Producer");
+  producerHelper.SetPrefix(prefix);
+  producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
+  producerHelper.SetAttribute("Signature", UintegerValue(100));
+  producerHelper.SetAttribute("KeyLocator", StringValue("/unique/key/locator"));
+  producerHelper.Install(producer);
+
+  // Add /prefix origins to ndn::GlobalRouter
+  ndnGlobalRoutingHelper.AddOrigins(prefix, producer);
+
+  PcapWriter trace("ndn-grid-trace.pcap");
+  Config::ConnectWithoutContext("/NodeList/*/DeviceList/*/$ns3::PointToPointNetDevice/MacTx",
+                                MakeCallback(&PcapWriter::TracePacket, &trace));
 
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes();
-  Packet::EnablePrinting (); 
 
-  Simulator::Stop(Seconds(100.0));
+  Simulator::Stop(Seconds(20.0));
+
+  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
 
   Simulator::Run();
   Simulator::Destroy();
