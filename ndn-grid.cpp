@@ -73,6 +73,8 @@ main(int argc, char* argv[])
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
+  ndnHelper.setCsSize(2);
+  ndnHelper.setPolicy("nfd::cs::lru");
   ndnHelper.InstallAll();
 
   // Set BestRoute strategy
@@ -84,6 +86,7 @@ main(int argc, char* argv[])
 
   // Getting containers for the consumer/producer
   Ptr<Node> producer = grid.GetNode(2, 2);
+  
   NodeContainer consumerNodes;
   for (uint16_t u = 0; u < 3; u++)
     {
@@ -100,7 +103,7 @@ main(int argc, char* argv[])
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
-  consumerHelper.SetAttribute("Frequency", StringValue("100")); // 100 interests a second
+  consumerHelper.SetAttribute("Frequency", StringValue("10"));
   consumerHelper.Install(consumerNodes);
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
