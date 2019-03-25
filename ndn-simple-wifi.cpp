@@ -151,11 +151,11 @@ main(int argc, char* argv[])
 
   FlowMonitorHelper flowmon;
   Ptr<FlowMonitor> monitor = flowmon.InstallAll ();
-
+/*
   AnimationInterface anim (anim_name.c_str ());
   anim.EnablePacketMetadata ();
   anim.EnableIpv4L3ProtocolCounters (Seconds (0), Seconds (10));
-
+*/
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
