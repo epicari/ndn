@@ -28,6 +28,7 @@
 #include "ns3/ndnSIM-module.h"
 #include "ns3/log.h"
 #include "ns3/flow-monitor-module.h"
+#include "ns3/netanim-module.h"
 
 using namespace std;
 namespace ns3 {
@@ -152,13 +153,15 @@ main(int argc, char* argv[])
   Ptr<FlowMonitor> monitor = flowmon.InstallAll ();
 
   AnimationInterface anim (anim_name.c_str ());
+  anim.EnablePacketMetadata ();
+  anim.EnableIpv4L3ProtocolCounters (Seconds (0), Seconds (10));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
   monitor->CheckForLostPackets ();
-  flowmon->SerializeToXmlFile (flow_name.c_str(), true, true);
+  flowmon.SerializeToXmlFile (flow_name.c_str(), true, true);
 
   ndn::L3RateTracer::InstallAll("wifi-rate-trace.txt", Seconds(0.5));
 
