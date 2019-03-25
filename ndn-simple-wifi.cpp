@@ -39,13 +39,13 @@ int
 main(int argc, char* argv[])
 {
   std::string flow_name ("n-node-ppp.xml");
-  std::string anim_name ("n-node-ppp.anim.xml");
+  //std::string anim_name ("n-node-ppp.anim.xml");
   std::string phyMode = "HtMcs7";
   uint16_t numberOfnodes = 30;
   uint16_t sNode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 15.0;
-  double simTime = 30.0;
+  double simTime = 60.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
