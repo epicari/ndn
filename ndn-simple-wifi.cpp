@@ -26,9 +26,6 @@
 #include "ns3/energy-module.h"
 #include "ns3/wifi-radio-energy-model-helper.h"
 #include "ns3/ndnSIM-module.h"
-#include "ns3/log.h"
-#include "ns3/flow-monitor-module.h"
-#include "ns3/netanim-module.h"
 
 using namespace std;
 namespace ns3 {
@@ -38,8 +35,6 @@ NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 int
 main(int argc, char* argv[])
 {
-  std::string flow_name ("n-node-ppp.xml");
-  //std::string anim_name ("n-node-ppp.anim.xml");
   std::string phyMode = "HtMcs7";
   uint16_t numberOfnodes = 30;
   uint16_t sNode = 1;
@@ -149,21 +144,13 @@ main(int argc, char* argv[])
   //cunapp.Start (Seconds (1.0));
   //cunapp.Stop (Seconds (10.0));
 
-  FlowMonitorHelper flowmon;
-  Ptr<FlowMonitor> monitor = flowmon.InstallAll ();
-/*
-  AnimationInterface anim (anim_name.c_str ());
-  anim.EnablePacketMetadata ();
-  anim.EnableIpv4L3ProtocolCounters (Seconds (0), Seconds (10));
-*/
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
-  monitor->CheckForLostPackets ();
-  flowmon.SerializeToXmlFile (flow_name.c_str(), true, true);
-
-  ndn::L3RateTracer::InstallAll("wifi-rate-trace.txt", Seconds(0.5));
+  ndn::L3RateTracer::InstallAll("wifi-l3-rate-trace.txt", Seconds(0.5));
+  ndn::L2RateTracer::InstallAll("wifi-l2-rate-trace.txt", Seconds(0.5));
+  ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
 
   Simulator::Destroy();
 

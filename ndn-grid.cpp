@@ -78,7 +78,7 @@ main(int argc, char* argv[])
   ndnHelper.InstallAll();
 
   // Set BestRoute strategy
-  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route2");
 
   // Installing global routing interface on all nodes
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
@@ -125,7 +125,9 @@ main(int argc, char* argv[])
 
   Simulator::Stop(Seconds(20.0));
 
-  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
+  ndn::L3RateTracer::InstallAll("wifi-l3-rate-trace.txt", Seconds(0.5));
+  ndn::L2RateTracer::InstallAll("wifi-l2-rate-trace.txt", Seconds(0.5));
+  ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
 
   Simulator::Run();
   Simulator::Destroy();
