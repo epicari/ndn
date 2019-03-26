@@ -96,8 +96,8 @@ main(int argc, char* argv[])
   producerHelper.Install(nodes.Get(4)); // last node
 
 
-  ndn::L3RateTracer::InstallAll("grid-l3-rate-trace.txt", Seconds(0.5));
-  ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
+  ndn::L3RateTracer::InstallAll("simple-l3-rate-trace.txt", Seconds(0.5));
+  ndn::AppDelayTracer::InstallAll("simple-delay-tracer.txt");
   Simulator::Stop(Seconds(20.0));
 
   Simulator::Run();
