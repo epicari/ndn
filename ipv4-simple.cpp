@@ -43,8 +43,7 @@ void
 CalculateThroughput ()
 {
   Time now = Simulator::Now ();                                        
-  //double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8 / 1e5; 
-  double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8;
+  double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8 / 1e5; 
   std::cout << now.GetSeconds () << "s: \t" << cur << " Mbit/s" << std::endl;
   lastTotalRx = sink->GetTotalRx ();
   Simulator::Schedule (MilliSeconds (100), &CalculateThroughput);
