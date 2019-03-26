@@ -39,9 +39,11 @@ main(int argc, char* argv[])
 {
   uint16_t numberOfNodes = 5;
   uint16_t distance = 1000;
+  uint16_t simTime = 30;
+
   // setting default parameters for PointToPoint links and channels
   Config::SetDefault("ns3::PointToPointNetDevice::DataRate", StringValue("1Mbps"));
-  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("10ms"));
+  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("100ms"));
   Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
 
   // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
@@ -64,7 +66,6 @@ main(int argc, char* argv[])
   ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll();
 
-
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfNodes; i++)
     {
@@ -75,7 +76,6 @@ main(int argc, char* argv[])
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator(positionAlloc);
   mobility.InstallAll();
-
 
   // Choosing forwarding strategy
   ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/best-route");
@@ -99,7 +99,7 @@ main(int argc, char* argv[])
 
   ndn::L3RateTracer::InstallAll("simple-l3-rate-trace.txt", Seconds(0.5));
   ndn::AppDelayTracer::InstallAll("simple-delay-tracer.txt");
-  Simulator::Stop(Seconds(20.0));
+  Simulator::Stop(Seconds(simTime));
 
   Simulator::Run();
   Simulator::Destroy();

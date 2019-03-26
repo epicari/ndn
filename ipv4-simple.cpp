@@ -23,6 +23,7 @@
 #include "ns3/network-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/mobility-module.h"
+#include "ns3/internet-module.h"
 
 namespace ns3 {
 
@@ -33,14 +34,47 @@ namespace ns3 {
  *     NS_LOG=ndn.Consumer:ndn.Producer ./waf --run=ndn-simple
  */
 
+void
+CalculateThroughput ()
+{
+  Time now = Simulator::Now ();                                        
+  double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8 / 1e5; 
+  std::cout << now.GetSeconds () << "s: \t" << cur << " Mbit/s" << std::endl;
+  lastTotalRx = sink->GetTotalRx ();
+  Simulator::Schedule (MilliSeconds (100), &CalculateThroughput);
+}
+
 int
 main(int argc, char* argv[])
 {
   uint16_t numberOfNodes = 5;
   uint16_t distance = 1000;
+  uint16_t simTime = 30;
+
+  std::string tcpVariant = "TcpNewReno";
+
+  tcpVariant = std::string ("ns3::") + tcpVariant;
+  // Select TCP variant
+  if (tcpVariant.compare ("ns3::TcpWestwoodPlus") == 0)
+    {
+      // TcpWestwoodPlus is not an actual TypeId name; we need TcpWestwood here
+      Config::SetDefault ("ns3::TcpL4Protocol::SocketType", TypeIdValue (TcpWestwood::GetTypeId ()));
+      // the default protocol type in ns3::TcpWestwood is WESTWOOD
+      Config::SetDefault ("ns3::TcpWestwood::ProtocolType", EnumValue (TcpWestwood::WESTWOODPLUS));
+    }
+  else
+    {
+      TypeId tcpTid;
+      NS_ABORT_MSG_UNLESS (TypeId::LookupByNameFailSafe (tcpVariant, &tcpTid), "TypeId " << tcpVariant << " not found");
+      Config::SetDefault ("ns3::TcpL4Protocol::SocketType", TypeIdValue (TypeId::LookupByName (tcpVariant)));
+    }
+  
+  /* Configure TCP Options */
+  Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (64));
+
   // setting default parameters for PointToPoint links and channels
   Config::SetDefault("ns3::PointToPointNetDevice::DataRate", StringValue("1Mbps"));
-  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("10ms"));
+  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("100ms"));
   Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
 
   // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
@@ -53,16 +87,29 @@ main(int argc, char* argv[])
 
   // Connecting nodes using two links
   PointToPointHelper p2p;
-  p2p.Install(nodes.Get(0), nodes.Get(1));
-  p2p.Install(nodes.Get(1), nodes.Get(2));
-  p2p.Install(nodes.Get(2), nodes.Get(3));
-  p2p.Install(nodes.Get(3), nodes.Get(4));
+  NetDeviceContainer p2pinterA = p2p.Install(nodes.Get(0), nodes.Get(1));
+  NetDeviceContainer p2pinterB = p2p.Install(nodes.Get(1), nodes.Get(2));
+  NetDeviceContainer p2pinterC = p2p.Install(nodes.Get(2), nodes.Get(3));
+  NetDeviceContainer p2pinterD = p2p.Install(nodes.Get(3), nodes.Get(4));
 
-  // Install NDN stack on all nodes
-  ndn::StackHelper ndnHelper;
-  ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.InstallAll();
+  // Install internet stack on all nodes
+  InternetStackHelper stack;
+  stack.InstallAll ();
 
+  Ipv4AddressHelper address;
+  address.SetBase ("10.1.1.0", "255.255.255.0");
+  Ipv4InterfaceContainer inetfaceA = address.Assign (p2pinterA);
+  Ipv4Address remoteHostAddr = inetfaceA.GetAddress (0);
+
+  address.SetBase ("10.1.2.0", "255.255.255.0");
+  Ipv4InterfaceContainer inetfaceB = address.Assign (p2pinterB);
+
+  address.SetBase ("10.1.3.0", "255.255.255.0");
+  Ipv4InterfaceContainer inetfaceC = address.Assign (p2pinterC);
+
+  address.SetBase ("10.1.4.0", "255.255.255.0");
+  Ipv4InterfaceContainer inetfaceD = address.Assign (p2pinterD);
+  Ipv4Address sinkHostAddr = inetfaceD.GetAddress (1);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfNodes; i++)
@@ -75,32 +122,29 @@ main(int argc, char* argv[])
   mobility.SetPositionAllocator(positionAlloc);
   mobility.InstallAll();
 
-
-  // Choosing forwarding strategy
-  ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/best-route");
-
   // Installing applications
 
+  uint16_t port = 9;
   // Consumer
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  // Consumer will request /prefix/0, /prefix/1, ...
-  consumerHelper.SetPrefix("/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("10")); // 10 interests a second
-  consumerHelper.Install(nodes.Get(0));                        // first node
+  PacketSinkHelper consumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
+  ApplicationContainer sinkApp = consumerHelper.Install(nodes.Get(4));                        // first node
+  sink = StaticCast<PacketSink> (sinkApp.Get (0));
 
   // Producer
-  ndn::AppHelper producerHelper("ns3::ndn::Producer");
+  BulkSendHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (sinkHostAddr, port));
   // Producer will reply to all requests starting with /prefix
-  producerHelper.SetPrefix("/prefix");
-  producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
-  producerHelper.Install(nodes.Get(4)); // last node
+  producerHelper.SetAttribute("MaxBytes", UintegerValue (100000));
+  producerHelper.SetAttribute("SendSize", UintegerValue (1024));
+  producerHelper.Install(nodes.Get(0)); // last node
 
-
-  ndn::L3RateTracer::InstallAll("simple-l3-rate-trace.txt", Seconds(0.5));
-  ndn::AppDelayTracer::InstallAll("simple-delay-tracer.txt");
-  Simulator::Stop(Seconds(20.0));
+  Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
+  Simulator::Stop(Seconds(simTime + 1));
 
   Simulator::Run();
+
+  double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * simTime));
+  std::cout << "\nAverage throughput: " << averageThroughput << " Mbit/s" << std::endl;
+
   Simulator::Destroy();
 
   return 0;
