@@ -25,6 +25,7 @@
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/applications-module.h"
+#include "ns3/tcp-westwood.h"
 
 namespace ns3 {
 
@@ -77,8 +78,6 @@ main(int argc, char* argv[])
   Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (64));
 
   // setting default parameters for PointToPoint links and channels
-  Config::SetDefault("ns3::PointToPointNetDevice::DataRate", StringValue("1Mbps"));
-  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("10ms"));
   Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
 
   // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
@@ -91,6 +90,9 @@ main(int argc, char* argv[])
 
   // Connecting nodes using two links
   PointToPointHelper p2p;
+  p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Mb/s")));
+  p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
+  p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   NetDeviceContainer p2pinterA = p2p.Install(nodes.Get(0), nodes.Get(1));
   NetDeviceContainer p2pinterB = p2p.Install(nodes.Get(1), nodes.Get(2));
   NetDeviceContainer p2pinterC = p2p.Install(nodes.Get(2), nodes.Get(3));
@@ -140,7 +142,7 @@ main(int argc, char* argv[])
 
   // Producer
   BulkSendHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (sinkHostAddr, port));
-  producerHelper.SetAttribute("MaxBytes", UintegerValue (100000));
+  producerHelper.SetAttribute("MaxBytes", UintegerValue (1000000000));
   producerHelper.SetAttribute("SendSize", UintegerValue (1024));
   remoteApp.Add (producerHelper.Install(nodes.Get(0)));
 
