@@ -43,7 +43,8 @@ void
 CalculateThroughput ()
 {
   Time now = Simulator::Now ();                                        
-  double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8 / 1e5; 
+  //double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8 / 1e5; 
+  double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8;
   std::cout << now.GetSeconds () << "s: \t" << cur << " Mbit/s" << std::endl;
   lastTotalRx = sink->GetTotalRx ();
   Simulator::Schedule (MilliSeconds (100), &CalculateThroughput);
@@ -153,10 +154,6 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
 
   Simulator::Run();
-
-  double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * simTime));
-  std::cout << "\nAverage throughput: " << averageThroughput << " Mbit/s" << std::endl;
-
   Simulator::Destroy();
 
   return 0;
