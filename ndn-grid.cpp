@@ -126,7 +126,7 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(20.0));
 
   ndn::L3RateTracer::InstallAll("wifi-l3-rate-trace.txt", Seconds(0.5));
-  ndn::L2RateTracer::InstallAll("wifi-l2-rate-trace.txt", Seconds(0.5));
+  //ndn::L2RateTracer::InstallAll("wifi-l2-rate-trace.txt", Seconds(0.5));
   ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
 
   Simulator::Run();
