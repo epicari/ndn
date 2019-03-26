@@ -68,7 +68,7 @@ main(int argc, char* argv[])
 
   // Creating 3x3 topology
   PointToPointHelper p2p;
-  PointToPointGridHelper grid(3, 3, p2p);
+  PointToPointGridHelper grid(5, 5, p2p);
   grid.BoundingBox(100, 100, 200, 200);
 
   // Install NDN stack on all nodes
@@ -85,18 +85,12 @@ main(int argc, char* argv[])
   ndnGlobalRoutingHelper.InstallAll();
 
   // Getting containers for the consumer/producer
-  Ptr<Node> producer = grid.GetNode(2, 2);
+  Ptr<Node> producer = grid.GetNode(4, 4);
   
   NodeContainer consumerNodes;
-  for (uint16_t u = 0; u < 3; u++)
-    {
-      for (uint16_t n = 0; n < 3; n++)
-        {
-          consumerNodes.Add(grid.GetNode(u, n));
-          if (u == 2 && n == 2)
-            break;
-        }
-    }
+
+  consumerNodes.Add(grid.GetNode(0, 0));
+  
 
   // Install NDN applications
   std::string prefix = "/prefix";
@@ -125,7 +119,7 @@ main(int argc, char* argv[])
 
   Simulator::Stop(Seconds(20.0));
 
-  ndn::L3RateTracer::InstallAll("wifi-l3-rate-trace.txt", Seconds(0.5));
+  ndn::L3RateTracer::InstallAll("grid-l3-rate-trace.txt", Seconds(0.5));
   //ndn::L2RateTracer::InstallAll("wifi-l2-rate-trace.txt", Seconds(0.5));
   ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
 
