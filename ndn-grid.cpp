@@ -68,8 +68,8 @@ main(int argc, char* argv[])
 
   // Creating 3x3 topology
   PointToPointHelper p2p;
-  PointToPointGridHelper grid(5, 5, p2p);
-  grid.BoundingBox(100, 100, 200, 200);
+  PointToPointGridHelper grid(3, 3, p2p);
+  grid.BoundingBox(1000, 1000, 2000, 2000);
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
@@ -78,20 +78,18 @@ main(int argc, char* argv[])
   ndnHelper.InstallAll();
 
   // Set BestRoute strategy
-  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route2");
+  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
 
   // Installing global routing interface on all nodes
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll();
 
   // Getting containers for the consumer/producer
-  Ptr<Node> producer = grid.GetNode(4, 4);
+  Ptr<Node> producer = grid.GetNode(2, 2);
   
   NodeContainer consumerNodes;
-
   consumerNodes.Add(grid.GetNode(0, 0));
   
-
   // Install NDN applications
   std::string prefix = "/prefix";
 
@@ -117,7 +115,7 @@ main(int argc, char* argv[])
   // Calculate and install FIBs
   ndn::GlobalRoutingHelper::CalculateRoutes();
 
-  Simulator::Stop(Seconds(20.0));
+  Simulator::Stop(Seconds(30.0));
 
   ndn::L3RateTracer::InstallAll("grid-l3-rate-trace.txt", Seconds(0.5));
   //ndn::L2RateTracer::InstallAll("wifi-l2-rate-trace.txt", Seconds(0.5));
