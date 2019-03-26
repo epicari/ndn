@@ -42,8 +42,6 @@ main(int argc, char* argv[])
   uint16_t simTime = 30;
 
   // setting default parameters for PointToPoint links and channels
-  Config::SetDefault("ns3::PointToPointNetDevice::DataRate", StringValue("1Mbps"));
-  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("100ms"));
   Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
 
   // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
@@ -56,6 +54,9 @@ main(int argc, char* argv[])
 
   // Connecting nodes using two links
   PointToPointHelper p2p;
+  p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Mb/s")));
+  p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
+  p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   p2p.Install(nodes.Get(0), nodes.Get(1));
   p2p.Install(nodes.Get(1), nodes.Get(2));
   p2p.Install(nodes.Get(2), nodes.Get(3));
