@@ -58,14 +58,18 @@ main(int argc, char* argv[])
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   p2p.Install(nodes.Get(0), nodes.Get(1));
+  p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.100)));
   p2p.Install(nodes.Get(1), nodes.Get(2));
+  p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   p2p.Install(nodes.Get(2), nodes.Get(3));
+  p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   p2p.Install(nodes.Get(3), nodes.Get(4));
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "100");
+  ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll();
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
