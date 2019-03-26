@@ -38,7 +38,7 @@ int
 main(int argc, char* argv[])
 {
   uint16_t numberOfNodes = 5;
-  uint16_t distance = 1000;
+  uint16_t distance = 400;
   uint16_t simTime = 10;
 
   // setting default parameters for PointToPoint links and channels
@@ -71,7 +71,7 @@ main(int argc, char* argv[])
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfNodes; i++)
     {
-      positionAlloc->Add (Vector(0, distance * i, 0));
+      positionAlloc->Add (Vector(distance * i, 0, 0));
     }
 
   MobilityHelper mobility;
@@ -88,7 +88,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   // Consumer will request /prefix/0, /prefix/1, ...
   consumerHelper.SetPrefix("/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("1")); // 10 interests a second
+  consumerHelper.SetAttribute("Frequency", StringValue("10")); // 10 interests a second
   ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));                        // first node
 
   // Producer

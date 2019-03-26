@@ -53,7 +53,7 @@ int
 main(int argc, char* argv[])
 {
   uint16_t numberOfNodes = 5;
-  uint16_t distance = 1000;
+  uint16_t distance = 400;
   uint16_t simTime = 10;
 
   std::string tcpVariant = "TcpNewReno";
@@ -121,7 +121,7 @@ main(int argc, char* argv[])
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfNodes; i++)
     {
-      positionAlloc->Add (Vector(0, distance * i, 0));
+      positionAlloc->Add (Vector(distance * i, 0, 0));
     }
 
   MobilityHelper mobility;
