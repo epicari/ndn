@@ -24,6 +24,7 @@
 #include "ns3/point-to-point-module.h"
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
+#include "ns3/applications-module.h"
 
 namespace ns3 {
 
@@ -33,6 +34,9 @@ namespace ns3 {
  *
  *     NS_LOG=ndn.Consumer:ndn.Producer ./waf --run=ndn-simple
  */
+
+Ptr<PacketSink> sink;
+uint64_t lastTotalRx = 0;
 
 void
 CalculateThroughput ()
