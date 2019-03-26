@@ -54,7 +54,7 @@ main(int argc, char* argv[])
 
   // Connecting nodes using two links
   PointToPointHelper p2p;
-  p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("1Mb/s")));
+  p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Mb/s")));
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   p2p.Install(nodes.Get(0), nodes.Get(1));
@@ -101,9 +101,9 @@ main(int argc, char* argv[])
   cons.Start (Seconds (1.0));
   prod.Start (Seconds (0.0));
 
-  ndn::L3RateTracer::InstallAll("simple-l3-rate-trace.txt", Seconds(0.5));
-  ndn::AppDelayTracer::InstallAll("simple-delay-tracer.txt");
-  ndn::CsTracer::InstallAll("simple-cs-trace.txt", Seconds(1));
+  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
+  ndn::AppDelayTracer::InstallAll("delay-tracer.txt");
+  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
   Simulator::Stop(Seconds(simTime + 1));
 
   Simulator::Run();

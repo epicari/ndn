@@ -90,7 +90,7 @@ main(int argc, char* argv[])
 
   // Connecting nodes using two links
   PointToPointHelper p2p;
-  p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("1Mb/s")));
+  p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Mb/s")));
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   NetDeviceContainer p2pinterA = p2p.Install(nodes.Get(0), nodes.Get(1));
