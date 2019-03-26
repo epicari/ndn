@@ -141,15 +141,15 @@ main(int argc, char* argv[])
   sink = StaticCast<PacketSink> (sinkApp.Get (0));
 
   // Producer
-  /*BulkSendHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (sinkHostAddr, port));
-  producerHelper.SetAttribute("MaxBytes", UintegerValue (1000000000));
-  producerHelper.SetAttribute("SendSize", UintegerValue (1040));
-  */
-   OnOffHelper producerHelper ("ns3::TcpSocketFactory", (InetSocketAddress (sinkHostAddr, port)));
+  BulkSendHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (sinkHostAddr, port));
+  producerHelper.SetAttribute("MaxBytes", UintegerValue (1000));
+  producerHelper.SetAttribute("SendSize", UintegerValue (1000));
+  
+  /*OnOffHelper producerHelper ("ns3::TcpSocketFactory", (InetSocketAddress (sinkHostAddr, port)));
   producerHelper.SetAttribute ("PacketSize", UintegerValue (1040));
   producerHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   producerHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
-  remoteApp.Add (producerHelper.Install(nodes.Get(0)));
+  */remoteApp.Add (producerHelper.Install(nodes.Get(0)));
 
   //sinkApp.Start (Seconds (0.0));
   //remoteApp.Start (Seconds (0.0));
