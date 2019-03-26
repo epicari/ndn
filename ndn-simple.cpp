@@ -92,7 +92,7 @@ main(int argc, char* argv[])
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   // Consumer will request /prefix/0, /prefix/1, ...
   consumerHelper.SetPrefix("/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  consumerHelper.SetAttribute("Frequency", StringValue("100"));
   //consumerHelper.SetAttribute("NumberOfContents", StringValue("10"));
   ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
 
@@ -101,7 +101,7 @@ main(int argc, char* argv[])
   // Producer will reply to all requests starting with /prefix
   ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetPrefix("/prefix");
-  producerHelper.SetAttribute("PayloadSize", StringValue("1000000"));
+  producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
   ApplicationContainer prod = producerHelper.Install(nodes.Get(4));
 
