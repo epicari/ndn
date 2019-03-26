@@ -65,7 +65,7 @@ main(int argc, char* argv[])
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "100");
+  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "100");
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
@@ -93,7 +93,7 @@ main(int argc, char* argv[])
   // Consumer will request /prefix/0, /prefix/1, ...
   consumerHelper.SetPrefix("/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  consumerHelper.SetAttribute("NumberOfContents", StringValue("100000"));
+  consumerHelper.SetAttribute("NumberOfContents", StringValue("10000"));
   ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
 
   // Producer
@@ -102,7 +102,7 @@ main(int argc, char* argv[])
   ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1000"));
-  //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
   ApplicationContainer prod = producerHelper.Install(nodes.Get(4));
 
   //cons.Start (Seconds (0.0));
