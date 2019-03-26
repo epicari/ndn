@@ -94,7 +94,6 @@ main(int argc, char* argv[])
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   // Producer will reply to all requests starting with /prefix
-  ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1040"));
   ApplicationContainer prod = producerHelper.Install(nodes.Get(4)); // last node
