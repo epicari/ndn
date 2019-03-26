@@ -78,7 +78,7 @@ main(int argc, char* argv[])
 
   // setting default parameters for PointToPoint links and channels
   Config::SetDefault("ns3::PointToPointNetDevice::DataRate", StringValue("1Mbps"));
-  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("100ms"));
+  Config::SetDefault("ns3::PointToPointChannel::Delay", StringValue("10ms"));
   Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
 
   // Read optional command-line parameters (e.g., enable visualizer with ./waf --run=<> --visualize
@@ -103,7 +103,6 @@ main(int argc, char* argv[])
   Ipv4AddressHelper address;
   address.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer inetfaceA = address.Assign (p2pinterA);
-  Ipv4Address remoteHostAddr = inetfaceA.GetAddress (0);
 
   address.SetBase ("10.1.2.0", "255.255.255.0");
   Ipv4InterfaceContainer inetfaceB = address.Assign (p2pinterB);
