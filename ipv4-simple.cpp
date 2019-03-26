@@ -98,7 +98,7 @@ main(int argc, char* argv[])
 
   // Install internet stack on all nodes
   InternetStackHelper stack;
-  stack.InstallAll ();
+  stack.Install (nodes);
 
   Ipv4AddressHelper address;
   address.SetBase ("10.1.1.0", "255.255.255.0");
@@ -115,6 +115,8 @@ main(int argc, char* argv[])
   Ipv4InterfaceContainer inetfaceD = address.Assign (p2pinterD);
   Ipv4Address sinkHostAddr = inetfaceD.GetAddress (1);
 
+  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfNodes; i++)
     {
@@ -124,7 +126,7 @@ main(int argc, char* argv[])
   MobilityHelper mobility;
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator(positionAlloc);
-  mobility.InstallAll();
+  mobility.Install (nodes);
 
   // Installing applications
 
@@ -133,29 +135,18 @@ main(int argc, char* argv[])
   ApplicationContainer sinkApp;
   ApplicationContainer remoteApp;
   // Consumer
-  PacketSinkHelper dlconsumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
-  sinkApp.Add (dlconsumerHelper.Install(nodes.Get(4)));
+  PacketSinkHelper consumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
+  sinkApp.Add (consumerHelper.Install(nodes.Get(4)));
   sink = StaticCast<PacketSink> (sinkApp.Get (0));
 
-  PacketSinkHelper ulconsumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
-  sinkApp.Add (ulconsumerHelper.Install(nodes.Get(0)));
-
   // Producer
-  BulkSendHelper dlproducerHelper ("ns3::TcpSocketFactory", InetSocketAddress (sinkHostAddr, port));
-  dlproducerHelper.SetAttribute("MaxBytes", UintegerValue (100000));
-  dlproducerHelper.SetAttribute("SendSize", UintegerValue (1024));
-  remoteApp.Add (dlproducerHelper.Install(nodes.Get(0)));
-
-  BulkSendHelper ulproducerHelper ("ns3::TcpSocketFactory", InetSocketAddress (remoteHostAddr, port));
-  ulproducerHelper.SetAttribute("MaxBytes", UintegerValue (100000));
-  ulproducerHelper.SetAttribute("SendSize", UintegerValue (1024));
-  remoteApp.Add (ulproducerHelper.Install(nodes.Get(4)));
-
-  sinkApp.Start (Seconds (0.01));
-  remoteApp.Start (Seconds (0.01));
+  BulkSendHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (sinkHostAddr, port));
+  producerHelper.SetAttribute("MaxBytes", UintegerValue (100000));
+  //producerHelper.SetAttribute("SendSize", UintegerValue (1024));
+  remoteApp.Add (producerHelper.Install(nodes.Get(0)));
 
   Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
-  Simulator::Stop(Seconds(simTime + 1));
+  Simulator::Stop(Seconds(simTime));
 
   Simulator::Run();
 
