@@ -153,7 +153,7 @@ main(int argc, char* argv[])
   Ptr<Ipv4> ipv4 = n1->GetObject<Ipv4> ();
   uint32_t ipv4Index = 2;
 
-  Simulator::Schedule (Seconds (0.1), &CalculateThroughput);
+  Simulator::Schedule (Seconds(0.5), &CalculateThroughput);
   Simulator::Schedule (Seconds(2.0), &Ipv4::SetDown, ipv4, ipv4Index);
   Simulator::Schedule (Seconds(5.0), &Ipv4::SetUp, ipv4, ipv4Index);
   Simulator::Stop(Seconds(simTime + 1));
