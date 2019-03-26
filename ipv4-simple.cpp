@@ -146,10 +146,10 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("SendSize", UintegerValue (1040));
   remoteApp.Add (producerHelper.Install(nodes.Get(0)));
 
-  sinkApp.Start (Seconds (0.0));
-  remoteApp.Start (Seconds (1.0));
+  //sinkApp.Start (Seconds (0.0));
+  //remoteApp.Start (Seconds (0.0));
 
-  Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
+  Simulator::Schedule (Seconds (0.1), &CalculateThroughput);
   Simulator::Stop(Seconds(simTime + 1));
 
   Simulator::Run();

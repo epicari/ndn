@@ -98,8 +98,8 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("PayloadSize", StringValue("1040"));
   ApplicationContainer prod = producerHelper.Install(nodes.Get(4)); // last node
 
-  cons.Start (Seconds (1.0));
-  prod.Start (Seconds (0.0));
+  //cons.Start (Seconds (0.0));
+  //prod.Start (Seconds (0.0));
 
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
   ndn::AppDelayTracer::InstallAll("delay-tracer.txt");
