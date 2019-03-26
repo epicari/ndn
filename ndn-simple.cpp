@@ -99,7 +99,7 @@ main(int argc, char* argv[])
   // Producer will reply to all requests starting with /prefix
   ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetPrefix("/prefix");
-  producerHelper.SetAttribute("PayloadSize", StringValue("1040"));
+  producerHelper.SetAttribute("PayloadSize", StringValue("1000"));
   //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
   ApplicationContainer prod = producerHelper.Install(nodes.Get(4)); // last node
 
