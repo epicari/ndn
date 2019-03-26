@@ -24,7 +24,7 @@
 #include "ns3/point-to-point-module.h"
 #include "ns3/ndnSIM-module.h"
 #include "ns3/mobility-module.h"
-
+#include "ns3/ndnSIM/helper/ndn-link-control-helper.hpp"
 namespace ns3 {
 
 /**
