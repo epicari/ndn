@@ -53,7 +53,7 @@ main(int argc, char* argv[])
 {
   uint16_t numberOfNodes = 5;
   uint16_t distance = 1000;
-  uint16_t simTime = 10.1;
+  uint16_t simTime = 11.1;
 
   std::string tcpVariant = "TcpNewReno";
 
@@ -141,8 +141,11 @@ main(int argc, char* argv[])
   // Producer
   BulkSendHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (sinkHostAddr, port));
   producerHelper.SetAttribute("MaxBytes", UintegerValue (100000));
-  //producerHelper.SetAttribute("SendSize", UintegerValue (1024));
+  producerHelper.SetAttribute("SendSize", UintegerValue (1024));
   remoteApp.Add (producerHelper.Install(nodes.Get(0)));
+
+  sinkApp.Start (Seconds (1.0));
+  remoteApp.Start (Seconds (1.0));
 
   Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
   Simulator::Stop(Seconds(simTime));
