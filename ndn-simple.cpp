@@ -58,11 +58,8 @@ main(int argc, char* argv[])
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   p2p.Install(nodes.Get(0), nodes.Get(1));
-  p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.100)));
   p2p.Install(nodes.Get(1), nodes.Get(2));
-  p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   p2p.Install(nodes.Get(2), nodes.Get(3));
-  p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   p2p.Install(nodes.Get(3), nodes.Get(4));
 
   // Install NDN stack on all nodes
@@ -100,6 +97,7 @@ main(int argc, char* argv[])
   // Producer will reply to all requests starting with /prefix
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1040"));
+  producerHelper.SetAttribute("Freshness", TimeValue(Years(2)));
   ApplicationContainer prod = producerHelper.Install(nodes.Get(4)); // last node
 
   //cons.Start (Seconds (0.0));
@@ -108,6 +106,11 @@ main(int argc, char* argv[])
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
   ndn::AppDelayTracer::InstallAll("delay-tracer.txt");
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
+
+    // The failure of the link connecting consumer and router will start
+  Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
+  Simulator::Schedule(Seconds(5.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
+
   Simulator::Stop(Seconds(simTime + 1));
 
   Simulator::Run();

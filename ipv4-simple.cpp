@@ -150,6 +150,8 @@ main(int argc, char* argv[])
   //remoteApp.Start (Seconds (0.0));
 
   Simulator::Schedule (Seconds (0.1), &CalculateThroughput);
+  Simulator::Schedule (Seconds(2.0), Ipv4Interface::SetDown, nodes.Get(3), nodes.Get(4));
+  Simulator::Schedule (Seconds(5.0), Ipv4Interface::SetUp, nodes.Get(3), nodes.Get(4));
   Simulator::Stop(Seconds(simTime + 1));
 
   Simulator::Run();
