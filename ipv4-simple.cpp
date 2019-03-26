@@ -93,13 +93,13 @@ main(int argc, char* argv[])
   p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Mb/s")));
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
-  p2p.Install(nodes.Get(0), nodes.Get(1));
+  NetDeviceContainer p2pinterA = p2p.Install(nodes.Get(0), nodes.Get(1));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.100)));
-  p2p.Install(nodes.Get(1), nodes.Get(2));
+  NetDeviceContainer p2pinterB = p2p.Install(nodes.Get(1), nodes.Get(2));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
-  p2p.Install(nodes.Get(2), nodes.Get(3));
+  NetDeviceContainer p2pinterC = p2p.Install(nodes.Get(2), nodes.Get(3));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
-  p2p.Install(nodes.Get(3), nodes.Get(4));
+  NetDeviceContainer p2pinterD = p2p.Install(nodes.Get(3), nodes.Get(4));
 
   // Install internet stack on all nodes
   InternetStackHelper stack;
