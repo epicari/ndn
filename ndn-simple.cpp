@@ -88,12 +88,12 @@ main(int argc, char* argv[])
   // Installing applications
 
   // Consumer
-  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   // Consumer will request /prefix/0, /prefix/1, ...
   consumerHelper.SetPrefix("/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  consumerHelper.SetAttribute("NumberOfContents", StringValue("10"));
+  consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  //consumerHelper.SetAttribute("NumberOfContents", StringValue("10"));
   ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
 
   // Producer
