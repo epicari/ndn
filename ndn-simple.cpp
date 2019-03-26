@@ -54,7 +54,7 @@ main(int argc, char* argv[])
 
   // Connecting nodes using two links
   PointToPointHelper p2p;
-  p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Mb/s")));
+  p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("1Mb/s")));
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   p2p.Install(nodes.Get(0), nodes.Get(1));
@@ -94,9 +94,8 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   // Producer will reply to all requests starting with /prefix
   producerHelper.SetPrefix("/prefix");
-  producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
+  producerHelper.SetAttribute("PayloadSize", StringValue("1040"));
   producerHelper.Install(nodes.Get(4)); // last node
-
 
   ndn::L3RateTracer::InstallAll("simple-l3-rate-trace.txt", Seconds(0.5));
   ndn::AppDelayTracer::InstallAll("simple-delay-tracer.txt");
