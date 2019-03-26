@@ -88,11 +88,13 @@ main(int argc, char* argv[])
   // Installing applications
 
   // Consumer
-  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   // Consumer will request /prefix/0, /prefix/1, ...
   consumerHelper.SetPrefix("/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("10")); // 10 interests a second
-  ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));                        // first node
+  consumerHelper.SetAttribute("Frequency", StringValue("1"));
+  consumerHelper.SetAttribute("NumberOfContents", StringValue("100000"));
+  ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
@@ -101,7 +103,7 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1000"));
   //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
-  ApplicationContainer prod = producerHelper.Install(nodes.Get(4)); // last node
+  ApplicationContainer prod = producerHelper.Install(nodes.Get(4));
 
   //cons.Start (Seconds (0.0));
   //prod.Start (Seconds (0.0));
