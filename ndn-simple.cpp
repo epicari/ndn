@@ -66,8 +66,10 @@ main(int argc, char* argv[])
   ndn::StackHelper ndnHelper;
   //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "100");
-  ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll();
+
+  ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
+  ndnGlobalRoutingHelper.InstallAll();
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   for (uint16_t i = 0; i < numberOfNodes; i++)
@@ -95,9 +97,10 @@ main(int argc, char* argv[])
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   // Producer will reply to all requests starting with /prefix
+  ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1040"));
-  producerHelper.SetAttribute("Freshness", TimeValue(Years(2)));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
   ApplicationContainer prod = producerHelper.Install(nodes.Get(4)); // last node
 
   //cons.Start (Seconds (0.0));
