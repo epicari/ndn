@@ -53,7 +53,7 @@ main(int argc, char* argv[])
 {
   uint16_t numberOfNodes = 5;
   uint16_t distance = 1000;
-  uint16_t simTime = 30;
+  uint16_t simTime = 10.1;
 
   std::string tcpVariant = "TcpNewReno";
 
@@ -129,17 +129,30 @@ main(int argc, char* argv[])
   // Installing applications
 
   uint16_t port = 9;
+
+  ApplicationContainer sinkApp;
+  ApplicationContainer remoteApp;
   // Consumer
-  PacketSinkHelper consumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
-  ApplicationContainer sinkApp = consumerHelper.Install(nodes.Get(4));                        // first node
+  PacketSinkHelper dlconsumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
+  sinkApp.Add (dlconsumerHelper.Install(nodes.Get(4)));
   sink = StaticCast<PacketSink> (sinkApp.Get (0));
 
+  PacketSinkHelper ulconsumerHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), port));
+  sinkApp.Add (ulconsumerHelper.Install(nodes.Get(0)));
+
   // Producer
-  BulkSendHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (sinkHostAddr, port));
-  // Producer will reply to all requests starting with /prefix
-  producerHelper.SetAttribute("MaxBytes", UintegerValue (100000));
-  producerHelper.SetAttribute("SendSize", UintegerValue (1024));
-  producerHelper.Install(nodes.Get(0)); // last node
+  BulkSendHelper dlproducerHelper ("ns3::TcpSocketFactory", InetSocketAddress (sinkHostAddr, port));
+  dlproducerHelper.SetAttribute("MaxBytes", UintegerValue (100000));
+  dlproducerHelper.SetAttribute("SendSize", UintegerValue (1024));
+  remoteApp.Add (dlproducerHelper.Install(nodes.Get(0)));
+
+  BulkSendHelper ulproducerHelper ("ns3::TcpSocketFactory", InetSocketAddress (remoteHostAddr, port));
+  ulproducerHelper.SetAttribute("MaxBytes", UintegerValue (100000));
+  ulproducerHelper.SetAttribute("SendSize", UintegerValue (1024));
+  remoteApp.Add (ulproducerHelper.Install(nodes.Get(4)));
+
+  sinkApp.Start (Seconds (0.01));
+  remoteApp.Start (Seconds (0.01));
 
   Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
   Simulator::Stop(Seconds(simTime + 1));
