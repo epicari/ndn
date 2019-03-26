@@ -39,7 +39,7 @@ main(int argc, char* argv[])
 {
   uint16_t numberOfNodes = 5;
   uint16_t distance = 1000;
-  uint16_t simTime = 30;
+  uint16_t simTime = 10;
 
   // setting default parameters for PointToPoint links and channels
   Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
@@ -64,7 +64,8 @@ main(int argc, char* argv[])
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
-  ndnHelper.SetDefaultRoutes(true);
+  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "100");
   ndnHelper.InstallAll();
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
@@ -88,18 +89,23 @@ main(int argc, char* argv[])
   // Consumer will request /prefix/0, /prefix/1, ...
   consumerHelper.SetPrefix("/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("1")); // 10 interests a second
-  consumerHelper.Install(nodes.Get(0));                        // first node
+  ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));                        // first node
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   // Producer will reply to all requests starting with /prefix
+  ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1040"));
-  producerHelper.Install(nodes.Get(4)); // last node
+  ApplicationContainer prod = producerHelper.Install(nodes.Get(4)); // last node
+
+  cons.Start (Seconds (1.0));
+  prod.Start (Seconds (0.0));
 
   ndn::L3RateTracer::InstallAll("simple-l3-rate-trace.txt", Seconds(0.5));
   ndn::AppDelayTracer::InstallAll("simple-delay-tracer.txt");
-  Simulator::Stop(Seconds(simTime));
+  ndn::CsTracer::InstallAll("simple-cs-trace.txt", Seconds(1));
+  Simulator::Stop(Seconds(simTime + 1));
 
   Simulator::Run();
   Simulator::Destroy();

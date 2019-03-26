@@ -54,7 +54,7 @@ main(int argc, char* argv[])
 {
   uint16_t numberOfNodes = 5;
   uint16_t distance = 1000;
-  uint16_t simTime = 11.1;
+  uint16_t simTime = 10;
 
   std::string tcpVariant = "TcpNewReno";
 
@@ -146,11 +146,11 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("SendSize", UintegerValue (1040));
   remoteApp.Add (producerHelper.Install(nodes.Get(0)));
 
-  sinkApp.Start (Seconds (1.0));
+  sinkApp.Start (Seconds (0.0));
   remoteApp.Start (Seconds (1.0));
 
   Simulator::Schedule (Seconds (1.1), &CalculateThroughput);
-  Simulator::Stop(Seconds(simTime));
+  Simulator::Stop(Seconds(simTime + 1));
 
   Simulator::Run();
   Simulator::Destroy();
