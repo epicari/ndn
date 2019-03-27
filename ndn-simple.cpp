@@ -37,7 +37,7 @@ namespace ns3 {
 int
 main(int argc, char* argv[])
 {
-  uint16_t numberOfNodes = 5;
+  uint16_t numberOfNodes = 6;
   uint16_t distance = 400;
   uint16_t simTime = 11;
 
@@ -61,6 +61,7 @@ main(int argc, char* argv[])
   p2p.Install(nodes.Get(1), nodes.Get(2));
   p2p.Install(nodes.Get(2), nodes.Get(3));
   p2p.Install(nodes.Get(3), nodes.Get(4));
+  p2p.Install(nodes.Get(5), nodes.Get(1));
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
@@ -72,7 +73,7 @@ main(int argc, char* argv[])
   ndnGlobalRoutingHelper.InstallAll();
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-  for (uint16_t i = 0; i < numberOfNodes; i++)
+  for (uint16_t i = 0; i < numberOfNodes - 1; i++)
     {
       positionAlloc->Add (Vector(distance * i, 0, 0));
     }
@@ -81,6 +82,10 @@ main(int argc, char* argv[])
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator(positionAlloc);
   mobility.InstallAll();
+
+  positionAlloc->Add (Vector(100, 0, 0));
+  mobility.SetPositionAllocator(positionAlloc);
+  mobility.Install (nodes.Get (5));
 
   // Choosing forwarding strategy
   ndn::StrategyChoiceHelper::InstallAll("/video_01", "/localhost/nfd/strategy/best-route");
@@ -96,6 +101,8 @@ main(int argc, char* argv[])
   consumerHelper.SetPrefix("/video_01");
   cons.Add (consumerHelper.Install(nodes.Get(0)));
   cons.Start (Seconds (0.0));
+
+  cons.Add (consumerHelper.Install(nodes.Get(5)));
   cons.Start (Seconds (3.0));
 
   // Producer
