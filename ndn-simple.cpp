@@ -71,7 +71,7 @@ main(int argc, char* argv[])
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.SetContentStore ("ns3::ndn::cs::Stats::Lru", "MaxSize", "0"); 
+  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Stats::Lru", "MaxSize", "0"); 
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
@@ -120,7 +120,7 @@ main(int argc, char* argv[])
   Simulator::Schedule(Seconds(3.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
   Simulator::Schedule(Seconds(6.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
 
-  Config::Connect ("/NodeList/*/$ns3::ndn::cs::Stats::Lru/WillRemoveEntry", MakeCallback (&CacheEntryRemoved));
+  Config::Connect ("/NodeList/*/$ns3::ndn::cs::Stats::Lru/WillRemoveEntry", MakeCallback (CacheEntryRemoved));
 
   Simulator::Stop(Seconds(simTime));
 
