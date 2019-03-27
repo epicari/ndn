@@ -110,9 +110,9 @@ main(int argc, char* argv[])
   //cons.Start (Seconds (0.0));
   //prod.Start (Seconds (0.0));
 
-  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
+  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(1.0));
   //ndn::AppDelayTracer::InstallAll("delay-tracer.txt");
-  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(0.5));
+  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1.0));
 
     // The failure of the link connecting consumer and router will start
   Simulator::Schedule(Seconds(1.0), ndn::LinkControlHelper::FailLink, nodes.Get(1), nodes.Get(2));
