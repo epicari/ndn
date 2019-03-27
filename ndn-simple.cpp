@@ -34,6 +34,12 @@ namespace ns3 {
  *     NS_LOG=ndn.Consumer:ndn.Producer ./waf --run=ndn-simple
  */
 
+void
+CacheEntryRemoved (std::string context, Ptr<const ndn::cs::Entry> entry, Time lifetime)
+{
+    std::cout << entry->GetName () << " " << lifetime.ToDouble (Time::S) << "s" << std::endl;
+}
+
 int
 main(int argc, char* argv[])
 {
@@ -113,6 +119,8 @@ main(int argc, char* argv[])
   Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::UpLink, nodes.Get(1), nodes.Get(2));
   Simulator::Schedule(Seconds(3.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
   Simulator::Schedule(Seconds(6.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
+
+  Config::Connect ("/NodeList/*/$ns3::ndn::cs::Stats::Lru/WillRemoveEntry", MakeCallback (&CacheEntryRemoved));
 
   Simulator::Stop(Seconds(simTime));
 
