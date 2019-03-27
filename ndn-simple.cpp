@@ -34,18 +34,12 @@ namespace ns3 {
  *     NS_LOG=ndn.Consumer:ndn.Producer ./waf --run=ndn-simple
  */
 
-void
-CacheEntryRemoved (std::string context, Ptr<const ndn::cs::Entry> entry, Time lifetime)
-{
-    std::cout << entry->GetName () << " " << lifetime.ToDouble (Time::S) << "s" << std::endl;
-}
-
 int
 main(int argc, char* argv[])
 {
   uint16_t numberOfNodes = 5;
   uint16_t distance = 400;
-  uint16_t simTime = 10;
+  uint16_t simTime = 11;
 
   // setting default parameters for PointToPoint links and channels
   Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
@@ -71,7 +65,7 @@ main(int argc, char* argv[])
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Freshness::Lru", "MaxSize", "0"); 
+  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Freshness::Lru", "MaxSize", "1000000"); 
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
@@ -90,51 +84,33 @@ main(int argc, char* argv[])
 
   // Choosing forwarding strategy
   ndn::StrategyChoiceHelper::InstallAll("/video_01", "/localhost/nfd/strategy/best-route");
-  ndn::StrategyChoiceHelper::InstallAll("/video_02", "/localhost/nfd/strategy/best-route");
 
   // Installing applications
 
   ApplicationContainer cons;
   ApplicationContainer prod;
+
   // Consumer
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetAttribute("Frequency", StringValue("1"));
+  consumerHelper.SetAttribute("Frequency", StringValue("10"));
   consumerHelper.SetPrefix("/video_01");
   cons.Add (consumerHelper.Install(nodes.Get(0)));
   cons.Start (Seconds (0.0));
-  //cons.Stop (Seconds (1.9));
-  cons.Start (Seconds (4.0));
-
-  consumerHelper.SetPrefix("/video_02");
-  cons.Add (consumerHelper.Install(nodes.Get(0)));
-  cons.Start (Seconds (2.0));
-  //cons.Stop (Seconds (3.9));
-  cons.Start (Seconds (8.0));
+  cons.Start (Seconds (3.0));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
-  //ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   producerHelper.SetPrefix("/video_01");
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds (5.0)));
   prod.Add (producerHelper.Install(nodes.Get(4)));
-  
-  producerHelper.SetPrefix("/video_02");
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds (4.0)));
-  prod.Add (producerHelper.Install(nodes.Get(4)));
-
-  //cons.Start (Seconds (0.0));
-  //prod.Start (Seconds (0.0));
 
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
-  //ndn::AppDelayTracer::InstallAll("delay-tracer.txt");
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
 
     // The failure of the link connecting consumer and router will start
   Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
   Simulator::Schedule(Seconds(5.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
-
-  //Config::Connect ("/NodeList/*/$ns3::ndn::cs::Stats::Lru/WillRemoveEntry", MakeCallback (CacheEntryRemoved));
 
   Simulator::Stop(Seconds(simTime));
 
