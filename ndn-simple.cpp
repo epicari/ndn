@@ -71,7 +71,7 @@ main(int argc, char* argv[])
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "0"); 
+  ndnHelper.SetOldContentStore("ns3::ndn::cs::Stats::Lru", "MaxSize", "0"); 
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
