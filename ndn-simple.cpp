@@ -97,9 +97,9 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
   consumerHelper.SetPrefix("/prefix");
-  //ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
-  consumerHelper.Install(nodes.Get(0).Start (Seconds (0.0)));
-  consumerHelper.Install(nodes.Get(0).Start (Seconds (4.0)));
+  ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
+  cons.Start (Seconds (0.0));
+  cons.Start (Seconds (4.0));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
