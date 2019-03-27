@@ -109,7 +109,7 @@ main(int argc, char* argv[])
   cons.Add (consumerHelper.Install(nodes.Get(0)));
   cons.Start (Seconds (2.0));
   //cons.Stop (Seconds (3.9));
-  cons.Start (Seconds (6.0));
+  cons.Start (Seconds (8.0));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
