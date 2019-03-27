@@ -142,8 +142,8 @@ main(int argc, char* argv[])
 
   // Producer
   BulkSendHelper producerHelper ("ns3::TcpSocketFactory", InetSocketAddress (sinkHostAddr, port));
-  producerHelper.SetAttribute("MaxBytes", UintegerValue (10000000));
-  producerHelper.SetAttribute("SendSize", UintegerValue (1000));
+  producerHelper.SetAttribute("MaxBytes", UintegerValue (10000000)); //10MB
+  producerHelper.SetAttribute("SendSize", UintegerValue (1460));
   
   /*OnOffHelper producerHelper ("ns3::TcpSocketFactory", (InetSocketAddress (sinkHostAddr, port)));
   producerHelper.SetAttribute ("PacketSize", UintegerValue (1040));
