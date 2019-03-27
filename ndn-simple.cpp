@@ -95,16 +95,18 @@ main(int argc, char* argv[])
 
   // Consumer
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
+  consumerHelper.SetPrefix("/prefix");
+  //ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
+  consumerHelper.Install(nodes.Get(0).Start (Seconds (0.0)));
+  consumerHelper.Install(nodes.Get(0).Start (Seconds (4.0)));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   //ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(4.0)));
   ApplicationContainer prod = producerHelper.Install(nodes.Get(4));
 
   //cons.Start (Seconds (0.0));
@@ -115,10 +117,8 @@ main(int argc, char* argv[])
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1.0));
 
     // The failure of the link connecting consumer and router will start
-  Simulator::Schedule(Seconds(1.0), ndn::LinkControlHelper::FailLink, nodes.Get(1), nodes.Get(2));
-  Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::UpLink, nodes.Get(1), nodes.Get(2));
-  Simulator::Schedule(Seconds(3.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
-  Simulator::Schedule(Seconds(6.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
+  Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
+  Simulator::Schedule(Seconds(5.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
 
   Config::Connect ("/NodeList/*/$ns3::ndn::cs::Stats::Lru/WillRemoveEntry", MakeCallback (CacheEntryRemoved));
 
