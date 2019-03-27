@@ -65,7 +65,7 @@ main(int argc, char* argv[])
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "100");
+  //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000000");
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
@@ -92,7 +92,7 @@ main(int argc, char* argv[])
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   // Consumer will request /prefix/0, /prefix/1, ...
   consumerHelper.SetPrefix("/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  consumerHelper.SetAttribute("Frequency", StringValue("100"));
   //consumerHelper.SetAttribute("NumberOfContents", StringValue("10"));
   ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
 
