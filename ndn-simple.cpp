@@ -101,11 +101,13 @@ main(int argc, char* argv[])
   consumerHelper.SetPrefix("/video_01");
   cons.Add (consumerHelper.Install(nodes.Get(0)));
   cons.Start (Seconds (0.0));
+  cons.Stop (Seconds (1.9));
   cons.Start (Seconds (4.0));
 
   consumerHelper.SetPrefix("/video_02");
   cons.Add (consumerHelper.Install(nodes.Get(0)));
   cons.Start (Seconds (2.0));
+  cons.Stop (Seconds (3.9));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
