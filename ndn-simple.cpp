@@ -65,7 +65,7 @@ main(int argc, char* argv[])
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "100");
+  //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "100");
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
@@ -102,14 +102,14 @@ main(int argc, char* argv[])
   ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
+  //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
   ApplicationContainer prod = producerHelper.Install(nodes.Get(4));
 
   //cons.Start (Seconds (0.0));
   //prod.Start (Seconds (0.0));
 
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
-  ndn::AppDelayTracer::InstallAll("delay-tracer.txt");
+  //ndn::AppDelayTracer::InstallAll("delay-tracer.txt");
   //ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
 
     // The failure of the link connecting consumer and router will start
