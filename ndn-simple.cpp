@@ -73,8 +73,12 @@ main(int argc, char* argv[])
   ndnGlobalRoutingHelper.InstallAll();
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-  for (uint16_t i = 0; i < numberOfNodes - 1; i++)
+  for (uint16_t i = 0; i < numberOfNodes; i++)
     {
+        if (i == 5) {
+        positionAlloc->Add (Vector(100, 0, 0));
+        break;
+      }
       positionAlloc->Add (Vector(distance * i, 0, 0));
     }
 
@@ -82,10 +86,6 @@ main(int argc, char* argv[])
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator(positionAlloc);
   mobility.InstallAll();
-
-  positionAlloc->Add (Vector(100, 0, 0));
-  mobility.SetPositionAllocator(positionAlloc);
-  mobility.Install (nodes.Get (5));
 
   // Choosing forwarding strategy
   ndn::StrategyChoiceHelper::InstallAll("/video_01", "/localhost/nfd/strategy/best-route");
