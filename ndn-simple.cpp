@@ -37,7 +37,7 @@ namespace ns3 {
 int
 main(int argc, char* argv[])
 {
-  uint16_t numberOfNodes = 2;
+  uint16_t numberOfNodes = 5;
   uint16_t distance = 400;
   uint16_t simTime = 10;
 
@@ -58,14 +58,14 @@ main(int argc, char* argv[])
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
   p2p.Install(nodes.Get(0), nodes.Get(1));
-  //p2p.Install(nodes.Get(1), nodes.Get(2));
-  //p2p.Install(nodes.Get(2), nodes.Get(3));
-  //p2p.Install(nodes.Get(3), nodes.Get(4));
+  p2p.Install(nodes.Get(1), nodes.Get(2));
+  p2p.Install(nodes.Get(2), nodes.Get(3));
+  p2p.Install(nodes.Get(3), nodes.Get(4));
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000000");
+  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "0"); 
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
@@ -89,34 +89,32 @@ main(int argc, char* argv[])
 
   // Consumer
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
-  // Consumer will request /prefix/0, /prefix/1, ...
   consumerHelper.SetPrefix("/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  //consumerHelper.SetAttribute("NumberOfContents", StringValue("10"));
   ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
-  // Producer will reply to all requests starting with /prefix
   //ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
-  //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
-  ApplicationContainer prod = producerHelper.Install(nodes.Get(1));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
+  ApplicationContainer prod = producerHelper.Install(nodes.Get(4));
 
   //cons.Start (Seconds (0.0));
   //prod.Start (Seconds (0.0));
 
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
   //ndn::AppDelayTracer::InstallAll("delay-tracer.txt");
-  //ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
+  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(0.5));
 
     // The failure of the link connecting consumer and router will start
-  //Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
-  //Simulator::Schedule(Seconds(5.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
+  Simulator::Schedule(Seconds(1.0), ndn::LinkControlHelper::FailLink, nodes.Get(1), nodes.Get(2));
+  Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::UpLink, nodes.Get(1), nodes.Get(2));
+  Simulator::Schedule(Seconds(3.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
+  Simulator::Schedule(Seconds(6.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
 
-  Simulator::Stop(Seconds(simTime + 1));
+  Simulator::Stop(Seconds(simTime));
 
   Simulator::Run();
   Simulator::Destroy();
