@@ -97,36 +97,37 @@ main(int argc, char* argv[])
   ApplicationContainer prod;
   // Consumer
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetAttribute("Frequency", StringValue("10"));
+  consumerHelper.SetAttribute("Frequency", StringValue("1"));
   consumerHelper.SetPrefix("/video_01");
   cons.Add (consumerHelper.Install(nodes.Get(0)));
   cons.Start (Seconds (0.0));
-  cons.Stop (Seconds (1.9));
+  //cons.Stop (Seconds (1.9));
   cons.Start (Seconds (4.0));
 
   consumerHelper.SetPrefix("/video_02");
   cons.Add (consumerHelper.Install(nodes.Get(0)));
   cons.Start (Seconds (2.0));
-  cons.Stop (Seconds (3.9));
+  //cons.Stop (Seconds (3.9));
+  cons.Start (Seconds (6.0));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   //ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   producerHelper.SetPrefix("/video_01");
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(5.0)));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds (5.0)));
   prod.Add (producerHelper.Install(nodes.Get(4)));
   
   producerHelper.SetPrefix("/video_02");
-  //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(4.0)));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds (4.0)));
   prod.Add (producerHelper.Install(nodes.Get(4)));
 
   //cons.Start (Seconds (0.0));
   //prod.Start (Seconds (0.0));
 
-  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
+  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
   //ndn::AppDelayTracer::InstallAll("delay-tracer.txt");
-  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(0.5));
+  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
 
     // The failure of the link connecting consumer and router will start
   Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
