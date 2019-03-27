@@ -105,14 +105,14 @@ main(int argc, char* argv[])
 
   consumerHelper.SetPrefix("/video_02");
   cons.Add (consumerHelper.Install(nodes.Get(0)));
-  cons.Start (Seconds (1.0));
+  cons.Start (Seconds (2.0));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   //ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   producerHelper.SetPrefix("/video_01");
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(4.0)));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(5.0)));
   prod.Add (producerHelper.Install(nodes.Get(4)));
   
   producerHelper.SetPrefix("/video_02");
