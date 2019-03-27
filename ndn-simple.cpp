@@ -99,7 +99,7 @@ main(int argc, char* argv[])
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   // Producer will reply to all requests starting with /prefix
-  ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
+  //ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
