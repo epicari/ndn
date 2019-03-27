@@ -113,8 +113,8 @@ main(int argc, char* argv[])
   //ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
 
     // The failure of the link connecting consumer and router will start
-  Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
-  Simulator::Schedule(Seconds(5.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
+  //Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
+  //Simulator::Schedule(Seconds(5.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
 
   Simulator::Stop(Seconds(simTime + 1));
 
