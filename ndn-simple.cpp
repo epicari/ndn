@@ -92,7 +92,7 @@ main(int argc, char* argv[])
   //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   // Consumer will request /prefix/0, /prefix/1, ...
   consumerHelper.SetPrefix("/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("1"));
+  consumerHelper.SetAttribute("Frequency", StringValue("10"));
   //consumerHelper.SetAttribute("NumberOfContents", StringValue("10"));
   ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
 
