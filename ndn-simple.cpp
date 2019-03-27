@@ -89,32 +89,42 @@ main(int argc, char* argv[])
   mobility.InstallAll();
 
   // Choosing forwarding strategy
-  ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/best-route");
+  //ndn::StrategyChoiceHelper::InstallAll("/video_01", "/localhost/nfd/strategy/best-route");
 
   // Installing applications
 
+  ApplicationContainer cons;
+  ApplicationContainer prod;
   // Consumer
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  consumerHelper.SetPrefix("/prefix");
-  ApplicationContainer cons = consumerHelper.Install(nodes.Get(0));
+  consumerHelper.SetPrefix("/video_01");
+  cons.Add (consumerHelper.Install(nodes.Get(0)));
   cons.Start (Seconds (0.0));
   cons.Start (Seconds (4.0));
+
+  consumerHelper.SetPrefix("/video_02");
+  cons.Add (consumerHelper.Install(nodes.Get(0)));
+  cons.Start (Seconds (1.0));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   //ndnGlobalRoutingHelper.AddOrigins("/prefix", nodes.Get(4));
-  producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
+  producerHelper.SetPrefix("/video_01");
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(4.0)));
-  ApplicationContainer prod = producerHelper.Install(nodes.Get(4));
+  prod.Add (producerHelper.Install(nodes.Get(4)));
+  
+  producerHelper.SetPrefix("/video_02");
+  //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(4.0)));
+  prod.Add (producerHelper.Install(nodes.Get(4)));
 
   //cons.Start (Seconds (0.0));
   //prod.Start (Seconds (0.0));
 
-  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(1.0));
+  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds(0.5));
   //ndn::AppDelayTracer::InstallAll("delay-tracer.txt");
-  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1.0));
+  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(0.5));
 
     // The failure of the link connecting consumer and router will start
   Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
