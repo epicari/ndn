@@ -37,7 +37,7 @@ namespace ns3 {
 int
 main(int argc, char* argv[])
 {
-  uint16_t numberOfNodes = 5;
+  uint16_t numberOfNodes = 2;
   uint16_t distance = 400;
   uint16_t simTime = 10;
 
@@ -103,7 +103,7 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix("/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(2.0)));
-  ApplicationContainer prod = producerHelper.Install(nodes.Get(4));
+  ApplicationContainer prod = producerHelper.Install(nodes.Get(1));
 
   //cons.Start (Seconds (0.0));
   //prod.Start (Seconds (0.0));
@@ -113,8 +113,8 @@ main(int argc, char* argv[])
   //ndn::CsTracer::InstallAll("cs-trace.txt", Seconds(1));
 
     // The failure of the link connecting consumer and router will start
-  Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
-  Simulator::Schedule(Seconds(5.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
+  //Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
+  //Simulator::Schedule(Seconds(5.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
 
   Simulator::Stop(Seconds(simTime + 1));
 
