@@ -132,6 +132,7 @@ main(int argc, char* argv[])
 
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (0.5));
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (0.5));
+  ndn::AppDelayTracer::InstallAll("app-delays-trace.txt");
 
     // The failure of the link connecting consumer and router will start
   Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
