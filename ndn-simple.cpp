@@ -39,8 +39,8 @@ main(int argc, char* argv[])
 {
   uint16_t numberOfRouters = 3;
   uint16_t numberOfPeers = 2;
-  uint16_t numberOfpacing = 1;
-  uint16_t distance = 400;
+  //uint16_t numberOfpacing = 1;
+  //uint16_t distance = 400;
   uint16_t simTime = 11;
 
   // setting default parameters for PointToPoint links and channels
@@ -57,8 +57,8 @@ main(int argc, char* argv[])
   NodeContainer peers;
   peers.Create (numberOfPeers);
 
-  NodeContainer pacing;
-  pacing.Create (numberOfpacing);
+  //NodeContainer pacing;
+  //pacing.Create (numberOfpacing);
 
   // Connecting nodes using two links
   PointToPointHelper p2p;
@@ -69,7 +69,7 @@ main(int argc, char* argv[])
   p2p.Install(routers.Get(1), routers.Get(2));
   p2p.Install(routers.Get(2), routers.Get(3));
   p2p.Install(routers.Get(3), peers.Get(1));
-  p2p.Install(pacing.Get(0), routers.Get(2));
+  //p2p.Install(pacing.Get(0), routers.Get(2));
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
@@ -100,11 +100,11 @@ main(int argc, char* argv[])
   positionAlloc->Add (Vector(1600, 0, 0));
   mobility.SetPositionAllocator(positionAlloc);
   mobility.Install (peers);
-
+  /*
   positionAlloc->Add (Vector(500, 0, 0));
   mobility.SetPositionAllocator(positionAlloc);
   mobility.Install (pacing);
-
+  */
   // Choosing forwarding strategy
   ndn::StrategyChoiceHelper::InstallAll("/video_01", "/localhost/nfd/strategy/best-route");
 
@@ -120,23 +120,23 @@ main(int argc, char* argv[])
   cons.Add (consumerHelper.Install(nodes.Get(0)));
   cons.Start (Seconds (0.0));
 
-  cons.Add (consumerHelper.Install(pacing.Get(0)));
-  cons.Start (Seconds (4.0));
+  //cons.Add (consumerHelper.Install(pacing.Get(0)));
+  //cons.Start (Seconds (4.0));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   producerHelper.SetPrefix("/video_01");
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds (5.0)));
+  //producerHelper.SetAttribute("Freshness", TimeValue(Seconds (5.0)));
   prod.Add (producerHelper.Install(nodes.Get(4)));
 
-  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (0.5));
-  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (0.5));
+  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
+  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
   ndn::AppDelayTracer::InstallAll("app-delays-trace.txt");
 
     // The failure of the link connecting consumer and router will start
-  Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
-  Simulator::Schedule(Seconds(5.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
+  //Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
+  //Simulator::Schedule(Seconds(5.0), ndn::LinkControlHelper::UpLink, nodes.Get(3), nodes.Get(4));
 
   Simulator::Stop(Seconds(simTime));
 
