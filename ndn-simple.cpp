@@ -65,10 +65,10 @@ main(int argc, char* argv[])
   p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Mb/s")));
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
-  p2p.Install(peers.Get(0), routers.Get(1));
+  p2p.Install(peers.Get(0), routers.Get(0));
+  p2p.Install(routers.Get(0), routers.Get(1));
   p2p.Install(routers.Get(1), routers.Get(2));
-  p2p.Install(routers.Get(2), routers.Get(3));
-  p2p.Install(routers.Get(3), peers.Get(1));
+  p2p.Install(routers.Get(2), peers.Get(1));
   //p2p.Install(pacing.Get(0), routers.Get(2));
 
   // Install NDN stack on all nodes
