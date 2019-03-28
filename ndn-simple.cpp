@@ -74,33 +74,34 @@ main(int argc, char* argv[])
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Freshness::Lru", "MaxSize", "10000"); 
+  //ndnHelper.SetOldContentStore ("ns3::ndn::cs::Freshness::Lru", "MaxSize", "10000"); 
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll();
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-  /*
-  for (uint16_t i = 0; i < 4; ++i)
+  
+  for (uint16_t i = 0; i < 5; i++)
     {
       positionAlloc->Add (Vector(distance * i, 0, 0));
     }
-  */
+  /*
   positionAlloc->Add (Vector(400, 0, 0));
   positionAlloc->Add (Vector(800, 0, 0));
   positionAlloc->Add (Vector(1200, 0, 0));
-
+  */
   MobilityHelper mobility;
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator(positionAlloc);
-  mobility.Install (routers);
-
+  //mobility.Install (routers);
+  mobility.InstallAll ();
+  /*
   positionAlloc->Add (Vector(0, 0, 0));
   positionAlloc->Add (Vector(1600, 0, 0));
   mobility.SetPositionAllocator(positionAlloc);
   mobility.Install (peers);
-  /*
+  
   positionAlloc->Add (Vector(500, 0, 0));
   mobility.SetPositionAllocator(positionAlloc);
   mobility.Install (pacing);
@@ -133,6 +134,8 @@ main(int argc, char* argv[])
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
   ndn::AppDelayTracer::InstallAll("app-delays-trace.txt");
+
+  ndn::GlobalRoutingHelper::CalculateRoutes();
 
     // The failure of the link connecting consumer and router will start
   //Simulator::Schedule(Seconds(2.0), ndn::LinkControlHelper::FailLink, nodes.Get(3), nodes.Get(4));
