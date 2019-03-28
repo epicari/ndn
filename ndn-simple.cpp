@@ -40,7 +40,7 @@ main(int argc, char* argv[])
   uint16_t numberOfRouters = 3;
   uint16_t numberOfPeers = 2;
   //uint16_t numberOfpacing = 1;
-  //uint16_t distance = 400;
+  uint16_t distance = 400;
   uint16_t simTime = 11;
 
   // setting default parameters for PointToPoint links and channels
