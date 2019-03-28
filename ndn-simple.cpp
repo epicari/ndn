@@ -119,7 +119,7 @@ main(int argc, char* argv[])
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
   consumerHelper.SetPrefix("/video_01");
   cons.Add (consumerHelper.Install(peers.Get(0)));
-  cons.Start (Seconds (0.0));
+  //cons.Start (Seconds (0.0));
 
   //cons.Add (consumerHelper.Install(pacing.Get(0)));
   //cons.Start (Seconds (4.0));
