@@ -117,7 +117,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
   consumerHelper.SetPrefix("/video_01");
-  cons.Add (consumerHelper.Install(nodes.Get(0)));
+  cons.Add (consumerHelper.Install(peers.Get(0)));
   cons.Start (Seconds (0.0));
 
   //cons.Add (consumerHelper.Install(pacing.Get(0)));
@@ -128,7 +128,7 @@ main(int argc, char* argv[])
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   producerHelper.SetPrefix("/video_01");
   //producerHelper.SetAttribute("Freshness", TimeValue(Seconds (5.0)));
-  prod.Add (producerHelper.Install(nodes.Get(4)));
+  prod.Add (producerHelper.Install(peers.Get(1)));
 
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
