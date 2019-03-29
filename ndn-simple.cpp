@@ -64,7 +64,7 @@ main(int argc, char* argv[])
   PointToPointHelper p2p;
   p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Mb/s")));
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
-  p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
+  p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.030)));
   p2p.Install(peers.Get(0), routers.Get(0));
   p2p.Install(routers.Get(0), routers.Get(1));
   p2p.Install(routers.Get(1), routers.Get(2));
@@ -74,7 +74,7 @@ main(int argc, char* argv[])
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  //ndnHelper.SetOldContentStore ("ns3::ndn::cs::Freshness::Lru", "MaxSize", "10000"); 
+  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Freshness::Lru", "MaxSize", "10000"); 
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
@@ -119,7 +119,7 @@ main(int argc, char* argv[])
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
   consumerHelper.SetPrefix("/video_01");
   cons.Add (consumerHelper.Install(peers.Get(0)));
-  //cons.Start (Seconds (0.0));
+  cons.Start (Seconds (0.0));
 
   //cons.Add (consumerHelper.Install(pacing.Get(0)));
   //cons.Start (Seconds (4.0));
@@ -128,7 +128,7 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   producerHelper.SetPrefix("/video_01");
-  //producerHelper.SetAttribute("Freshness", TimeValue(Seconds (5.0)));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds (5.0)));
   prod.Add (producerHelper.Install(peers.Get(1)));
 
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
