@@ -37,11 +37,10 @@ namespace ns3 {
 int
 main(int argc, char* argv[])
 {
-  uint16_t numberOfRouters = 3;
-  uint16_t numberOfPeers = 2;
-  //uint16_t numberOfpacing = 1;
+  uint16_t numberOfRouters = 1;
+  uint16_t numberOfPeers = 3;
   uint16_t distance = 400;
-  uint16_t simTime = 11;
+  uint16_t simTime = 20.1;
 
   // setting default parameters for PointToPoint links and channels
   Config::SetDefault("ns3::QueueBase::MaxSize", StringValue("10p"));
@@ -57,55 +56,47 @@ main(int argc, char* argv[])
   NodeContainer peers;
   peers.Create (numberOfPeers);
 
-  //NodeContainer pacing;
-  //pacing.Create (numberOfpacing);
-
   // Connecting nodes using two links
   PointToPointHelper p2p;
   p2p.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Mb/s")));
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.030)));
   p2p.Install(peers.Get(0), routers.Get(0));
-  p2p.Install(routers.Get(0), routers.Get(1));
-  p2p.Install(routers.Get(1), routers.Get(2));
-  p2p.Install(routers.Get(2), peers.Get(1));
-  //p2p.Install(pacing.Get(0), routers.Get(2));
+  //p2p.Install(routers.Get(0), routers.Get(1));
+  //p2p.Install(routers.Get(1), routers.Get(2));
+  p2p.Install(routers.Get(1), peers.Get(1));
+  p2p.Install(peers.Get(2), routers.Get(0));
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Freshness::Lru", "MaxSize", "10000"); 
+  //ndnHelper.SetOldContentStore ("ns3::ndn::cs::Freshness::Lru", "MaxSize", "10000"); 
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll();
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-  
+/*  
   for (uint16_t i = 0; i < 5; i++)
     {
       positionAlloc->Add (Vector(distance * i, 0, 0));
     }
-  /*
-  positionAlloc->Add (Vector(400, 0, 0));
+*/
   positionAlloc->Add (Vector(800, 0, 0));
-  positionAlloc->Add (Vector(1200, 0, 0));
-  */
+  
   MobilityHelper mobility;
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator(positionAlloc);
-  //mobility.Install (routers);
-  mobility.InstallAll ();
-  /*
+  mobility.Install (routers);
+  //mobility.InstallAll ();
+  
   positionAlloc->Add (Vector(0, 0, 0));
-  positionAlloc->Add (Vector(1600, 0, 0));
+  positionAlloc->Add (Vector(500800, 0, 0));
+  positionAlloc->Add (Vector(0, 0, 0));
   mobility.SetPositionAllocator(positionAlloc);
   mobility.Install (peers);
   
-  positionAlloc->Add (Vector(500, 0, 0));
-  mobility.SetPositionAllocator(positionAlloc);
-  mobility.Install (pacing);
-  */
   // Choosing forwarding strategy
   ndn::StrategyChoiceHelper::InstallAll("/video_01", "/localhost/nfd/strategy/best-route");
 
@@ -120,15 +111,15 @@ main(int argc, char* argv[])
   consumerHelper.SetPrefix("/video_01");
   cons.Add (consumerHelper.Install(peers.Get(0)));
   cons.Start (Seconds (0.0));
-
-  //cons.Add (consumerHelper.Install(pacing.Get(0)));
-  //cons.Start (Seconds (4.0));
+  cons.Stop (Seconds (10.0));
+  cons.Add (consumerHelper.Install(peers.Get(2)));
+  cons.Start (Seconds (10.1));
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   producerHelper.SetPrefix("/video_01");
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds (5.0)));
+  //producerHelper.SetAttribute("Freshness", TimeValue(Seconds (5.0)));
   prod.Add (producerHelper.Install(peers.Get(1)));
 
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
