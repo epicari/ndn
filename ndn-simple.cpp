@@ -70,7 +70,7 @@ main(int argc, char* argv[])
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
-  //ndnHelper.SetOldContentStore ("ns3::ndn::cs::Freshness::Lru", "MaxSize", "10000"); 
+  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Freshness::Lru", "MaxSize", "10000"); 
   ndnHelper.InstallAll();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
@@ -119,7 +119,7 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetAttribute("PayloadSize", StringValue("1500"));
   producerHelper.SetPrefix("/video_01");
-  //producerHelper.SetAttribute("Freshness", TimeValue(Seconds (5.0)));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds (20.0)));
   prod.Add (producerHelper.Install(peers.Get(1)));
 
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
