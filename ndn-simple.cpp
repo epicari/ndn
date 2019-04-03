@@ -39,7 +39,7 @@ main(int argc, char* argv[])
 {
   uint16_t numberOfRouters = 1;
   uint16_t numberOfPeers = 3;
-  //uint16_t distance = 400;
+  uint16_t distance = 400;
   uint16_t simTime = 20.1;
 
   // setting default parameters for PointToPoint links and channels
@@ -77,26 +77,26 @@ main(int argc, char* argv[])
   ndnGlobalRoutingHelper.InstallAll();
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-/*  
-  for (uint16_t i = 0; i < 5; i++)
+
+  for (uint16_t i = 0; i < 4; i++)
     {
       positionAlloc->Add (Vector(distance * i, 0, 0));
     }
-*/
-  positionAlloc->Add (Vector(800, 0, 0));
+
+  //positionAlloc->Add (Vector(800, 0, 0));
   
   MobilityHelper mobility;
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator(positionAlloc);
-  mobility.Install (routers);
-  //mobility.InstallAll ();
-  
+  //mobility.Install (routers);
+  mobility.InstallAll ();
+  /*
   positionAlloc->Add (Vector(0, 0, 0));
   positionAlloc->Add (Vector(500800, 0, 0));
   positionAlloc->Add (Vector(0, 0, 0));
   mobility.SetPositionAllocator(positionAlloc);
   mobility.Install (peers);
-  
+  */
   // Choosing forwarding strategy
   ndn::StrategyChoiceHelper::InstallAll("/video_01", "/localhost/nfd/strategy/best-route");
 
