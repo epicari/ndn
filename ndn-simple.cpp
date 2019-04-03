@@ -37,9 +37,9 @@ namespace ns3 {
 int
 main(int argc, char* argv[])
 {
-  uint16_t numberOfRouters = 1;
+  uint16_t numberOfRouters = 2;
   uint16_t numberOfPeers = 3;
-  uint16_t distance = 400;
+  uint16_t distance = 2000;
   uint16_t simTime = 20.1;
 
   // setting default parameters for PointToPoint links and channels
@@ -62,9 +62,9 @@ main(int argc, char* argv[])
   p2p.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2p.SetChannelAttribute ("Delay", TimeValue (Seconds (0.030)));
   p2p.Install(peers.Get(0), routers.Get(0));
-  //p2p.Install(routers.Get(0), routers.Get(1));
+  p2p.Install(routers.Get(0), routers.Get(1));
   //p2p.Install(routers.Get(1), routers.Get(2));
-  p2p.Install(routers.Get(0), peers.Get(1));
+  p2p.Install(routers.Get(1), peers.Get(1));
   p2p.Install(peers.Get(2), routers.Get(0));
 
   // Install NDN stack on all nodes
@@ -78,7 +78,7 @@ main(int argc, char* argv[])
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  for (uint16_t i = 0; i < 4; i++)
+  for (uint16_t i = 0; i < 5; i++)
     {
       positionAlloc->Add (Vector(distance * i, 0, 0));
     }
