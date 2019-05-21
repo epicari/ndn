@@ -36,7 +36,7 @@ int
 main(int argc, char* argv[])
 {
   std::string phyMode = "HtMcs7";
-  uint16_t distance = 100;
+  uint16_t distance = 10;
   uint16_t numberOfnodes = 1;
   uint16_t sNode = 1;
   double txPowerStart = 0.0;
