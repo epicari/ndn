@@ -36,11 +36,12 @@ int
 main(int argc, char* argv[])
 {
   std::string phyMode = "HtMcs7";
-  uint16_t numberOfnodes = 30;
+  uint16_t distance = 100;
+  uint16_t numberOfnodes = 1;
   uint16_t sNode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 15.0;
-  double simTime = 60.0;
+  double simTime = 20.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -79,9 +80,9 @@ main(int argc, char* argv[])
   wifiPhy.SetChannel(wifiChannel.Create());
   wifiPhy.Set ("TxPowerStart", DoubleValue (txPowerStart));
   wifiPhy.Set ("TxPowerEnd", DoubleValue (txPowerEnd));
-  wifiPhy.Set ("TxPowerLevels", UintegerValue (16));
-  wifiPhy.Set ("TxGain", DoubleValue (1));
-  wifiPhy.Set ("RxGain", DoubleValue (-10));
+  wifiPhy.Set ("TxPowerLevels", UintegerValue (14));
+  wifiPhy.Set ("TxGain", DoubleValue (8));
+  wifiPhy.Set ("RxGain", DoubleValue (7));
   wifiPhy.Set ("RxNoiseFigure", DoubleValue (10));
   wifiPhy.Set ("CcaMode1Threshold", DoubleValue (-79));
   wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
@@ -98,7 +99,7 @@ main(int argc, char* argv[])
   //NetDeviceContainer wifiSTAch1 = wifi.Install (wifiPhy, wifiMacHelper, nodes);
 
   NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
-
+/*
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("100.0"),
@@ -110,6 +111,17 @@ main(int argc, char* argv[])
                              "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
                              "Bounds", StringValue ("0|200|0|200"));
   mobility.Install (allNodes);
+*/
+  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+
+  for (uint16_t i = 0; i < 2; i++)
+    {
+      positionAlloc->Add (Vector(distance * i, 0, 0));
+    }
+
+  MobilityHelper mobility;
+  mobility.SetPositionAllocator (positionAlloc);
+  mobility.Install (allNodes);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
@@ -118,14 +130,14 @@ main(int argc, char* argv[])
   //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.Install (allNodes);
 
-  //ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/self-learning");
   //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/ncc");
-  ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/multicast");
+  //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/multicast");
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test");
-  producerHelper.SetAttribute("PayloadSize", StringValue("1000"));
+  producerHelper.SetAttribute("PayloadSize", StringValue("4096"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(1.0))); 
   producerHelper.SetAttribute("Signature", UintegerValue(100));
   producerHelper.SetAttribute("KeyLocator", StringValue("/unique/key/locator")); 
@@ -148,8 +160,7 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
-  ndn::L3RateTracer::InstallAll("wifi-l3-rate-trace.txt", Seconds(0.5));
-  ndn::L2RateTracer::InstallAll("wifi-l2-rate-trace.txt", Seconds(0.5));
+  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
   ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
 
   Simulator::Destroy();
