@@ -99,8 +99,13 @@ main(int argc, char* argv[])
     }
 
   MobilityHelper mobility;
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (allNodes);
+  //mobility.SetPositionAllocator (positionAlloc);
+  mobility.SetPositionAllocator (Vector(0, 0, 5));
+  //mobility.Install (allNodes);
+  mobility.Install (nodes);
+
+  mobility.SetPositionAllocator (Vector(100, 0, 2));
+  mobility.Install (sinkNode);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
@@ -112,12 +117,12 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix("/test");
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(1.0))); 
-  //ApplicationContainer proapp = producerHelper.Install (nodes);
+  ApplicationContainer proapp = producerHelper.Install (nodes);
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  //ApplicationContainer cunapp = consumerHelper.Install (sinkNode.Get (0));
+  ApplicationContainer cunapp = consumerHelper.Install (sinkNode.Get (0));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
