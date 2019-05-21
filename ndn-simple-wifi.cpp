@@ -72,7 +72,7 @@ main(int argc, char* argv[])
 
   YansWifiChannelHelper wifiChannel;
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
-  wifiChannel.AddPropagationLoss("ns3::TwoRayGroundPropagationLossModel", "Frequency", DoubleValue (5e9));
+  wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
 
   YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default();
   wifiPhy.SetChannel(wifiChannel.Create());
