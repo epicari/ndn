@@ -81,8 +81,8 @@ main(int argc, char* argv[])
   wifiPhy.Set ("TxPowerStart", DoubleValue (txPowerStart));
   wifiPhy.Set ("TxPowerEnd", DoubleValue (txPowerEnd));
   wifiPhy.Set ("TxPowerLevels", UintegerValue (14));
-  wifiPhy.Set ("TxGain", DoubleValue (1));
-  wifiPhy.Set ("RxGain", DoubleValue (-10));
+  wifiPhy.Set ("TxGain", DoubleValue (10));
+  wifiPhy.Set ("RxGain", DoubleValue (7));
   wifiPhy.Set ("RxNoiseFigure", DoubleValue (10));
   wifiPhy.Set ("CcaMode1Threshold", DoubleValue (-79));
   wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
@@ -137,7 +137,7 @@ main(int argc, char* argv[])
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test");
-  producerHelper.SetAttribute("PayloadSize", StringValue("4096"));
+  producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(1.0))); 
   producerHelper.SetAttribute("Signature", UintegerValue(100));
   producerHelper.SetAttribute("KeyLocator", StringValue("/unique/key/locator")); 
@@ -161,6 +161,7 @@ main(int argc, char* argv[])
   Simulator::Run();
 
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
+  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
   ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
 
   Simulator::Destroy();
