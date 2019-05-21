@@ -64,8 +64,6 @@ main(int argc, char* argv[])
 
   NodeContainer allNodes = NodeContainer (nodes, sinkNode);
 
-  //NodeContainer cm1 = NodeContainer (nodes.Get (0), nodes.Get (1), nodes.Get (2), nodes.Get (3), nodes.Get (4));
-
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
@@ -88,30 +86,10 @@ main(int argc, char* argv[])
   wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
   wifiPhy.SetErrorRateModel ("ns3::YansErrorRateModel");
 
-  WifiMacHelper wifiMacHelper;
-  Ssid ssid1 = Ssid ("ssid1");
-
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  //wifiMacHelper.SetType("ns3::ApWifiMac", "Ssid", SsidValue (ssid1));
-  //NetDeviceContainer wifiAPch1 = wifi.Install (wifiPhy, wifiMacHelper, sinkNode.Get (0));
-
-  //wifiMacHelper.SetType("ns3::StaWifiMac", "Ssid", SsidValue (ssid1));
-  //NetDeviceContainer wifiSTAch1 = wifi.Install (wifiPhy, wifiMacHelper, nodes);
 
   NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
-/*
-  MobilityHelper mobility;
-  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("100.0"),
-                                 "Y", StringValue ("100.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=60]"));
-  mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
-                             "Mode", StringValue ("Time"),
-                             "Time", StringValue ("10s"),
-                             "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                             "Bounds", StringValue ("0|200|0|200"));
-  mobility.Install (allNodes);
-*/
+
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
   for (uint16_t i = 0; i < 2; i++)
@@ -125,36 +103,20 @@ main(int argc, char* argv[])
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  //ndnHelper.setCsSize(2); // allow just 2 entries to be cached
-  //ndnHelper.setPolicy("nfd::cs::lru");
-  //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.Install (allNodes);
 
   ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
-  //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/self-learning");
-  //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/ncc");
-  //ndn::StrategyChoiceHelper::InstallAll("/prefix", "/localhost/nfd/strategy/multicast");
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test");
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(1.0))); 
-  producerHelper.SetAttribute("Signature", UintegerValue(100));
-  producerHelper.SetAttribute("KeyLocator", StringValue("/unique/key/locator")); 
-  ApplicationContainer proapp = producerHelper.Install (nodes);
-  //proapp.Start (Seconds (0.0));
-  //proapp.Stop (Seconds (10.0));
+  //ApplicationContainer proapp = producerHelper.Install (nodes);
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerBatches");
-  //consumerHelper.SetAttribute("Batches", StringValue("1s 1 10s 1 20s 1 30s 1"));
-  //ndn::AppHelper consumerHelper("ns3::ndn::ConsumerZipfMandelbrot");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  //consumerHelper.SetAttribute("NumberOfContents", StringValue("1"));
-  ApplicationContainer cunapp = consumerHelper.Install (sinkNode.Get (0));
-  //cunapp.Start (Seconds (1.0));
-  //cunapp.Stop (Seconds (10.0));
+  //ApplicationContainer cunapp = consumerHelper.Install (sinkNode.Get (0));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
