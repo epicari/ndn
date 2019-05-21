@@ -40,8 +40,8 @@ main(int argc, char* argv[])
   uint16_t numberOfnodes = 1;
   uint16_t sNode = 1;
   double txPowerStart = 0.0;
-  double txPowerEnd = 15.0;
-  double simTime = 20.0;
+  double txPowerEnd = 10.0;
+  double simTime = 10.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
