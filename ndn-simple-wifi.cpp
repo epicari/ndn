@@ -36,7 +36,7 @@ int
 main(int argc, char* argv[])
 {
   std::string phyMode = "HtMcs7";
-  uint16_t distance = 10;
+  uint16_t distance = 100;
   uint16_t numberOfnodes = 1;
   uint16_t sNode = 1;
   double txPowerStart = 0.0;
@@ -90,22 +90,17 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
 
   NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
-/*
+
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  for (uint16_t i = 0; i < 2; i++)
-    {
-      positionAlloc->Add (Vector(distance * i, 0, 0));
-    }
-*/
-  MobilityHelper mobility;
-  //mobility.SetPositionAllocator (positionAlloc);
-  mobility.SetPositionAllocator (Vector(0, 0, 5));
-  //mobility.Install (allNodes);
-  mobility.Install (nodes);
+  positionAlloc->Add (Vector(0, 0, 5));
+  positionAlloc->Add (Vector(distance, 0, 2));
 
-  mobility.SetPositionAllocator (Vector(100, 0, 2));
-  mobility.Install (sinkNode);
+  MobilityHelper mobility;
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+  mobility.SetPositionAllocator (positionAlloc);
+  mobility.Install (allNodes);
+
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
