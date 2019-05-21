@@ -81,8 +81,8 @@ main(int argc, char* argv[])
   wifiPhy.Set ("TxPowerStart", DoubleValue (txPowerStart));
   wifiPhy.Set ("TxPowerEnd", DoubleValue (txPowerEnd));
   wifiPhy.Set ("TxPowerLevels", UintegerValue (14));
-  wifiPhy.Set ("TxGain", DoubleValue (8));
-  wifiPhy.Set ("RxGain", DoubleValue (7));
+  wifiPhy.Set ("TxGain", DoubleValue (1));
+  wifiPhy.Set ("RxGain", DoubleValue (-10));
   wifiPhy.Set ("RxNoiseFigure", DoubleValue (10));
   wifiPhy.Set ("CcaMode1Threshold", DoubleValue (-79));
   wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
