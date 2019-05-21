@@ -90,14 +90,14 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
 
   NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
-
+/*
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
   for (uint16_t i = 0; i < 2; i++)
     {
       positionAlloc->Add (Vector(distance * i, 0, 0));
     }
-
+*/
   MobilityHelper mobility;
   //mobility.SetPositionAllocator (positionAlloc);
   mobility.SetPositionAllocator (Vector(0, 0, 5));
