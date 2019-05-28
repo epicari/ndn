@@ -113,8 +113,12 @@ main(int argc, char* argv[])
   //mobility.Install (allNodes);
   mobility.Install (nodes);
 
-  for (uint16_t j = 0; j < sNode; ++j) {
-    positionAlloc->Add (Vector(disSink * j, 0, 6));
+  for (uint16_t j = 0; j < sNode; j++) {
+    if(j = 0){
+      positionAlloc->Add (Vector(disSink, 0, 6));
+    }
+    else
+      positionAlloc->Add (Vector(disSink * j, 0, 6));    
   }
   
   mobility.SetPositionAllocator (positionAlloc);
