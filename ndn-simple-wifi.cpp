@@ -103,7 +103,7 @@ main(int argc, char* argv[])
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  for (uint16_t i = 0; i = numberOfnodes; i++) {
+  for (uint16_t i = 0; i < numberOfnodes; i++) {
     positionAlloc->Add (Vector(disNode * i, 0, 2));
   }
 
@@ -113,7 +113,7 @@ main(int argc, char* argv[])
   //mobility.Install (allNodes);
   mobility.Install (nodes);
 
-  for (uint16_t j = 0; j = sinkNode; ++j) {
+  for (uint16_t j = 0; j < sinkNode; ++j) {
     positionAlloc->Add (Vector(disSink * j, 0, 6));
   }
   
