@@ -113,7 +113,7 @@ main(int argc, char* argv[])
   //mobility.Install (allNodes);
   mobility.Install (nodes);
 
-  for (uint16_t j = 0; j < sinkNode; ++j) {
+  for (uint16_t j = 0; j < sNode; ++j) {
     positionAlloc->Add (Vector(disSink * j, 0, 6));
   }
   
