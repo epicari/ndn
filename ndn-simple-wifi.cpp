@@ -114,7 +114,7 @@ main(int argc, char* argv[])
   mobility.Install (nodes);
 
   for (uint16_t j = 0; j < sNode; j++) {
-    if(j = 0){
+    if(j == 0){
       positionAlloc->Add (Vector(disSink, 0, 6));
     }
     else
