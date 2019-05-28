@@ -23,7 +23,6 @@
 #include "ns3/wifi-module.h"
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
-#include "ns3/energy-module.h"
 #include "ns3/wifi-radio-energy-model-helper.h"
 #include "ns3/ndnSIM-module.h"
 
@@ -36,8 +35,9 @@ int
 main(int argc, char* argv[])
 {
   std::string phyMode = "HtMcs7";
-  uint16_t distance = 100;
-  uint16_t numberOfnodes = 1;
+  uint16_t disSink = 100;
+  uint16_t disNode = 35;
+  uint16_t numberOfnodes = 10;
   uint16_t sNode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 10.0;
@@ -86,21 +86,39 @@ main(int argc, char* argv[])
   wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
   wifiPhy.SetErrorRateModel ("ns3::YansErrorRateModel");
 
-  WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  Ssid ssid = Ssid ("wifi-default");
 
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
+  WifiMacHelper wifiMacHelper;
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  wifiMacHelper.SetType ("ns3::StaWifiMac",
+                         "ActiveProbing", BooleanValue (true),
+                         "Ssid", SsidValue (ssid));
+  NetDeviceContainer staDevs = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+
+  wifiMacHelper.SetType ("ns3::ApWifiMac",
+                         "Ssid", SsidValue (ssid));
+  NetDeviceContainer apDevs = wifi.Install (wifiPhy, wifiMacHelper, sinkNode);
+
+  //NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  positionAlloc->Add (Vector(0, 0, 5));
-  positionAlloc->Add (Vector(distance, 0, 2));
+  for (uint16_t i = 0; i = numberOfnodes; i++) {
+    positionAlloc->Add (Vector(disNode * i, 0, 2));
+  }
 
   MobilityHelper mobility;
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (allNodes);
+  //mobility.Install (allNodes);
+  mobility.Install (nodes);
 
+  for (uint16_t j = 0; j = sinkNode; ++j) {
+    positionAlloc->Add (Vector(disSink * j, 0, 6));
+  }
+  
+  mobility.SetPositionAllocator (positionAlloc);
+  mobility.Install (sinkNode);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
@@ -111,13 +129,13 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/test");
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(1.0))); 
-  ApplicationContainer proapp = producerHelper.Install (nodes);
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(5.0))); 
+  ApplicationContainer proapp = producerHelper.Install (nodes.Get (0));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
-  consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  ApplicationContainer cunapp = consumerHelper.Install (sinkNode.Get (0));
+  consumerHelper.SetAttribute("Frequency", StringValue("1"));
+  ApplicationContainer cunapp = consumerHelper.Install (nodes);
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
