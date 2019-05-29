@@ -35,7 +35,7 @@ main(int argc, char* argv[])
   std::string phyMode = "HtMcs7";
   //uint16_t disSink = 100;
   //uint16_t disNode = 35;
-  uint16_t numberOfnodes = 2;
+  uint16_t numberOfnodes = 10;
   //uint16_t sNode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 10.0;
@@ -105,11 +105,13 @@ main(int argc, char* argv[])
                                  "X", StringValue ("100.0"),
                                  "Y", StringValue ("100.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+/*  
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                                  "Mode", StringValue ("Time"),
                                  "Time", StringValue ("2s"),
                                  "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
                                  "Bounds", StringValue ("0|200|0|200"));
+*/
   mobility.Install (nodes);
 
 /*
@@ -162,7 +164,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  consumerHelper.Install (nodes.Get (1));
+  consumerHelper.Install (nodes);
 
   //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
