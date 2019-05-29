@@ -39,7 +39,7 @@ main(int argc, char* argv[])
   //uint16_t sNode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 10.0;
-  double simTime = 30.0;
+  double simTime = 60.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -154,7 +154,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  ApplicationContainer cunapp = consumerHelper.Install (nodes.Get (1));
+  ApplicationContainer cunapp = consumerHelper.Install (nodes.Get (49));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
