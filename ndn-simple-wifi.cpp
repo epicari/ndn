@@ -146,18 +146,22 @@ main(int argc, char* argv[])
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.Install (nodes);
 
-  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/multicast");
+  string prefix = "/ucla/hello";
+
+  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
-  producerHelper.SetPrefix("/");
+  producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(5.0))); 
-  ApplicationContainer proapp = producerHelper.Install (nodes.Get (0));
+  producerHelper.Install (nodes.Get (0));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
+  consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  ApplicationContainer cunapp = consumerHelper.Install (nodes.Get (49));
+  consumerHelper.Install (nodes.Get (49));
+
+  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
