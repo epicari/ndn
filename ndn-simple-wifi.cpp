@@ -35,7 +35,7 @@ main(int argc, char* argv[])
   std::string phyMode = "HtMcs7";
   //uint16_t disSink = 100;
   //uint16_t disNode = 35;
-  uint16_t numberOfnodes = 50;
+  uint16_t numberOfnodes = 2;
   //uint16_t sNode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 10.0;
@@ -162,7 +162,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  consumerHelper.Install (nodes.Get (49));
+  consumerHelper.Install (nodes.Get (1));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
