@@ -63,7 +63,7 @@ main(int argc, char* argv[])
   //NodeContainer allNodes = NodeContainer (nodes, sinkNode);
 
   WifiHelper wifi;
-  wifi.SetStandard(WIFI_PHY_STANDARD_80211ax_5GHZ);
+  wifi.SetStandard(WIFI_PHY_STANDARD_80211ac);
   /*wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode", StringValue (phyMode), 
                                 "ControlMode", StringValue ("HtMcs0"));
