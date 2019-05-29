@@ -35,8 +35,8 @@ int
 main(int argc, char* argv[])
 {
   std::string phyMode = "HtMcs7";
-  uint16_t disSink = 100;
-  uint16_t disNode = 35;
+  //uint16_t disSink = 100;
+  //uint16_t disNode = 35;
   uint16_t numberOfnodes = 10;
   uint16_t sNode = 1;
   double txPowerStart = 0.0;
@@ -89,7 +89,8 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("wifi-default");
 
   WifiMacHelper wifiMacHelper;
-  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+/*
   wifiMacHelper.SetType ("ns3::StaWifiMac",
                          "ActiveProbing", BooleanValue (true),
                          "Ssid", SsidValue (ssid));
@@ -98,9 +99,18 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType ("ns3::ApWifiMac",
                          "Ssid", SsidValue (ssid));
   NetDeviceContainer apDevs = wifi.Install (wifiPhy, wifiMacHelper, sinkNode);
+*/
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
 
-  //NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
+  MobilityHelper mobility;
+  mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
+                                 "X", DoubleValue ("400.0"),
+                                 "Y", DoubleValue ("400.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"));
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+  mobility.Install (allNodes);
 
+/*
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
   for (uint16_t i = 0; i < numberOfnodes; i++) {
@@ -109,8 +119,7 @@ main(int argc, char* argv[])
 
   MobilityHelper mobility;
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  mobility.SetPositionAllocator (positionAlloc);
-  //mobility.Install (allNodes);
+  mobility.SetPositionAllocator (positionAlloc); 
   mobility.Install (nodes);
 
   for (uint16_t j = 0; j < sNode; j++) {
@@ -123,18 +132,21 @@ main(int argc, char* argv[])
   
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (sinkNode);
+*/
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
+  //ndnHelper.Install (nodes);
+  //ndnHelper.Install (sNode);
   ndnHelper.Install (allNodes);
 
   ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
-  producerHelper.SetPrefix("/test");
+  producerHelper.SetPrefix("/test/prefix");
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(5.0))); 
-  ApplicationContainer proapp = producerHelper.Install (nodes.Get (0));
+  ApplicationContainer proapp = producerHelper.Install (sinkNode);
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
