@@ -101,15 +101,11 @@ main(int argc, char* argv[])
   NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
 
   MobilityHelper mobility;
-  mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
-                                 "X", DoubleValue (100.0),
-                                 "Y", DoubleValue (100.0),
-                                 //"MinX", DoubleValue (0.0),
-                                 //"MinY", DoubleValue (0.0),
-                                 //"DeltaX", DoubleValue (100.0),
-                                 //"DeltaY", DoubleValue (100.0),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
-  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+  mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
+                                 "Mode", StringValue ("Time"),
+                                 "Time", StringValue ("1s"),
+                                 "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
+                                 "Bounds", RectangleValue (Rectangle (0.0, 0.0 + 5.0,0.0, (2 + 1) * 5.0)));
   mobility.Install (allNodes);
 
 /*
