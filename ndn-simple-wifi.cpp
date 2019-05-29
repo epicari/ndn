@@ -36,7 +36,7 @@ main(int argc, char* argv[])
   //uint16_t disSink = 100;
   //uint16_t disNode = 35;
   uint16_t numberOfnodes = 50;
-  uint16_t sNode = 1;
+  //uint16_t sNode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 10.0;
   double simTime = 30.0;
@@ -57,10 +57,10 @@ main(int argc, char* argv[])
   NodeContainer nodes;
   nodes.Create (numberOfnodes);
   
-  NodeContainer sinkNode;
-  sinkNode.Create (sNode);
+  //NodeContainer sinkNode;
+  //sinkNode.Create (sNode);
 
-  NodeContainer allNodes = NodeContainer (nodes, sinkNode);
+  //NodeContainer allNodes = NodeContainer (nodes, sinkNode);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
@@ -98,7 +98,7 @@ main(int argc, char* argv[])
                          "Ssid", SsidValue (ssid));
   NetDeviceContainer apDevs = wifi.Install (wifiPhy, wifiMacHelper, sinkNode);
 */
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
 
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
@@ -110,7 +110,7 @@ main(int argc, char* argv[])
                                  "Time", StringValue ("2s"),
                                  "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
                                  "Bounds", StringValue ("0|200|0|200"));
-  mobility.Install (allNodes);
+  mobility.Install (nodes);
 
 /*
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
@@ -140,15 +140,15 @@ main(int argc, char* argv[])
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
   //ndnHelper.Install (nodes);
   //ndnHelper.Install (sNode);
-  ndnHelper.Install (allNodes);
+  ndnHelper.Install (nodes);
 
   ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
-  producerHelper.SetPrefix("/test/prefix");
+  producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(5.0))); 
-  ApplicationContainer proapp = producerHelper.Install (sinkNode);
+  ApplicationContainer proapp = producerHelper.Install (nodes.Get (0));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
