@@ -138,10 +138,13 @@ main(int argc, char* argv[])
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes(true);
+  //ndnHelper.SetDefaultRoutes(true);
   //ndnHelper.Install (nodes);
   //ndnHelper.Install (sNode);
   ndnHelper.Install (nodes);
+
+  GlobalRoutingHelper ndnGlobalRoutingHelper;
+  ndnGlobalRoutingHelper.Install (nodes);
 
   ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/multicast");
 
