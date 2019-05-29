@@ -154,7 +154,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  ApplicationContainer cunapp = consumerHelper.Install (nodes);
+  ApplicationContainer cunapp = consumerHelper.Install (nodes.Get (1));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
