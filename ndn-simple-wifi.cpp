@@ -32,7 +32,7 @@ NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 int
 main(int argc, char* argv[])
 {
-  std::string phyMode = "HtMcs7";
+  //std::string phyMode = "HtMcs7";
   //uint16_t disSink = 100;
   //uint16_t disNode = 35;
   uint16_t numberOfnodes = 10;
@@ -43,7 +43,7 @@ main(int argc, char* argv[])
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
-
+/*
   // disable fragmentation for frames below 2200 bytes
   Config::SetDefault ("ns3::WifiRemoteStationManager::FragmentationThreshold",
                       StringValue ("2200"));
@@ -53,7 +53,7 @@ main(int argc, char* argv[])
   // Fix non-unicast data rate to be the same as that of unicast
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",
                       StringValue (phyMode));
-
+*/
   NodeContainer nodes;
   nodes.Create (numberOfnodes);
   
@@ -63,11 +63,11 @@ main(int argc, char* argv[])
   //NodeContainer allNodes = NodeContainer (nodes, sinkNode);
 
   WifiHelper wifi;
-  wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
-  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
+  wifi.SetStandard(WIFI_PHY_STANDARD_80211ax_5GHZ);
+  /*wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode", StringValue (phyMode), 
                                 "ControlMode", StringValue ("HtMcs0"));
-
+  */
   YansWifiChannelHelper wifiChannel;
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
   wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
