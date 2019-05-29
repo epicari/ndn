@@ -143,7 +143,7 @@ main(int argc, char* argv[])
   //ndnHelper.Install (sNode);
   ndnHelper.Install (nodes);
 
-  GlobalRoutingHelper ndnGlobalRoutingHelper;
+  ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.Install (nodes);
 
   ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/multicast");
