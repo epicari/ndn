@@ -138,13 +138,13 @@ main(int argc, char* argv[])
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.SetDefaultRoutes(true);
   //ndnHelper.Install (nodes);
   //ndnHelper.Install (sNode);
   ndnHelper.Install (nodes);
 
-  ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-  ndnGlobalRoutingHelper.Install (nodes);
+  //ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
+  //ndnGlobalRoutingHelper.Install (nodes);
 
   string prefix = "/ucla/hello";
 
@@ -161,7 +161,7 @@ main(int argc, char* argv[])
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
   consumerHelper.Install (nodes.Get (49));
 
-  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
+  //ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
