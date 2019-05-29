@@ -143,7 +143,7 @@ main(int argc, char* argv[])
   //ndnHelper.Install (sNode);
   ndnHelper.Install (nodes);
 
-  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/multicast");
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
