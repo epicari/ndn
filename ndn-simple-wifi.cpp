@@ -102,10 +102,12 @@ main(int argc, char* argv[])
 
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
-                                 "MinX", DoubleValue (0.0),
-                                 "MinY", DoubleValue (0.0),
-                                 "DeltaX", DoubleValue (100.0),
-                                 "DeltaY", DoubleValue (100.0),
+                                 "X", DoubleValue (100.0),
+                                 "Y", DoubleValue (100.0),
+                                 //"MinX", DoubleValue (0.0),
+                                 //"MinY", DoubleValue (0.0),
+                                 //"DeltaX", DoubleValue (100.0),
+                                 //"DeltaY", DoubleValue (100.0),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.Install (allNodes);
