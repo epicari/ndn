@@ -39,7 +39,7 @@ main(int argc, char* argv[])
   uint16_t sNode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 10.0;
-  double simTime = 10.0;
+  double simTime = 30.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -101,11 +101,15 @@ main(int argc, char* argv[])
   NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
 
   MobilityHelper mobility;
+  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
+                                 "X", StringValue ("100.0"),
+                                 "Y", StringValue ("100.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                                  "Mode", StringValue ("Time"),
-                                 "Time", StringValue ("1s"),
+                                 "Time", StringValue ("2s"),
                                  "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                                 "Bounds", RectangleValue (Rectangle (0.0, 0.0 + 5.0,0.0, (2 + 1) * 5.0)));
+                                 "Bounds", StringValue ("0|200|0|200"));
   mobility.Install (allNodes);
 
 /*
