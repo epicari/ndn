@@ -37,7 +37,7 @@ main(int argc, char* argv[])
   std::string phyMode = "HtMcs7";
   //uint16_t disSink = 100;
   //uint16_t disNode = 35;
-  uint16_t numberOfnodes = 10;
+  uint16_t numberOfnodes = 50;
   uint16_t sNode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 10.0;
@@ -104,9 +104,9 @@ main(int argc, char* argv[])
 
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
-                                 "X", DoubleValue ("400.0"),
-                                 "Y", DoubleValue ("400.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"));
+                                 "X", DoubleValue ("100.0"),
+                                 "Y", DoubleValue ("100.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobility.Install (allNodes);
 
