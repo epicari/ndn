@@ -188,7 +188,7 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(5.0))); 
-  producerHelper.Install (nodesA.Get (0));
+  producerHelper.Install (nodesA);
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
