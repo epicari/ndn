@@ -21,6 +21,7 @@
 #include "ns3/network-module.h"
 #include "ns3/applications-module.h"
 #include "ns3/wifi-module.h"
+#include "ns3/point-to-point-module.h"
 #include "ns3/mobility-module.h"
 #include "ns3/ndnSIM-module.h"
 
@@ -32,18 +33,19 @@ NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 int
 main(int argc, char* argv[])
 {
-  //std::string phyMode = "HtMcs7";
+  std::string phyMode = "HtMcs7";
   //uint16_t disSink = 100;
   //uint16_t disNode = 35;
-  uint16_t numberOfnodes = 10;
-  //uint16_t sNode = 1;
+  uint16_t numberOfnodes = 50;
+  uint16_t sNode = 1;
+  uint16_t remotenode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 10.0;
   double simTime = 60.0;
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
-/*
+
   // disable fragmentation for frames below 2200 bytes
   Config::SetDefault ("ns3::WifiRemoteStationManager::FragmentationThreshold",
                       StringValue ("2200"));
@@ -53,21 +55,24 @@ main(int argc, char* argv[])
   // Fix non-unicast data rate to be the same as that of unicast
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",
                       StringValue (phyMode));
-*/
+
   NodeContainer nodes;
   nodes.Create (numberOfnodes);
   
-  //NodeContainer sinkNode;
-  //sinkNode.Create (sNode);
+  NodeContainer sinkNode;
+  sinkNode.Create (sNode);
+
+  NodeContainer remoteHost;
+  remoteHost.Create (remotenode);
 
   //NodeContainer allNodes = NodeContainer (nodes, sinkNode);
 
   WifiHelper wifi;
-  wifi.SetStandard(WIFI_PHY_STANDARD_80211ac);
-  /*wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
+  wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
+  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode", StringValue (phyMode), 
                                 "ControlMode", StringValue ("HtMcs0"));
-  */
+  
   YansWifiChannelHelper wifiChannel;
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
   wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
@@ -87,32 +92,43 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("wifi-default");
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
-/*
-  wifiMacHelper.SetType ("ns3::StaWifiMac",
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  //NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+
+  wifiMacHelper.SetType("ns3::StaWifiMac",
                          "ActiveProbing", BooleanValue (true),
                          "Ssid", SsidValue (ssid));
-  NetDeviceContainer staDevs = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+  NetDeviceContainer staDevs = wifi.Install(wifiPhy, wifiMacHelper, nodes);
 
-  wifiMacHelper.SetType ("ns3::ApWifiMac",
+  wifiMacHelper.SetType("ns3::ApWifiMac",
                          "Ssid", SsidValue (ssid));
-  NetDeviceContainer apDevs = wifi.Install (wifiPhy, wifiMacHelper, sinkNode);
-*/
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+  NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, sinkNode);
+
+  PointToPointHelper p2p;
+  p2p.Install(sinkNode, remoteHost);
 
   MobilityHelper mobility;
+  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+ 
+  positionAlloc->Add (Vector(120, 120, 0));
+  mobility.SetPositionAllocator(positionAlloc);
+  mobility.Install(sNode);
+
+  positionAlloc->Add (Vector(150, 150, 0));
+  mobility.SetPositionAllocator(positionAlloc);
+  mobility.Install(remoteHost);
+
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("100.0"),
                                  "Y", StringValue ("100.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
-/*  
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                                  "Mode", StringValue ("Time"),
                                  "Time", StringValue ("2s"),
                                  "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
                                  "Bounds", StringValue ("0|200|0|200"));
-*/
-  mobility.Install (nodes);
+
+  mobility.Install(nodes);
 
 /*
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
@@ -141,17 +157,17 @@ main(int argc, char* argv[])
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
   //ndnHelper.SetDefaultRoutes(true);
-  //ndnHelper.Install (nodes);
+  ndnHelper.InstallAll();
   //ndnHelper.Install (sNode);
-  ndnHelper.Install (nodes);
+  //ndnHelper.Install (nodes);
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.Install (nodes);
 
   string prefix = "/ucla/hello";
 
-  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
-  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
+  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
+  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
   
   ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
 
@@ -164,7 +180,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  consumerHelper.Install (nodes);
+  consumerHelper.Install (remoteNode);
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
