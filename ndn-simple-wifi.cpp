@@ -40,7 +40,6 @@ main(int argc, char* argv[])
   //uint16_t disNode = 35;
   uint16_t numberOfnodes = 50;
   uint16_t sNode = 2;
-  //uint16_t remotenode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 10.0;
   double simTime = 60.0;
@@ -66,15 +65,10 @@ main(int argc, char* argv[])
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
   //ndnHelper.Install (sNode);
   //ndnHelper.Install (nodes);
-
-  //NodeContainer remoteHost;
-  //remoteHost.Create (remotenode);
-
-  //NodeContainer allNodes = NodeContainer (nodes, sinkNode);
 
   CsmaHelper csma;
   NetDeviceContainer backboneDevices = csma.Install (sinkNode);
@@ -123,10 +117,7 @@ main(int argc, char* argv[])
 
       BridgeHelper bridge;
       NetDeviceContainer bridgeDev = bridge.Install (sinkNode.Get (i), NetDeviceContainer (apDevs, backboneDevices.Get (i)));
-      
-      //PointToPointHelper p2p;
-      //p2p.Install(sinkNode, remoteHost);
-    
+          
       if(i==0) {
         positionAlloc->Add (Vector(120, 120, 0));
         mobility.SetPositionAllocator(positionAlloc);
@@ -174,15 +165,15 @@ main(int argc, char* argv[])
   mobility.Install (sinkNode);
 */
 
-  ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-  ndnGlobalRoutingHelper.Install (nodes);
+  //ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
+  //ndnGlobalRoutingHelper.Install (nodes);
 
   string prefix = "/ucla/hello";
 
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
   ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
   
-  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
+  //ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
@@ -195,7 +186,7 @@ main(int argc, char* argv[])
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
   consumerHelper.Install (sinkNode.Get (1));
 
-  ndn::GlobalRoutingHelper::CalculateRoutes();
+  //ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
 
