@@ -110,8 +110,9 @@ main(int argc, char* argv[])
   NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, sinkNode);
 
   BridgeHelper bridge;
-  NetDeviceContainer bridgeDev = bridge.Install (sinkNode, NetDeviceContainer (apDevs, sinkNode));
-
+  for (uint16_t i = 0; i < sinkNode.GetN(); i++) {
+    NetDeviceContainer bridgeDev = bridge.Install (sinkNode.Get (i), NetDeviceContainer (apDevs, sinkNode.Get (i)));
+  }
   //PointToPointHelper p2p;
   //p2p.Install(sinkNode, remoteHost);
 
