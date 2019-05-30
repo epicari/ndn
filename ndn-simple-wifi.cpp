@@ -112,7 +112,7 @@ main(int argc, char* argv[])
                          "Ssid", SsidValue (ssid));
   NetDeviceContainer staDevs = wifi.Install(wifiPhy, wifiMacHelper, nodes);
 
-  for(uint16_t i = 0; i < sNode; ++i)
+  for(uint16_t i = 0; i < sNode.GetN (); i++)
     {
       wifiMacHelper.SetType("ns3::ApWifiMac",
                             "Ssid", SsidValue (ssid));
