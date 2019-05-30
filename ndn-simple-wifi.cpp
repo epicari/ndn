@@ -57,8 +57,13 @@ main(int argc, char* argv[])
   Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",
                       StringValue (phyMode));
 
-  NodeContainer nodes;
-  nodes.Create (numberOfnodes);
+  NodeContainer nodesA;
+  nodesA.Create (numberOfnodes);
+
+  NodeContainer nodesB;
+  nodesB.Create (1);
+
+  NodeContainer nodes = NodeContainer (nodesA, nodesB);
   
   NodeContainer sinkNode;
   sinkNode.Create (sNode);
@@ -119,12 +124,12 @@ main(int argc, char* argv[])
       NetDeviceContainer bridgeDev = bridge.Install (sinkNode.Get (i), NetDeviceContainer (apDevs, backboneDevices.Get (i)));
           
       if(i==0) {
-        positionAlloc->Add (Vector(80, 80, 0));
+        positionAlloc->Add (Vector(100, 100, 0));
         mobility.SetPositionAllocator(positionAlloc);
         mobility.Install(sinkNode.Get (i));
       }
 
-      positionAlloc->Add (Vector(150, 150, 0));
+      positionAlloc->Add (Vector(200, 200, 0));
       mobility.SetPositionAllocator(positionAlloc);
       mobility.Install(sinkNode.Get (i));
     }
@@ -139,7 +144,11 @@ main(int argc, char* argv[])
                                  "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
                                  "Bounds", StringValue ("0|200|0|200"));
 
-  mobility.Install(nodes);
+  mobility.Install(nodesA);
+
+  positionAlloc->Add (Vector(250, 250, 0));
+  mobility.SetPositionAllocator(positionAlloc);
+  mobility.Install(nodesB);
 
 /*
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
@@ -179,12 +188,12 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(5.0))); 
-  producerHelper.Install (nodes.Get (0));
+  producerHelper.Install (nodesA.Get (0));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  consumerHelper.Install (sinkNode.Get (1));
+  consumerHelper.Install (nodesB);
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
