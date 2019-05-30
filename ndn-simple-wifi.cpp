@@ -68,7 +68,7 @@ main(int argc, char* argv[])
   NodeContainer sinkNode;
   sinkNode.Create (sNode);
 
-  //NodeContainer allNodes = NodeContainer (sinkNode, nodes);
+  NodeContainer allNodes = NodeContainer (sinkNode, nodes);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
