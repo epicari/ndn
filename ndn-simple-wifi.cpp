@@ -110,9 +110,8 @@ main(int argc, char* argv[])
   NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, sinkNode);
 
   BridgeHelper bridge;
-  for (uint16_t i = 0; i < sinkNode.GetN(); i++) {
-    NetDeviceContainer bridgeDev = bridge.Install (sinkNode.Get (i), NetDeviceContainer (apDevs, sinkNode.Get (i)));
-  }
+  NetDeviceContainer bridgeDev = bridge.Install (sinkNode, NetDeviceContainer (apDevs, backboneInterfaces));
+  
   //PointToPointHelper p2p;
   //p2p.Install(sinkNode, remoteHost);
 
@@ -121,11 +120,11 @@ main(int argc, char* argv[])
  
   positionAlloc->Add (Vector(120, 120, 0));
   mobility.SetPositionAllocator(positionAlloc);
-  mobility.Install(sNode);
+  mobility.Install(sNode.Get (0));
 
   positionAlloc->Add (Vector(150, 150, 0));
   mobility.SetPositionAllocator(positionAlloc);
-  mobility.Install(remoteHost);
+  mobility.Install(sNode.Get (1));
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("100.0"),
@@ -189,7 +188,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  consumerHelper.Install (remotenode);
+  consumerHelper.Install (sNode.Get (1));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
