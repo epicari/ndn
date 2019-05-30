@@ -106,7 +106,7 @@ main(int argc, char* argv[])
 
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodesA);
 /*
   wifiMacHelper.SetType("ns3::StaWifiMac",
                          "ActiveProbing", BooleanValue (true),
