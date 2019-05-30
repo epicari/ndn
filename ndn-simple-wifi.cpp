@@ -126,20 +126,20 @@ main(int argc, char* argv[])
       NetDeviceContainer bridgeDev = bridge.Install (sinkNode.Get (i), NetDeviceContainer (apDevs, backboneDevices.Get (i)));
           
       if(i==0) {
-        positionAlloc->Add (Vector(50, 50, 0));
+        positionAlloc->Add (Vector(100, 100, 0));
         mobility.SetPositionAllocator(positionAlloc);
         mobility.Install(sinkNode.Get (i));
       }
 
-      positionAlloc->Add (Vector(70, 70, 0));
+      positionAlloc->Add (Vector(120, 120, 0));
       mobility.SetPositionAllocator(positionAlloc);
       mobility.Install(sinkNode.Get (i));
     }
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("50.0"),
-                                 "Y", StringValue ("50.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=20]"));
+                                 "X", StringValue ("100.0"),
+                                 "Y", StringValue ("100.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                                  "Mode", StringValue ("Time"),
                                  "Time", StringValue ("2s"),
@@ -148,7 +148,7 @@ main(int argc, char* argv[])
 
   mobility.Install(nodesA);
 
-  positionAlloc->Add (Vector(90, 90, 0));
+  positionAlloc->Add (Vector(120, 90, 0));
   mobility.SetPositionAllocator(positionAlloc);
   mobility.Install(nodesB);
 
