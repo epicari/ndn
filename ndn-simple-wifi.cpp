@@ -133,7 +133,7 @@ main(int argc, char* argv[])
         mobility.Install(sinkNode.Get (i));
       }
 
-      positionAlloc->Add (Vector(150 150, 0));
+      positionAlloc->Add (Vector(150, 150, 0));
       mobility.SetPositionAllocator(positionAlloc);
       mobility.Install(sinkNode.Get (i));
     }
