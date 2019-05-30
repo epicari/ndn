@@ -24,6 +24,8 @@
 #include "ns3/point-to-point-module.h"
 #include "ns3/mobility-module.h"
 #include "ns3/ndnSIM-module.h"
+#include "ns3/csma-helper.h"
+#include "ns3/bridge-helper.h"
 
 using namespace std;
 namespace ns3 {
@@ -37,8 +39,8 @@ main(int argc, char* argv[])
   //uint16_t disSink = 100;
   //uint16_t disNode = 35;
   uint16_t numberOfnodes = 50;
-  uint16_t sNode = 1;
-  uint16_t remotenode = 1;
+  uint16_t sNode = 2;
+  //uint16_t remotenode = 1;
   double txPowerStart = 0.0;
   double txPowerEnd = 10.0;
   double simTime = 60.0;
@@ -62,8 +64,11 @@ main(int argc, char* argv[])
   NodeContainer sinkNode;
   sinkNode.Create (sNode);
 
-  NodeContainer remoteHost;
-  remoteHost.Create (remotenode);
+  CsmaHelper csma;
+  NetDeviceContainer backboneInterfaces = csma.Install (sinkNode);
+
+  //NodeContainer remoteHost;
+  //remoteHost.Create (remotenode);
 
   //NodeContainer allNodes = NodeContainer (nodes, sinkNode);
 
@@ -104,8 +109,11 @@ main(int argc, char* argv[])
                          "Ssid", SsidValue (ssid));
   NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, sinkNode);
 
-  PointToPointHelper p2p;
-  p2p.Install(sinkNode, remoteHost);
+  BridgeHelper bridge;
+  NetDeviceContainer bridgeDev = bridge.Install (sinkNode, NetDeviceContainer (apDevs, sinkNode));
+
+  //PointToPointHelper p2p;
+  //p2p.Install(sinkNode, remoteHost);
 
   MobilityHelper mobility;
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
@@ -180,7 +188,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  consumerHelper.Install (remoteNode);
+  consumerHelper.Install (remotenode);
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
