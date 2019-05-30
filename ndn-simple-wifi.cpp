@@ -68,15 +68,17 @@ main(int argc, char* argv[])
   NodeContainer sinkNode;
   sinkNode.Create (sNode);
 
+  NodeContainer allNodes = NodeContainer (sinkNode, nodes);
+
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes(true);
+  //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
   //ndnHelper.Install (sNode);
   //ndnHelper.Install (nodes);
 
-  CsmaHelper csma;
-  NetDeviceContainer backboneDevices = csma.Install (sinkNode);
+  //CsmaHelper csma;
+  //NetDeviceContainer backboneDevices = csma.Install (sinkNode);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
@@ -103,36 +105,36 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("wifi-default");
 
   WifiMacHelper wifiMacHelper;
-  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  //NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
 
-  wifiMacHelper.SetType("ns3::StaWifiMac",
-                         "ActiveProbing", BooleanValue (true),
-                         "Ssid", SsidValue (ssid));
-  NetDeviceContainer staDevs = wifi.Install(wifiPhy, wifiMacHelper, nodes);
+  //wifiMacHelper.SetType("ns3::StaWifiMac",
+  //                       "ActiveProbing", BooleanValue (true),
+  //                       "Ssid", SsidValue (ssid));
+  //NetDeviceContainer staDevs = wifi.Install(wifiPhy, wifiMacHelper, nodes);
 
   MobilityHelper mobility;
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  for(uint16_t i = 0; i < sNode; i++)
-    {
-      wifiMacHelper.SetType("ns3::ApWifiMac",
-                            "Ssid", SsidValue (ssid));
-      NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, sinkNode.Get (i));
+  //for(uint16_t i = 0; i < sNode; i++)
+  //  {
+  //    wifiMacHelper.SetType("ns3::ApWifiMac",
+  //                          "Ssid", SsidValue (ssid));
+  //    NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, sinkNode.Get (i));
 
-      BridgeHelper bridge;
-      NetDeviceContainer bridgeDev = bridge.Install (sinkNode.Get (i), NetDeviceContainer (apDevs, backboneDevices.Get (i)));
+  //    BridgeHelper bridge;
+  //    NetDeviceContainer bridgeDev = bridge.Install (sinkNode.Get (i), NetDeviceContainer (apDevs, backboneDevices.Get (i)));
           
-      if(i==0) {
+  //    if(i==0) {
         positionAlloc->Add (Vector(100, 100, 0));
         mobility.SetPositionAllocator(positionAlloc);
-        mobility.Install(sinkNode.Get (i));
-      }
+        mobility.Install(sinkNode.Get (0));
+  //    }
 
       positionAlloc->Add (Vector(200, 200, 0));
       mobility.SetPositionAllocator(positionAlloc);
-      mobility.Install(sinkNode.Get (i));
-    }
+      mobility.Install(sinkNode.Get (1));
+  //  }
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("100.0"),
@@ -175,14 +177,14 @@ main(int argc, char* argv[])
 */
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-  ndnGlobalRoutingHelper.Install (nodes);
+  ndnGlobalRoutingHelper.Install (allNodes);
 
   string prefix = "/ucla/hello";
 
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
   ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
   
-  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
+  ndnGlobalRoutingHelper.AddOrigins(prefix, allNodes);
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
