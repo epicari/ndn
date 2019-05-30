@@ -64,13 +64,20 @@ main(int argc, char* argv[])
   NodeContainer sinkNode;
   sinkNode.Create (sNode);
 
-  CsmaHelper csma;
-  NetDeviceContainer backboneInterfaces = csma.Install (sinkNode);
+  ndn::StackHelper ndnHelper;
+  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
+  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.InstallAll ();
+  //ndnHelper.Install (sNode);
+  //ndnHelper.Install (nodes);
 
   //NodeContainer remoteHost;
   //remoteHost.Create (remotenode);
 
   //NodeContainer allNodes = NodeContainer (nodes, sinkNode);
+
+  CsmaHelper csma;
+  NetDeviceContainer backboneDevices = csma.Install (sinkNode);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
@@ -105,26 +112,31 @@ main(int argc, char* argv[])
                          "Ssid", SsidValue (ssid));
   NetDeviceContainer staDevs = wifi.Install(wifiPhy, wifiMacHelper, nodes);
 
-  wifiMacHelper.SetType("ns3::ApWifiMac",
-                         "Ssid", SsidValue (ssid));
-  NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, sinkNode);
+  for(uint16_t i = 0; i < sNode; ++i)
+    {
+      wifiMacHelper.SetType("ns3::ApWifiMac",
+                            "Ssid", SsidValue (ssid));
+      NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, sinkNode.Get (i));
 
-  BridgeHelper bridge;
-  NetDeviceContainer bridgeDev = bridge.Install (sinkNode, NetDeviceContainer (apDevs, backboneInterfaces));
-  
-  //PointToPointHelper p2p;
-  //p2p.Install(sinkNode, remoteHost);
+      BridgeHelper bridge;
+      NetDeviceContainer bridgeDev = bridge.Install (sinkNode.Get (i), NetDeviceContainer (apDevs, backboneDevices.Get (i)));
+      
+      //PointToPointHelper p2p;
+      //p2p.Install(sinkNode, remoteHost);
 
-  MobilityHelper mobility;
-  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
- 
-  positionAlloc->Add (Vector(120, 120, 0));
-  mobility.SetPositionAllocator(positionAlloc);
-  mobility.Install(sNode.Get (0));
+      MobilityHelper mobility;
+      Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+    
+      if(i==0) {
+        positionAlloc->Add (Vector(120, 120, 0));
+        mobility.SetPositionAllocator(positionAlloc);
+        mobility.Install(sNode.Get (i));
+      }
 
-  positionAlloc->Add (Vector(150, 150, 0));
-  mobility.SetPositionAllocator(positionAlloc);
-  mobility.Install(sNode.Get (1));
+      positionAlloc->Add (Vector(150 150, 0));
+      mobility.SetPositionAllocator(positionAlloc);
+      mobility.Install(sNode.Get (i));
+    }
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("100.0"),
@@ -161,13 +173,6 @@ main(int argc, char* argv[])
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (sinkNode);
 */
-
-  ndn::StackHelper ndnHelper;
-  ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  //ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.InstallAll();
-  //ndnHelper.Install (sNode);
-  //ndnHelper.Install (nodes);
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.Install (nodes);
