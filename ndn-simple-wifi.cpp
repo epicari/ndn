@@ -112,6 +112,9 @@ main(int argc, char* argv[])
                          "Ssid", SsidValue (ssid));
   NetDeviceContainer staDevs = wifi.Install(wifiPhy, wifiMacHelper, nodes);
 
+  MobilityHelper mobility;
+  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+
   for(uint16_t i = 0; i < sNode; i++)
     {
       wifiMacHelper.SetType("ns3::ApWifiMac",
@@ -123,9 +126,6 @@ main(int argc, char* argv[])
       
       //PointToPointHelper p2p;
       //p2p.Install(sinkNode, remoteHost);
-
-      MobilityHelper mobility;
-      Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
     
       if(i==0) {
         positionAlloc->Add (Vector(120, 120, 0));
