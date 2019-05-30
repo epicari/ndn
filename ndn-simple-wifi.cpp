@@ -68,7 +68,7 @@ main(int argc, char* argv[])
   NodeContainer sinkNode;
   sinkNode.Create (sNode);
 
-  NodeContainer allNodes = NodeContainer (sinkNode, nodes);
+  //NodeContainer allNodes = NodeContainer (sinkNode, nodes);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
@@ -77,8 +77,8 @@ main(int argc, char* argv[])
   //ndnHelper.Install (sNode);
   //ndnHelper.Install (nodes);
 
-  //CsmaHelper csma;
-  //NetDeviceContainer backboneDevices = csma.Install (sinkNode);
+  CsmaHelper csma;
+  NetDeviceContainer backboneDevices = csma.Install (sinkNode);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
@@ -105,50 +105,50 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("wifi-default");
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  //NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, allNodes);
 
-  //wifiMacHelper.SetType("ns3::StaWifiMac",
-  //                       "ActiveProbing", BooleanValue (true),
-  //                       "Ssid", SsidValue (ssid));
-  //NetDeviceContainer staDevs = wifi.Install(wifiPhy, wifiMacHelper, nodes);
+  wifiMacHelper.SetType("ns3::StaWifiMac",
+                         "ActiveProbing", BooleanValue (true),
+                         "Ssid", SsidValue (ssid));
+  NetDeviceContainer staDevs = wifi.Install(wifiPhy, wifiMacHelper, nodes);
 
   MobilityHelper mobility;
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  //for(uint16_t i = 0; i < sNode; i++)
-  //  {
-  //    wifiMacHelper.SetType("ns3::ApWifiMac",
-  //                          "Ssid", SsidValue (ssid));
-  //    NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, sinkNode.Get (i));
+  for(uint16_t i = 0; i < sNode; i++)
+    {
+      wifiMacHelper.SetType("ns3::ApWifiMac",
+                            "Ssid", SsidValue (ssid));
+      NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, sinkNode.Get (i));
 
-  //    BridgeHelper bridge;
-  //    NetDeviceContainer bridgeDev = bridge.Install (sinkNode.Get (i), NetDeviceContainer (apDevs, backboneDevices.Get (i)));
+      BridgeHelper bridge;
+      NetDeviceContainer bridgeDev = bridge.Install (sinkNode.Get (i), NetDeviceContainer (apDevs, backboneDevices.Get (i)));
           
-  //    if(i==0) {
-        positionAlloc->Add (Vector(100, 100, 0));
+      if(i==0) {
+        positionAlloc->Add (Vector(50, 50, 0));
         mobility.SetPositionAllocator(positionAlloc);
-        mobility.Install(sinkNode.Get (0));
-  //    }
+        mobility.Install(sinkNode.Get (i));
+      }
 
-      positionAlloc->Add (Vector(200, 200, 0));
+      positionAlloc->Add (Vector(70, 70, 0));
       mobility.SetPositionAllocator(positionAlloc);
-      mobility.Install(sinkNode.Get (1));
-  //  }
+      mobility.Install(sinkNode.Get (i));
+    }
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("100.0"),
-                                 "Y", StringValue ("100.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+                                 "X", StringValue ("50.0"),
+                                 "Y", StringValue ("50.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=20]"));
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                                  "Mode", StringValue ("Time"),
                                  "Time", StringValue ("2s"),
                                  "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                                 "Bounds", StringValue ("0|200|0|200"));
+                                 "Bounds", StringValue ("0|20|0|20"));
 
   mobility.Install(nodesA);
 
-  positionAlloc->Add (Vector(250, 250, 0));
+  positionAlloc->Add (Vector(90, 90, 0));
   mobility.SetPositionAllocator(positionAlloc);
   mobility.Install(nodesB);
 
