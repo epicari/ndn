@@ -52,8 +52,7 @@ main(int argc, char* argv[])
   // disable fragmentation
   Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue("2200"));
   Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("2200"));
-  Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode",
-                     StringValue("OfdmRate24Mbps"));
+  Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -108,7 +107,7 @@ main(int argc, char* argv[])
                                  "Bounds", StringValue ("0|200|0|200"));
 
   NodeContainer nodes;
-  nodes.Create(30);
+  nodes.Create(50);
 
   ////////////////
   // 1. Install Wifi
