@@ -62,14 +62,19 @@ main(int argc, char* argv[])
   //////////////////////
   WifiHelper wifi;
   // wifi.SetRemoteStationManager ("ns3::AarfWifiManager");
-  wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
-  wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager", "DataMode",
-                               StringValue("OfdmRate24Mbps"));
+  //wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
+  //wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager", "DataMode",
+  //                             StringValue("OfdmRate24Mbps"));
+  wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
+  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
+                                "DataMode", StringValue (phyMode), 
+                                "ControlMode", StringValue ("HtMcs0"));
 
   YansWifiChannelHelper wifiChannel; // = YansWifiChannelHelper::Default ();
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
-  wifiChannel.AddPropagationLoss("ns3::ThreeLogDistancePropagationLossModel");
-  wifiChannel.AddPropagationLoss("ns3::NakagamiPropagationLossModel");
+  //wifiChannel.AddPropagationLoss("ns3::ThreeLogDistancePropagationLossModel");
+  //wifiChannel.AddPropagationLoss("ns3::NakagamiPropagationLossModel");
+  wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
 
   // YansWifiPhy wifiPhy = YansWifiPhy::Default();
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
@@ -79,16 +84,26 @@ main(int argc, char* argv[])
 
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
-
+/*
   Ptr<UniformRandomVariable> randomizer = CreateObject<UniformRandomVariable>();
   randomizer->SetAttribute("Min", DoubleValue(10));
   randomizer->SetAttribute("Max", DoubleValue(100));
-
+*/
   MobilityHelper mobility;
-  mobility.SetPositionAllocator("ns3::RandomBoxPositionAllocator", "X", PointerValue(randomizer),
-                                "Y", PointerValue(randomizer), "Z", PointerValue(randomizer));
+//  mobility.SetPositionAllocator("ns3::RandomBoxPositionAllocator", "X", PointerValue(randomizer),
+//                                "Y", PointerValue(randomizer), "Z", PointerValue(randomizer));
 
-  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+//  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+
+  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
+                                 "X", StringValue ("100.0"),
+                                 "Y", StringValue ("100.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+  mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
+                                 "Mode", StringValue ("Time"),
+                                 "Time", StringValue ("2s"),
+                                 "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
+                                 "Bounds", StringValue ("0|200|0|200"));
 
   NodeContainer nodes;
   nodes.Create(2);
@@ -126,6 +141,10 @@ main(int argc, char* argv[])
   producerHelper.Install(nodes.Get(1));
 
   ////////////////
+
+  ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
+  ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
+  ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
 
   Simulator::Stop(Seconds(30.0));
 
