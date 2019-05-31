@@ -175,6 +175,9 @@ main(int argc, char* argv[])
                                   Seconds (1.0), &GenerateTraffic,
                                   source, packetSize, numPackets, interPacketInterval);
 
+  Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ("aodv.routes", std::ios::out);
+  aodv.PrintRoutingTableAllAt (Seconds (8), routingStream);
+
   Simulator::Stop(Seconds(30.0));
 
   Simulator::Run();
