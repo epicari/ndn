@@ -50,7 +50,8 @@ void ReceivePacket (Ptr<Socket> socket)
 {
   while (socket->Recv ())
     {
-      NS_LOG_UNCOND ("Received one packet!");
+      //NS_LOG_UNCOND ("Received one packet!");
+      << Simulator::Now().GetSeconds() << "    " << Received one packet! << std::endl;
     }
 }
 
