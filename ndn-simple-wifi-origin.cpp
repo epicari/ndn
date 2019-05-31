@@ -48,6 +48,7 @@ NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 int
 main(int argc, char* argv[])
 {
+  std::string phyMode = "HtMcs7";
   // disable fragmentation
   Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue("2200"));
   Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("2200"));
