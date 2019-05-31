@@ -41,7 +41,7 @@ main(int argc, char* argv[])
   uint16_t numberOfnodes = 50;
   //uint16_t sNode = 2;
   double txPowerStart = 0.0;
-  double txPowerEnd = 10.0;
+  double txPowerEnd = 30.0;
   double simTime = 60.0;
 
   CommandLine cmd;
@@ -198,7 +198,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("1"));
-  consumerHelper.Install (nodesA.Get (0));
+  consumerHelper.Install (nodesA);
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
