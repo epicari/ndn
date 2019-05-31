@@ -23,6 +23,7 @@
 #include "ns3/wifi-module.h"
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
+#include "ns3/aodv-module.h"
 
 #include "ns3/ndnSIM-module.h"
 
@@ -75,6 +76,8 @@ main(int argc, char* argv[])
   double interval = 1.0;
   uint32_t numPackets = 1;
   uint32_t packetSize = 1200;
+
+  Time interPacketInterval = Seconds (interval);
 
   // disable fragmentation
   Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue("2200"));
