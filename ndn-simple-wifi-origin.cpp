@@ -108,7 +108,7 @@ main(int argc, char* argv[])
                                  "Bounds", StringValue ("0|200|0|200"));
 
   NodeContainer nodes;
-  nodes.Create(50);
+  nodes.Create(30);
 
   ////////////////
   // 1. Install Wifi
@@ -123,7 +123,7 @@ main(int argc, char* argv[])
   // ndnHelper.AddNetDeviceFaceCreateCallback (WifiNetDevice::GetTypeId (), MakeCallback
   // (MyNetDeviceFaceCallback));
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.SetDefaultRoutes(true);
   ndnHelper.Install(nodes);
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
