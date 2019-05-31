@@ -72,7 +72,7 @@ main(int argc, char* argv[])
 */
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes(true);
+  //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
   //ndnHelper.Install (sNode);
   //ndnHelper.Install (nodes);
@@ -137,7 +137,7 @@ main(int argc, char* argv[])
     }
 */
   MobilityHelper mobility;
-  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+  //Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("100.0"),
