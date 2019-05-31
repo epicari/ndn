@@ -179,6 +179,8 @@ main(int argc, char* argv[])
   Ptr<OutputStreamWrapper> routingStream = Create<OutputStreamWrapper> ("aodv.routes", std::ios::out);
   aodv.PrintRoutingTableAllAt (Seconds (8), routingStream);
 
+  wifiPhyHelper.EnablePcap ("simple-ipv4", wifiNetDevices);
+
   Simulator::Stop(Seconds(30.0));
 
   Simulator::Run();
