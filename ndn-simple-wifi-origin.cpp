@@ -123,27 +123,32 @@ main(int argc, char* argv[])
   // ndnHelper.AddNetDeviceFaceCreateCallback (WifiNetDevice::GetTypeId (), MakeCallback
   // (MyNetDeviceFaceCallback));
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes(true);
+  //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.Install(nodes);
 
+  ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
+  ndnGlobalRoutingHelper.Install (nodes);
+  string prefix = "/ucla/hello";
+  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes);
+
   // Set BestRoute strategy
-  ndn::StrategyChoiceHelper::Install(nodes, "/", "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::Install(nodes, prefix, "/localhost/nfd/strategy/best-route");
 
   // 4. Set up applications
   NS_LOG_INFO("Installing Applications");
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-  consumerHelper.SetPrefix("/test/prefix");
+  consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
   consumerHelper.Install(nodes.Get(0));
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
-  producerHelper.SetPrefix("/");
+  producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
   producerHelper.Install(nodes.Get(49));
 
   ////////////////
-
+  ndn::GlobalRoutingHelper::CalculateRoutes();
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
   ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
