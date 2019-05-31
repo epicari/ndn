@@ -82,6 +82,7 @@ main(int argc, char* argv[])
   wifiPhyHelper.SetChannel(wifiChannel.Create());
   wifiPhyHelper.Set("TxPowerStart", DoubleValue(5));
   wifiPhyHelper.Set("TxPowerEnd", DoubleValue(5));
+  wifiPhyHelper.Set ("TxPowerLevels", UintegerValue (14));
 
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
@@ -107,7 +108,7 @@ main(int argc, char* argv[])
                                  "Bounds", StringValue ("0|200|0|200"));
 
   NodeContainer nodes;
-  nodes.Create(2);
+  nodes.Create(50);
 
   ////////////////
   // 1. Install Wifi
@@ -139,7 +140,7 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
-  producerHelper.Install(nodes.Get(1));
+  producerHelper.Install(nodes.Get(49));
 
   ////////////////
 
