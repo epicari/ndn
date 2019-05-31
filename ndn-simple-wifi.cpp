@@ -184,8 +184,8 @@ main(int argc, char* argv[])
 
   string prefix = "/ucla/hello";
 
-  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
-  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
+  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
   
   ndnGlobalRoutingHelper.AddOrigins(prefix, nodesA);
 
@@ -198,7 +198,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  consumerHelper.Install (nodesA);
+  consumerHelper.Install (nodesA.Get (0));
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
   Simulator::Stop(Seconds(simTime));
