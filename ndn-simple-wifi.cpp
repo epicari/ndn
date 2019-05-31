@@ -197,7 +197,7 @@ main(int argc, char* argv[])
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
-  consumerHelper.SetAttribute("Frequency", StringValue("1"));
+  consumerHelper.SetAttribute("Frequency", StringValue("10"));
   consumerHelper.Install (nodesA);
 
   ndn::GlobalRoutingHelper::CalculateRoutes();
