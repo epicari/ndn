@@ -187,6 +187,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
+  consumerHelper.SetAttribute("LifeTime", DoubleValue(10.0));
   auto counappA = consumerHelper.Install(remoteHost.Get (0));
   auto counappB = consumerHelper.Install(remoteHost.Get (1));
 
