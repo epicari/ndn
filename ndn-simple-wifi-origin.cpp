@@ -80,8 +80,8 @@ main(int argc, char* argv[])
   // YansWifiPhy wifiPhy = YansWifiPhy::Default();
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
   wifiPhyHelper.SetChannel(wifiChannel.Create());
-  wifiPhyHelper.Set("TxPowerStart", DoubleValue(5));
-  wifiPhyHelper.Set("TxPowerEnd", DoubleValue(5));
+  wifiPhyHelper.Set ("TxPowerStart", DoubleValue(5));
+  wifiPhyHelper.Set ("TxPowerEnd", DoubleValue(5));
   wifiPhyHelper.Set ("TxPowerLevels", UintegerValue (14));
 
   WifiMacHelper wifiMacHelper;
@@ -176,6 +176,7 @@ main(int argc, char* argv[])
 
   ndnGlobalRoutingHelper.AddOrigins(prefix, nodes);
   ndnGlobalRoutingHelper.AddOrigins(prefix, apNode);
+  ndnGlobalRoutingHelper.AddOrigins(prefix, remoteHost);
 
   // Set BestRoute strategy
   ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/best-route");
