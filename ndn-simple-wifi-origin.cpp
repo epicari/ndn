@@ -100,8 +100,8 @@ main(int argc, char* argv[])
 //  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("400.0"),
-                                 "Y", StringValue ("400.0"),
+                                 "X", StringValue ("300.0"),
+                                 "Y", StringValue ("300.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=120]"));
 /*
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
@@ -111,15 +111,16 @@ main(int argc, char* argv[])
                                  "Bounds", StringValue ("0|200|0|200"));
 */
   NodeContainer nodes;
-  nodes.Create (50);
+  nodes.Create (30);
 
   NodeContainer apNode;
   apNode.Create (1);
 
   NodeContainer remoteHost;
-  remoteHost.Create (1);
+  remoteHost.Create (2);
 
-  NodeContainer p2plink = NodeContainer (apNode, remoteHost);
+  NodeContainer p2plinkA = NodeContainer (apNode, remoteHost.Get (0));
+  NodeContainer p2plinkB = NodeContainer (apNode, remoteHost.Get (1));
 
   ////////////////
   // 1. Install Wifi
@@ -140,20 +141,25 @@ main(int argc, char* argv[])
   p2ph.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2ph.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
 
-  NetDeviceContainer internetDevices = p2ph.Install (p2plink);
+  NetDeviceContainer internetDeviceA = p2ph.Install (p2plinkA);
+  NetDeviceContainer internetDeviceB = p2ph.Install (p2plinkB);
 
   // 2. Install Mobility model
   mobility.Install (nodes);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  positionAlloc->Add (Vector (200, 400, 0));
+  positionAlloc->Add (Vector (150, 300, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (apNode);
 
-  positionAlloc->Add (Vector (210, 410, 0));
+  positionAlloc->Add (Vector (160, 310, 0));
   mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (remoteHost);
+  mobility.Install (remoteHost.Get (0));
+
+  positionAlloc->Add (Vector (140, 310, 0));
+  mobility.SetPositionAllocator (positionAlloc);
+  mobility.Install (remoteHost.Get (1));
 
   // 3. Install NDN stack
   NS_LOG_INFO("Installing NDN stack");
@@ -180,11 +186,19 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
-  consumerHelper.Install(remoteHost);
+  auto counappA = consumerHelper.Install(remoteHost.Get (0));
+  auto counappB = consumerHelper.Install(remoteHost.Get (1));
+
+  counappA.Start (Seconds (0.0));
+  counappA.Stop (Seconds (30.0));
+
+  counappB.Start (Seconds (31.0));
+  counappB.Stop (Seconds (61.0));
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(10.0))); 
   producerHelper.Install(nodes);
 
   ////////////////
@@ -193,7 +207,7 @@ main(int argc, char* argv[])
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
   ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
 
-  Simulator::Stop(Seconds(30.0));
+  Simulator::Stop(Seconds(61.0));
 
   Simulator::Run();
   Simulator::Destroy();
