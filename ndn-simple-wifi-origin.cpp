@@ -23,6 +23,7 @@
 #include "ns3/wifi-module.h"
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
+#include "ns3/point-to-point-module.h"
 
 #include "ns3/ndnSIM-module.h"
 
@@ -84,7 +85,9 @@ main(int argc, char* argv[])
   wifiPhyHelper.Set ("TxPowerLevels", UintegerValue (14));
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+
+  Ssid ssid = Ssid ("wifi-default");
 /*
   Ptr<UniformRandomVariable> randomizer = CreateObject<UniformRandomVariable>();
   randomizer->SetAttribute("Min", DoubleValue(10));
@@ -97,24 +100,53 @@ main(int argc, char* argv[])
 //  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("100.0"),
-                                 "Y", StringValue ("100.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+                                 "X", StringValue ("400.0"),
+                                 "Y", StringValue ("400.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=120]"));
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                                  "Mode", StringValue ("Time"),
                                  "Time", StringValue ("2s"),
                                  "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                                 "Bounds", StringValue ("0|200|0|200"));
+                                 "Bounds", StringValue ("0|300|0|300"));
 
   NodeContainer nodes;
-  nodes.Create(50);
+  nodes.Create (50);
+
+  NodeContainer apNode;
+  apNode.Create (1);
+
+  NodeContainer remoteHost;
+  remoteHost.Create (1);
 
   ////////////////
   // 1. Install Wifi
-  NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
+  //NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
+  
+  wifiMacHelper.SetType("ns3::StaWifiMac",
+                         "ActiveProbing", BooleanValue (true),
+                         "Ssid", SsidValue (ssid));
+
+  NetDeviceContainer staDevs = wifi.Install(wifiPhy, wifiMacHelper, nodes);
+
+  wifiMacHelper.SetType("ns3::ApWifiMac",
+                        "Ssid", SsidValue (ssid));
+  NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, apNode);
+
+  PointToPointHelper p2ph;
+  p2ph.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Gb/s")));
+  p2ph.SetDeviceAttribute ("Mtu", UintegerValue (1500));
+  p2ph.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
+
+  NetDeviceContainer internetDevices = p2ph.Install (apNode, remoteHost);
 
   // 2. Install Mobility model
-  mobility.Install(nodes);
+  mobility.Install (nodes);
+
+  mobility.SetPositionAllocator (Vector (200, 400, 0));
+  mobility.Install (apNode);
+
+  mobility.SetPositionAllocator (Vector (210, 410, 0));
+  mobility.Install (remoteHost);
 
   // 3. Install NDN stack
   NS_LOG_INFO("Installing NDN stack");
@@ -122,16 +154,18 @@ main(int argc, char* argv[])
   // ndnHelper.AddNetDeviceFaceCreateCallback (WifiNetDevice::GetTypeId (), MakeCallback
   // (MyNetDeviceFaceCallback));
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.Install(nodes);
+  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.InstallAll ();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-  ndnGlobalRoutingHelper.Install (nodes);
+  ndnGlobalRoutingHelper.InstallAll ();
   string prefix = "/ucla/hello";
+
   ndnGlobalRoutingHelper.AddOrigins(prefix, nodes);
+  ndnGlobalRoutingHelper.AddOrigins(prefix, apNode);
 
   // Set BestRoute strategy
-  ndn::StrategyChoiceHelper::Install(nodes, prefix, "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/best-route");
 
   // 4. Set up applications
   NS_LOG_INFO("Installing Applications");
@@ -139,12 +173,12 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
-  consumerHelper.Install(nodes.Get(0));
+  consumerHelper.Install(remoteHost);
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
-  producerHelper.Install(nodes.Get(49));
+  producerHelper.Install(nodes);
 
   ////////////////
   ndn::GlobalRoutingHelper::CalculateRoutes();
