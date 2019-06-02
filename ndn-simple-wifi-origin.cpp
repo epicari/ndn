@@ -118,6 +118,8 @@ main(int argc, char* argv[])
   NodeContainer remoteHost;
   remoteHost.Create (1);
 
+  NodeContainer p2plink = NodeContainer (apNode, remoteHost);
+
   ////////////////
   // 1. Install Wifi
   //NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
@@ -126,26 +128,30 @@ main(int argc, char* argv[])
                          "ActiveProbing", BooleanValue (true),
                          "Ssid", SsidValue (ssid));
 
-  NetDeviceContainer staDevs = wifi.Install(wifiPhy, wifiMacHelper, nodes);
+  NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
 
   wifiMacHelper.SetType("ns3::ApWifiMac",
                         "Ssid", SsidValue (ssid));
-  NetDeviceContainer apDevs = wifi.Install(wifiPhy, wifiMacHelper, apNode);
+  NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
 
   PointToPointHelper p2ph;
   p2ph.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Gb/s")));
   p2ph.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2ph.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
 
-  NetDeviceContainer internetDevices = p2ph.Install (apNode, remoteHost);
+  NetDeviceContainer internetDevices = p2ph.Install (p2plink);
 
   // 2. Install Mobility model
   mobility.Install (nodes);
 
-  mobility.SetPositionAllocator (Vector (200, 400, 0));
+  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+
+  positionAlloc->Add (Vector (200, 400, 0));
+  mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (apNode);
 
-  mobility.SetPositionAllocator (Vector (210, 410, 0));
+  positionAlloc->Add (Vector (210, 410, 0));
+  mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost);
 
   // 3. Install NDN stack
