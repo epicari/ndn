@@ -107,7 +107,7 @@ main(int argc, char* argv[])
                                  "Mode", StringValue ("Time"),
                                  "Time", StringValue ("2s"),
                                  "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                                 "Bounds", StringValue ("0|300|0|300"));
+                                 "Bounds", StringValue ("0|200|0|200"));
 
   NodeContainer nodes;
   nodes.Create (50);
