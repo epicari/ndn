@@ -116,6 +116,8 @@ main(int argc, char* argv[])
   NodeContainer apNode;
   apNode.Create (1);
 
+  NodeContainer allNodes = NodeContainer (nodes, apNode);
+
   NodeContainer remoteHost;
   remoteHost.Create (2);
 
@@ -124,10 +126,10 @@ main(int argc, char* argv[])
 
   ////////////////
   // 1. Install Wifi
-  //NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
+  NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
   
+  /*
   wifiMacHelper.SetType("ns3::StaWifiMac",
-                         //"ActiveProbing", BooleanValue (true),
                          "Ssid", SsidValue (ssid));
 
   NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
@@ -135,6 +137,7 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType("ns3::ApWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
+  */
 
   PointToPointHelper p2ph;
   p2ph.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Gb/s")));
