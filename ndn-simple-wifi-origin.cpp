@@ -81,9 +81,8 @@ main(int argc, char* argv[])
   // YansWifiPhy wifiPhy = YansWifiPhy::Default();
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
   wifiPhyHelper.SetChannel(wifiChannel.Create());
-  wifiPhyHelper.Set ("TxPowerStart", DoubleValue(5));
-  wifiPhyHelper.Set ("TxPowerEnd", DoubleValue(5));
-  wifiPhyHelper.Set ("TxPowerLevels", UintegerValue (14));
+  //wifiPhyHelper.Set ("TxPowerStart", DoubleValue(5));
+  //wifiPhyHelper.Set ("TxPowerEnd", DoubleValue(5));
 
   WifiMacHelper wifiMacHelper;
   //wifiMacHelper.SetType("ns3::AdhocWifiMac");
@@ -101,7 +100,7 @@ main(int argc, char* argv[])
 //  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("300.0"),
+                                 "X", StringValue ("500.0"),
                                  //"Y", StringValue ("2.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=150]"));
 /*
