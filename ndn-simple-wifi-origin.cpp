@@ -186,8 +186,9 @@ main(int argc, char* argv[])
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
-  consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
-
+  consumerHelper.SetAttribute("Frequency", DoubleValue(5.0));
+  consumerHelper.Install (nodes);
+/*
   auto counappA = consumerHelper.Install(remoteHost.Get (0));
   auto counappB = consumerHelper.Install(remoteHost.Get (1));
 
@@ -196,12 +197,22 @@ main(int argc, char* argv[])
 
   counappB.Start (Seconds (31.0));
   counappB.Stop (Seconds (61.0));
+*/
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(10.0))); 
-  producerHelper.Install(nodes);
+  //producerHelper.Install(nodes);
+
+  auto prodappA = producerHelper.Install (remoteHost.Get (0));
+  auto prodappB = producerHelper.Install (remoteHost.Get (1));
+
+  prodappA.Start (Seconds (0.0));
+  prodappA.Stop (Seconds (30.0));
+
+  prodappB.Start (Seconds (31.0));
+  prodappB.Stop (Seconds (61.0));
 
   ////////////////
   ndn::GlobalRoutingHelper::CalculateRoutes();
