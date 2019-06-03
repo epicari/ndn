@@ -100,9 +100,9 @@ main(int argc, char* argv[])
 //  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("500.0"),
+                                 "X", StringValue ("400.0"),
                                  //"Y", StringValue ("2.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=150]"));
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=100]"));
 /*
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                                  "Mode", StringValue ("Time"),
