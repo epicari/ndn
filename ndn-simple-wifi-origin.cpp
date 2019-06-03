@@ -85,7 +85,7 @@ main(int argc, char* argv[])
   //wifiPhyHelper.Set ("TxPowerEnd", DoubleValue(5));
 
   WifiMacHelper wifiMacHelper;
-  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  wifiMacHelper.SetType("ns3::AdhocWifiMac");
 
   Ssid ssid = Ssid ("wifi-default");
 /*
