@@ -75,7 +75,8 @@ main(int argc, char* argv[])
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
   //wifiChannel.AddPropagationLoss("ns3::ThreeLogDistancePropagationLossModel");
   //wifiChannel.AddPropagationLoss("ns3::NakagamiPropagationLossModel");
-  wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
+  //wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
+  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-77));
 
   // YansWifiPhy wifiPhy = YansWifiPhy::Default();
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
@@ -127,7 +128,7 @@ main(int argc, char* argv[])
   //NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
   
   wifiMacHelper.SetType("ns3::StaWifiMac",
-                         "ActiveProbing", BooleanValue (true),
+                         //"ActiveProbing", BooleanValue (true),
                          "Ssid", SsidValue (ssid));
 
   NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
