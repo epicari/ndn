@@ -111,7 +111,7 @@ main(int argc, char* argv[])
                                  "Bounds", StringValue ("0|200|0|200"));
 */
   NodeContainer nodes;
-  nodes.Create (30);
+  nodes.Create (10);
 
   NodeContainer apNode;
   apNode.Create (1);
