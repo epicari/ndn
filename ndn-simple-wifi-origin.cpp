@@ -100,9 +100,9 @@ main(int argc, char* argv[])
 //  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("300.0"),
-                                 "Y", StringValue ("300.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=120]"));
+                                 "X", StringValue ("500.0"),
+                                 //"Y", StringValue ("2.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=150]"));
 /*
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                                  "Mode", StringValue ("Time"),
@@ -149,15 +149,15 @@ main(int argc, char* argv[])
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  positionAlloc->Add (Vector (150, 300, 0));
+  positionAlloc->Add (Vector (250, 6, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (apNode);
 
-  positionAlloc->Add (Vector (160, 310, 0));
+  positionAlloc->Add (Vector (260, 10, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost.Get (0));
 
-  positionAlloc->Add (Vector (140, 310, 0));
+  positionAlloc->Add (Vector (240, 10, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost.Get (1));
 
