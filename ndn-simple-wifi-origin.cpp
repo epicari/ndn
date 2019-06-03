@@ -167,7 +167,7 @@ main(int argc, char* argv[])
   // ndnHelper.AddNetDeviceFaceCreateCallback (WifiNetDevice::GetTypeId (), MakeCallback
   // (MyNetDeviceFaceCallback));
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
