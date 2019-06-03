@@ -100,7 +100,7 @@ main(int argc, char* argv[])
 //  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("500.0"),
+                                 "X", StringValue ("300.0"),
                                  //"Y", StringValue ("2.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=150]"));
 /*
@@ -167,7 +167,7 @@ main(int argc, char* argv[])
   // ndnHelper.AddNetDeviceFaceCreateCallback (WifiNetDevice::GetTypeId (), MakeCallback
   // (MyNetDeviceFaceCallback));
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes(true);
+  //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
