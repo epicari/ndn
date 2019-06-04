@@ -112,7 +112,7 @@ main(int argc, char* argv[])
                                  "Bounds", StringValue ("0|200|0|200"));
 */
   NodeContainer nodes;
-  nodes.Create (10);
+  nodes.Create (30);
 
   NodeContainer apNode;
   apNode.Create (1);
@@ -122,8 +122,10 @@ main(int argc, char* argv[])
   NodeContainer remoteHost;
   remoteHost.Create (1);
 
+  NodeContainer allNodes = NodeContainer (remoteHost, apNode);
+
   CsmaHelper csma;
-  NetDeviceContainer csmaDevs = csma.Install (apNode, remoteHost);
+  NetDeviceContainer csmaDevs = csma.Install (allNodes);
 
   ////////////////
   // 1. Install Wifi
