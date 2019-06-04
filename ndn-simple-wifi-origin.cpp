@@ -62,53 +62,7 @@ main(int argc, char* argv[])
   //////////////////////
   //////////////////////
   //////////////////////
-  WifiHelper wifi;
-  // wifi.SetRemoteStationManager ("ns3::AarfWifiManager");
-  //wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
-  //wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager", "DataMode",
-  //                             StringValue("OfdmRate24Mbps"));
-  wifi.SetStandard(WIFI_PHY_STANDARD_80211n_5GHZ);
-  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
-                                "DataMode", StringValue (phyMode), 
-                                "ControlMode", StringValue ("HtMcs0"));
-
-  YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
-  wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
-  //wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
-  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-77));
-
-  // YansWifiPhy wifiPhy = YansWifiPhy::Default();
-  YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
-  wifiPhyHelper.SetChannel(wifiChannel.Create());
-  //wifiPhyHelper.Set ("TxPowerStart", DoubleValue(5));
-  //wifiPhyHelper.Set ("TxPowerEnd", DoubleValue(5));
-
-  WifiMacHelper wifiMacHelper;
-  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
-
-  Ssid ssid = Ssid ("wifi-default");
-/*
-  Ptr<UniformRandomVariable> randomizer = CreateObject<UniformRandomVariable>();
-  randomizer->SetAttribute("Min", DoubleValue(10));
-  randomizer->SetAttribute("Max", DoubleValue(100));
-*/
-  MobilityHelper mobility;
-//  mobility.SetPositionAllocator("ns3::RandomBoxPositionAllocator", "X", PointerValue(randomizer),
-//                                "Y", PointerValue(randomizer), "Z", PointerValue(randomizer));
-
-//  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-
-  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("400.0"),
-                                 "Y", StringValue ("0.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
-/*
-  mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
-                                 "Mode", StringValue ("Time"),
-                                 "Time", StringValue ("2s"),
-                                 "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                                 "Bounds", StringValue ("0|200|0|200"));
-*/
+  
   NodeContainer nodes;
   nodes.Create (30);
 
@@ -118,41 +72,85 @@ main(int argc, char* argv[])
   NodeContainer remoteHost;
   remoteHost.Create (1);
 
-  //NodeContainer allNodes = NodeContainer (nodes, apNode, remoteHost);
+  NodeContainer allNodes = NodeContainer (nodes, apNode, remoteHost);
+
+  WifiHelper wifi;
+  // wifi.SetRemoteStationManager ("ns3::AarfWifiManager");
+  //wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
+  //wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager", "DataMode",
+  //                             StringValue("OfdmRate24Mbps"));
+  
+  wifi.SetStandard(WIFI_PHY_STANDARD_80211ac);
+  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
+                                "DataMode", StringValue ("VhtMcs9"), 
+                                "ControlMode", StringValue ("VhtMcs0"));
+
+  YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
+  wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
+  //wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
+  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-77));
+
+  YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
+  wifiPhyHelper.SetChannel(wifiChannel.Create());
+  wifiPhyHelper.Set ("Antennas", UintegerValue (4));
+  wifiPhyHelper.Set ("MaxSupportedTxSpatialStreams", UintegerValue (2));
+  wifiPhyHelper.Set ("MaxSupportedRxSpatialStreams", UintegerValue (2));
+  //wifiPhyHelper.Set ("TxPowerStart", DoubleValue(5));
+  //wifiPhyHelper.Set ("TxPowerEnd", DoubleValue(5));
+
+  Ssid ssid = Ssid ("wifi-default");
+
+  WifiMacHelper wifiMacHelper;
+  wifiMacHelper.SetType("ns3::AdhocWifiMac");
 
   //CsmaHelper csma;
   //NetDeviceContainer csmaDevs = csma.Install (apNode);
 
   ////////////////
   // 1. Install Wifi
-  //NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
-
+  NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
+/*
   wifiMacHelper.SetType("ns3::StaWifiMac",
                          "Ssid", SsidValue (ssid));
 
   NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
   NetDeviceContainer remoteDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, remoteHost);
 
-//for (uint16_t i = 0; i < 2; i++)
-  //{
+for (uint16_t i = 0; i < 2; i++)
+  {
       wifiMacHelper.SetType("ns3::ApWifiMac",
                             "Ssid", SsidValue (ssid));
       NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
 
-      //BridgeHelper bridge;
-      //NetDeviceContainer bridgeDev = bridge.Install (apNode.Get (i), NetDeviceContainer (apDevs, csmaDevs.Get (1)));
-  //}  
-
+      BridgeHelper bridge;
+      NetDeviceContainer bridgeDev = bridge.Install (apNode.Get (i), NetDeviceContainer (apDevs, csmaDevs.Get (1)));
+  }  
+*/
   // 2. Install Mobility model
+  
+  MobilityHelper mobility;
+
+  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
+                                 "X", StringValue ("500.0"),
+                                 "Y", StringValue ("0.0"),
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+/*
+  mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
+                                 "Mode", StringValue ("Time"),
+                                 "Time", StringValue ("2s"),
+                                 "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
+                                 "Bounds", StringValue ("0|200|0|200"));
+*/
+
   mobility.Install (nodes);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  positionAlloc->Add (Vector (200, 6, 0));
+  positionAlloc->Add (Vector (250, 6, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (apNode);
 
-  positionAlloc->Add (Vector (200, 10, 0));
+  positionAlloc->Add (Vector (250, 10, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost);
 /*
