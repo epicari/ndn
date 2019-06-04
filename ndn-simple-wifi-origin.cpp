@@ -121,8 +121,8 @@ main(int argc, char* argv[])
   NodeContainer remoteHost;
   remoteHost.Create (2);
 
-  NodeContainer p2plinkA = NodeContainer (apNode, remoteHost.Get (0));
-  NodeContainer p2plinkB = NodeContainer (apNode, remoteHost.Get (1));
+  //NodeContainer p2plinkA = NodeContainer (apNode, remoteHost.Get (0));
+  //NodeContainer p2plinkB = NodeContainer (apNode, remoteHost.Get (1));
 
   ////////////////
   // 1. Install Wifi
@@ -133,6 +133,7 @@ main(int argc, char* argv[])
                          "Ssid", SsidValue (ssid));
 
   NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
+  NetDeviceContainer remoteDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, remoteHost);
 
   wifiMacHelper.SetType("ns3::ApWifiMac",
                         "Ssid", SsidValue (ssid));
@@ -144,8 +145,8 @@ main(int argc, char* argv[])
   p2ph.SetDeviceAttribute ("Mtu", UintegerValue (1500));
   p2ph.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
 
-  NetDeviceContainer internetDeviceA = p2ph.Install (p2plinkA);
-  NetDeviceContainer internetDeviceB = p2ph.Install (p2plinkB);
+  //NetDeviceContainer internetDeviceA = p2ph.Install (p2plinkA);
+  //NetDeviceContainer internetDeviceB = p2ph.Install (p2plinkB);
 
   // 2. Install Mobility model
   mobility.Install (nodes);
@@ -206,7 +207,7 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(10.0))); 
-  //producerHelper.Install(nodes);
+  producerHelper.Install(nodes);
 
   auto prodappA = producerHelper.Install (remoteHost.Get (0));
   auto prodappB = producerHelper.Install (remoteHost.Get (1));
