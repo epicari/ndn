@@ -73,6 +73,7 @@ main(int argc, char* argv[])
   remoteHost.Create (1);
 
   //NodeContainer allNodes = NodeContainer (nodes, apNode, remoteHost);
+  NodeContainer csmaNodes = NodeContainer (remoteHost, apNode);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211ac);
@@ -98,8 +99,8 @@ main(int argc, char* argv[])
   WifiMacHelper wifiMacHelper;
   //wifiMacHelper.SetType("ns3::AdhocWifiMac");
 
-  //CsmaHelper csma;
-  //NetDeviceContainer csmaDevs = csma.Install (apNode);
+  CsmaHelper csma;
+  NetDeviceContainer csmaDevs = csma.Install (csmaNodes);
 
   ////////////////
   // 1. Install Wifi
@@ -109,17 +110,17 @@ main(int argc, char* argv[])
                          "Ssid", SsidValue (ssid));
 
   NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
-  NetDeviceContainer remoteDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, remoteHost);
+  //NetDeviceContainer remoteDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, remoteHost);
 
-//for (uint16_t i = 0; i < 2; i++)
-  //{
+for (uint16_t i = 0; i < apNode.GetN (); ++i)
+  {
       wifiMacHelper.SetType("ns3::ApWifiMac",
                             "Ssid", SsidValue (ssid));
       NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
 
-      //BridgeHelper bridge;
-      //NetDeviceContainer bridgeDev = bridge.Install (apNode.Get (i), NetDeviceContainer (apDevs, csmaDevs.Get (1)));
-  //}  
+      BridgeHelper bridge;
+      NetDeviceContainer bridgeDev = bridge.Install (apNode.Get (i), NetDeviceContainer (apDevs, csmaDevs.Get (i)));
+  }  
 
   // 2. Install Mobility model
   
