@@ -122,10 +122,10 @@ main(int argc, char* argv[])
   NodeContainer remoteHost;
   remoteHost.Create (1);
 
-  NodeContainer allNodes = NodeContainer (remoteHost, apNode);
+  //NodeContainer allNodes = NodeContainer (remoteHost, apNode);
 
-  CsmaHelper csma;
-  NetDeviceContainer csmaDevs = csma.Install (allNodes);
+  //CsmaHelper csma;
+  //NetDeviceContainer csmaDevs = csma.Install (allNodes);
 
   ////////////////
   // 1. Install Wifi
@@ -136,13 +136,14 @@ main(int argc, char* argv[])
                          "Ssid", SsidValue (ssid));
 
   NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
+  NetDeviceContainer remoteDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, remoteHost);
 
   wifiMacHelper.SetType("ns3::ApWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
 
-  BridgeHelper bridge;
-  NetDeviceContainer bridgeDev = bridge.Install (apNode, NetDeviceContainer (apDevs, csmaDevs.Get (1)));
+  //BridgeHelper bridge;
+  //NetDeviceContainer bridgeDev = bridge.Install (apNode, NetDeviceContainer (apDevs, csmaDevs.Get (1)));
   
   // 2. Install Mobility model
   mobility.Install (nodes);
@@ -153,7 +154,7 @@ main(int argc, char* argv[])
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (apNode);
 
-  positionAlloc->Add (Vector (750, 6, 0));
+  positionAlloc->Add (Vector (260, 6, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost);
 
