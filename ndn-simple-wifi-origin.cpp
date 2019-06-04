@@ -142,7 +142,7 @@ main(int argc, char* argv[])
   NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
 
   BridgeHelper bridge;
-  NetDeviceContainer bridgeDev = bridge.Install (apNode, NetDeviceContainer (apDevs, csmaDevs));
+  NetDeviceContainer bridgeDev = bridge.Install (apNode, NetDeviceContainer (apDevs, csmaDevs.Get (1)));
   
   // 2. Install Mobility model
   mobility.Install (nodes);
