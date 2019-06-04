@@ -72,10 +72,8 @@ main(int argc, char* argv[])
                                 "DataMode", StringValue (phyMode), 
                                 "ControlMode", StringValue ("HtMcs0"));
 
-  YansWifiChannelHelper wifiChannel; // = YansWifiChannelHelper::Default ();
+  YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
-  //wifiChannel.AddPropagationLoss("ns3::ThreeLogDistancePropagationLossModel");
-  //wifiChannel.AddPropagationLoss("ns3::NakagamiPropagationLossModel");
   //wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
   wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-77));
 
@@ -129,12 +127,12 @@ main(int argc, char* argv[])
   // 1. Install Wifi
   //NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
   
-  
   wifiMacHelper.SetType("ns3::StaWifiMac",
                          "Ssid", SsidValue (ssid));
 
   NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
   NetDeviceContainer remoteDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, remoteHost);
+
 for (uint16_t i = 0; i < 2; i++)
   {
       wifiMacHelper.SetType("ns3::ApWifiMac",
@@ -144,6 +142,7 @@ for (uint16_t i = 0; i < 2; i++)
       BridgeHelper bridge;
       NetDeviceContainer bridgeDev = bridge.Install (apNode.Get (i), NetDeviceContainer (apDevs, csmaDevs.Get (1)));
   }  
+  
   // 2. Install Mobility model
   mobility.Install (nodes);
 
@@ -179,7 +178,8 @@ for (uint16_t i = 0; i < 2; i++)
   ndnGlobalRoutingHelper.AddOrigins(prefix, remoteHost);
 
   // Set BestRoute strategy
-  ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/best-route");
+  //ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/multicast");
 
   // 4. Set up applications
   NS_LOG_INFO("Installing Applications");
@@ -207,7 +207,7 @@ for (uint16_t i = 0; i < 2; i++)
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(100.0))); 
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(60.0))); 
   //producerHelper.Install(nodes);
 
   auto prodappA = producerHelper.Install (remoteHost);
