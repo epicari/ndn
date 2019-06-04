@@ -72,14 +72,9 @@ main(int argc, char* argv[])
   NodeContainer remoteHost;
   remoteHost.Create (1);
 
-  NodeContainer allNodes = NodeContainer (nodes, apNode, remoteHost);
+  //NodeContainer allNodes = NodeContainer (nodes, apNode, remoteHost);
 
   WifiHelper wifi;
-  // wifi.SetRemoteStationManager ("ns3::AarfWifiManager");
-  //wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
-  //wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager", "DataMode",
-  //                             StringValue("OfdmRate24Mbps"));
-  
   wifi.SetStandard(WIFI_PHY_STANDARD_80211ac);
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode", StringValue ("VhtMcs9"), 
@@ -101,31 +96,31 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("wifi-default");
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
 
   //CsmaHelper csma;
   //NetDeviceContainer csmaDevs = csma.Install (apNode);
 
   ////////////////
   // 1. Install Wifi
-  NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
-/*
+  //NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
+
   wifiMacHelper.SetType("ns3::StaWifiMac",
                          "Ssid", SsidValue (ssid));
 
   NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
   NetDeviceContainer remoteDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, remoteHost);
 
-for (uint16_t i = 0; i < 2; i++)
-  {
+//for (uint16_t i = 0; i < 2; i++)
+  //{
       wifiMacHelper.SetType("ns3::ApWifiMac",
                             "Ssid", SsidValue (ssid));
       NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
 
-      BridgeHelper bridge;
-      NetDeviceContainer bridgeDev = bridge.Install (apNode.Get (i), NetDeviceContainer (apDevs, csmaDevs.Get (1)));
-  }  
-*/
+      //BridgeHelper bridge;
+      //NetDeviceContainer bridgeDev = bridge.Install (apNode.Get (i), NetDeviceContainer (apDevs, csmaDevs.Get (1)));
+  //}  
+
   // 2. Install Mobility model
   
   MobilityHelper mobility;
@@ -150,7 +145,7 @@ for (uint16_t i = 0; i < 2; i++)
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (apNode);
 
-  positionAlloc->Add (Vector (250, 10, 0));
+  positionAlloc->Add (Vector (250, 20, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost);
 /*
