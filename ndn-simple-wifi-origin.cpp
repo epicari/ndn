@@ -97,15 +97,15 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("wifi-default");
 
   WifiMacHelper wifiMacHelper;
-  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  wifiMacHelper.SetType("ns3::AdhocWifiMac");
 
   CsmaHelper csma;
   NetDeviceContainer csmaDevs = csma.Install (csmaNodes);
 
   ////////////////
   // 1. Install Wifi
-  //NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
-
+  NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
+/*
   wifiMacHelper.SetType("ns3::StaWifiMac",
                          "Ssid", SsidValue (ssid));
 
@@ -121,7 +121,7 @@ for (uint16_t i = 0; i < apNode.GetN (); ++i)
       BridgeHelper bridge;
       NetDeviceContainer bridgeDev = bridge.Install (apNode.Get (i), NetDeviceContainer (apDevs, csmaDevs.Get (i)));
   }  
-
+*/
   // 2. Install Mobility model
   
   MobilityHelper mobility;
