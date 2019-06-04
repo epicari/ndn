@@ -141,8 +141,8 @@ main(int argc, char* argv[])
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
 
-  //BridgeHelper bridge;
-  //NetDeviceContainer bridgeDev = bridge.Install (apNode, NetDeviceContainer (apDevs, csmaDevs));
+  BridgeHelper bridge;
+  NetDeviceContainer bridgeDev = bridge.Install (apNode, NetDeviceContainer (apDevs, csmaDevs));
   
   // 2. Install Mobility model
   mobility.Install (nodes);
