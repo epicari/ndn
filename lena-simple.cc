@@ -30,7 +30,6 @@
 #include "ns3/ndnSIM-module.h"
 
 using namespace ns3;
-using namespace ndn;
 
 int main (int argc, char *argv[])
 {	
@@ -90,11 +89,11 @@ int main (int argc, char *argv[])
   enbDevs = lteHelper->InstallEnbDevice (enbNodes);
   ueDevs = lteHelper->InstallUeDevice (ueNodes);
 
-  StackHelper ndnHelper;
+  ndn::StackHelper ndnHelper;
   ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll();
 
-  StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/best-route");
 
   // Attach a UE to a eNB
   lteHelper->Attach (ueDevs, enbDevs.Get (0));
@@ -105,12 +104,12 @@ int main (int argc, char *argv[])
   lteHelper->ActivateDataRadioBearer (ueDevs, bearer);
   lteHelper->EnableTraces ();
 
-  AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
+  ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix("/test/prefix");
   consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
   consumerHelper.Install(ueNodes);
 
-  AppHelper producerHelper("ns3::ndn::Producer");
+  ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix("/");
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
   producerHelper.Install(enbNodes);
