@@ -85,7 +85,7 @@ main(int argc, char* argv[])
   //wifiPhyHelper.Set ("TxPowerEnd", DoubleValue(5));
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
 
   Ssid ssid = Ssid ("wifi-default");
 /*
@@ -102,7 +102,7 @@ main(int argc, char* argv[])
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("500.0"),
                                  "Y", StringValue ("0.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=150]"));
+                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
 /*
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                                  "Mode", StringValue ("Time"),
@@ -128,7 +128,7 @@ main(int argc, char* argv[])
   // 1. Install Wifi
   NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
   
-  /*
+  
   wifiMacHelper.SetType("ns3::StaWifiMac",
                          "Ssid", SsidValue (ssid));
 
@@ -137,7 +137,7 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType("ns3::ApWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
-  */
+  
 
   PointToPointHelper p2ph;
   p2ph.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Gb/s")));
