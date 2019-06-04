@@ -29,6 +29,7 @@
 
 #include "ns3/ndnSIM-module.h"
 
+using namespace std;
 using namespace ns3;
 
 int main (int argc, char *argv[])
