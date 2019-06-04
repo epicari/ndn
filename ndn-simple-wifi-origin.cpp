@@ -75,7 +75,7 @@ main(int argc, char* argv[])
   YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
   //wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
-  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-97));
+  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-77));
 
   // YansWifiPhy wifiPhy = YansWifiPhy::Default();
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
@@ -99,7 +99,7 @@ main(int argc, char* argv[])
 //  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("500.0"),
+                                 "X", StringValue ("400.0"),
                                  "Y", StringValue ("0.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
 /*
@@ -148,11 +148,11 @@ main(int argc, char* argv[])
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  positionAlloc->Add (Vector (250, 6, 0));
+  positionAlloc->Add (Vector (200, 6, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (apNode);
 
-  positionAlloc->Add (Vector (250, 10, 0));
+  positionAlloc->Add (Vector (200, 10, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost);
 /*
