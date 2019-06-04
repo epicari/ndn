@@ -115,17 +115,15 @@ main(int argc, char* argv[])
   nodes.Create (30);
 
   NodeContainer apNode;
-  apNode.Create (1);
+  apNode.Create (2);
 
   //NodeContainer allNodes = NodeContainer (nodes, apNode);
 
   NodeContainer remoteHost;
   remoteHost.Create (1);
 
-  //NodeContainer allNodes = NodeContainer (remoteHost, apNode);
-
-  //CsmaHelper csma;
-  //NetDeviceContainer csmaDevs = csma.Install (allNodes);
+  CsmaHelper csma;
+  NetDeviceContainer csmaDevs = csma.Install (apNode);
 
   ////////////////
   // 1. Install Wifi
@@ -137,14 +135,15 @@ main(int argc, char* argv[])
 
   NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
   NetDeviceContainer remoteDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, remoteHost);
+for (uint16_t i = 0; i < 2; i++)
+  {
+      wifiMacHelper.SetType("ns3::ApWifiMac",
+                            "Ssid", SsidValue (ssid));
+      NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode.Get (i));
 
-  wifiMacHelper.SetType("ns3::ApWifiMac",
-                        "Ssid", SsidValue (ssid));
-  NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
-
-  //BridgeHelper bridge;
-  //NetDeviceContainer bridgeDev = bridge.Install (apNode, NetDeviceContainer (apDevs, csmaDevs.Get (1)));
-  
+      BridgeHelper bridge;
+      NetDeviceContainer bridgeDev = bridge.Install (apNode.Get (i), NetDeviceContainer (apDevs, csmaDevs.Get (1)));
+  }  
   // 2. Install Mobility model
   mobility.Install (nodes);
 
@@ -152,9 +151,13 @@ main(int argc, char* argv[])
 
   positionAlloc->Add (Vector (250, 6, 0));
   mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (apNode);
+  mobility.Install (apNode.Get (0));
 
-  positionAlloc->Add (Vector (260, 6, 0));
+  positionAlloc->Add (Vector (700, 6, 0));
+  mobility.SetPositionAllocator (positionAlloc);
+  mobility.Install (apNode.Get (1));
+
+  positionAlloc->Add (Vector (700, 0, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost);
 
