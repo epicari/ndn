@@ -23,7 +23,8 @@
 #include "ns3/wifi-module.h"
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
-#include "ns3/point-to-point-module.h"
+#include "ns3/csma-helper.h"
+#include "ns3/bridge-helper.h"
 
 #include "ns3/ndnSIM-module.h"
 
@@ -116,38 +117,31 @@ main(int argc, char* argv[])
   NodeContainer apNode;
   apNode.Create (1);
 
-  NodeContainer allNodes = NodeContainer (nodes, apNode);
+  //NodeContainer allNodes = NodeContainer (nodes, apNode);
 
   NodeContainer remoteHost;
-  remoteHost.Create (2);
+  remoteHost.Create (1);
 
-  //NodeContainer p2plinkA = NodeContainer (apNode, remoteHost.Get (0));
-  //NodeContainer p2plinkB = NodeContainer (apNode, remoteHost.Get (1));
+  CsmaHelper csma;
+  NetDeviceContainer csmaDevs = csma.Install (apNode, remoteHost);
 
   ////////////////
   // 1. Install Wifi
-  NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
+  //NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
   
   
   wifiMacHelper.SetType("ns3::StaWifiMac",
                          "Ssid", SsidValue (ssid));
 
   NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
-  NetDeviceContainer remoteDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, remoteHost);
 
   wifiMacHelper.SetType("ns3::ApWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
+
+  //BridgeHelper bridge;
+  //NetDeviceContainer bridgeDev = bridge.Install (apNode, NetDeviceContainer (apDevs, csmaDevs));
   
-
-  PointToPointHelper p2ph;
-  p2ph.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Gb/s")));
-  p2ph.SetDeviceAttribute ("Mtu", UintegerValue (1500));
-  p2ph.SetChannelAttribute ("Delay", TimeValue (Seconds (0.010)));
-
-  //NetDeviceContainer internetDeviceA = p2ph.Install (p2plinkA);
-  //NetDeviceContainer internetDeviceB = p2ph.Install (p2plinkB);
-
   // 2. Install Mobility model
   mobility.Install (nodes);
 
@@ -157,13 +151,9 @@ main(int argc, char* argv[])
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (apNode);
 
-  positionAlloc->Add (Vector (260, 10, 0));
+  positionAlloc->Add (Vector (750, 6, 0));
   mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (remoteHost.Get (0));
-
-  positionAlloc->Add (Vector (240, 10, 0));
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (remoteHost.Get (1));
+  mobility.Install (remoteHost);
 
   // 3. Install NDN stack
   NS_LOG_INFO("Installing NDN stack");
@@ -191,7 +181,12 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", DoubleValue(5.0));
-  consumerHelper.Install (nodes);
+  auto counapp = consumerHelper.Install (nodes);
+  counapp.Start (Seconds (0.0));
+  counapp.Stop (Seconds (30.0));
+
+  counapp.Start (Seconds (31.0));
+  counapp.Stop (Seconds (61.0));
 /*
   auto counappA = consumerHelper.Install(remoteHost.Get (0));
   auto counappB = consumerHelper.Install(remoteHost.Get (1));
@@ -206,17 +201,13 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(10.0))); 
-  producerHelper.Install(nodes);
+  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(100.0))); 
+  //producerHelper.Install(nodes);
 
-  auto prodappA = producerHelper.Install (remoteHost.Get (0));
-  auto prodappB = producerHelper.Install (remoteHost.Get (1));
+  auto prodappA = producerHelper.Install (remoteHost);
 
-  prodappA.Start (Seconds (0.0));
-  prodappA.Stop (Seconds (30.0));
-
-  prodappB.Start (Seconds (31.0));
-  prodappB.Stop (Seconds (61.0));
+  //prodappA.Start (Seconds (0.0));
+  //prodappA.Stop (Seconds (30.0));
 
   ////////////////
   ndn::GlobalRoutingHelper::CalculateRoutes();
