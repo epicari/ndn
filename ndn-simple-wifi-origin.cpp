@@ -50,11 +50,11 @@ NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 int
 main(int argc, char* argv[])
 {
-  std::string phyMode = "HtMcs7";
+  //std::string phyMode = "HtMcs7";
   // disable fragmentation
   //Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue("2200"));
   //Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("2200"));
-  //Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
+  //Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -83,7 +83,7 @@ main(int argc, char* argv[])
   YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
   //wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
-  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-77));
+  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-97));
 
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
   wifiPhyHelper.SetChannel(wifiChannel.Create());
@@ -163,7 +163,7 @@ main(int argc, char* argv[])
   // ndnHelper.AddNetDeviceFaceCreateCallback (WifiNetDevice::GetTypeId (), MakeCallback
   // (MyNetDeviceFaceCallback));
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
