@@ -108,8 +108,9 @@ main(int argc, char* argv[])
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   //ndnGlobalRoutingHelper.Install (nodes);
   ndnGlobalRoutingHelper.InstallAll ();
-  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get(0));
+  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
   //ndnGlobalRoutingHelper.AddOrigins(prefix, apNodes);
+  ndn::NetworkRegionTableHelper::AddRegionName(nodes, ndn::Name("/ucla"));
 
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
   ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
