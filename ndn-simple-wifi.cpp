@@ -53,7 +53,7 @@ main(int argc, char* argv[])
 
   ndn::StackHelper ndnHelper;
   //ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes (true);
+  //ndnHelper.SetDefaultRoutes (true);
   //ndnHelper.Install (nodes);
   ndnHelper.InstallAll ();
 
@@ -118,10 +118,10 @@ main(int argc, char* argv[])
 
   string prefix = "/ucla/hello";
 
-  //ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-  //ndnGlobalRoutingHelper.Install (nodes);
+  ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
+  ndnGlobalRoutingHelper.Install (nodes);
   //ndnGlobalRoutingHelper.InstallAll ();
-  //ndnGlobalRoutingHelper.AddOrigins(prefix, apNodes);
+  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get(0));
 
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
   ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
