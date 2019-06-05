@@ -76,9 +76,9 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("wifi-default");
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
-/*
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  //NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+
   wifiMacHelper.SetType("ns3::StaWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
@@ -86,7 +86,7 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType("ns3::ApWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacHelper, apNodes);
-*/
+
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("100.0"),
