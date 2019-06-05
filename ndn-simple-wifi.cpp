@@ -98,7 +98,7 @@ main(int argc, char* argv[])
                              "Mode", StringValue ("Time"),
                              "Time", StringValue ("2s"),
                              "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=30.0]"),
-                             "Bounds", StringValue ("0|400|0|400"));
+                             "Bounds", StringValue ("0|800|0|800"));
   mobility.InstallAll ();
 /*
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
