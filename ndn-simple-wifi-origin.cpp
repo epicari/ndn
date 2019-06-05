@@ -72,8 +72,8 @@ main(int argc, char* argv[])
   NodeContainer remoteHost;
   remoteHost.Create (1);
 
-  //NodeContainer allNodes = NodeContainer (nodes, apNode, remoteHost);
-  NodeContainer csmaNodes = NodeContainer (remoteHost, apNode);
+  NodeContainer allNodes = NodeContainer (nodes, apNode, remoteHost);
+  //NodeContainer csmaNodes = NodeContainer (remoteHost, apNode);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211ac);
@@ -99,12 +99,12 @@ main(int argc, char* argv[])
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
 
-  CsmaHelper csma;
-  NetDeviceContainer csmaDevs = csma.Install (csmaNodes);
+  //CsmaHelper csma;
+  //NetDeviceContainer csmaDevs = csma.Install (csmaNodes);
 
   ////////////////
   // 1. Install Wifi
-  NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
+  NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
 /*
   wifiMacHelper.SetType("ns3::StaWifiMac",
                          "Ssid", SsidValue (ssid));
@@ -166,7 +166,7 @@ for (uint16_t i = 0; i < apNode.GetN (); ++i)
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
   ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
-
+/*
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll ();
   string prefix = "/ucla/hello";
@@ -174,7 +174,7 @@ for (uint16_t i = 0; i < apNode.GetN (); ++i)
   ndnGlobalRoutingHelper.AddOrigins(prefix, nodes);
   ndnGlobalRoutingHelper.AddOrigins(prefix, apNode);
   ndnGlobalRoutingHelper.AddOrigins(prefix, remoteHost);
-
+*/
   // Set BestRoute strategy
   //ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/best-route");
   ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/multicast");
