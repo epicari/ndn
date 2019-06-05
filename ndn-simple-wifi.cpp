@@ -43,8 +43,8 @@ main(int argc, char* argv[])
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes(true);
-  ndnHelper.InstallAll ();
+  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.Install (nodes);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211ac);
@@ -79,14 +79,14 @@ main(int argc, char* argv[])
 
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("500.0"),
-                                 "Y", StringValue ("0.0"),
+                                 "Y", StringValue ("0.0"));
                                  //"Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   mobility.Install(nodes);
 
   string prefix = "/ucla/hello";
-  //ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-  //ndnGlobalRoutingHelper.Install (nodes);
-  //ndnGlobalRoutingHelper.AddOrigins(prefix, nodes);
+  ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
+  ndnGlobalRoutingHelper.Install (nodes);
+  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes);
 
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
   ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
@@ -105,7 +105,7 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
-  //ndn::GlobalRoutingHelper::CalculateRoutes();
+  ndn::GlobalRoutingHelper::CalculateRoutes();
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
   ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
