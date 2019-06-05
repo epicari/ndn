@@ -99,7 +99,7 @@ main(int argc, char* argv[])
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (nodes.Get (0));
 
-  positionAlloc->Add (Vector (500, 0, 0));
+  positionAlloc->Add (Vector (100, 0, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (nodes.Get (1));
 
