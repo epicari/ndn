@@ -39,7 +39,7 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
 
   NodeContainer nodes;
-  nodesA.Create (numberOfnodes);
+  nodes.Create (numberOfnodes);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
@@ -101,12 +101,12 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(30.0))); 
-  producerHelper.Install (nodesA.Get (0));
+  producerHelper.Install (nodes.Get (0));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  consumerHelper.Install (nodesA.Get (49));
+  consumerHelper.Install (nodes.Get (49));
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
