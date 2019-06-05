@@ -81,9 +81,7 @@ main(int argc, char* argv[])
                                  "X", StringValue ("500.0"),
                                  "Y", StringValue ("0.0"),
                                  "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
-  mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
-                                 "Mode", StringValue ("Time"),
-                                 "Time", StringValue ("1s"),
+  mobility.SetMobilityModel ("ns3::RandomWaypointMobilityModel",
                                  "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=30.0]"));
 
   mobility.Install(nodes);
