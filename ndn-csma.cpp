@@ -57,7 +57,7 @@ main(int argc, char* argv[])
 
   // Install NDN stack on all nodes
   ndn::StackHelper ndnHelper;
-  ndnHelper.SetDefaultRoutes(true);
+  //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll();
 
   // Install Mobility model
@@ -80,6 +80,7 @@ main(int argc, char* argv[])
   mobility.Install (remoteHost);
 
   // Installing applications
+  ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/multicast");
 
   // Consumer
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
