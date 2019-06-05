@@ -97,8 +97,8 @@ main(int argc, char* argv[])
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                              "Mode", StringValue ("Time"),
                              "Time", StringValue ("2s"),
-                             "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                             "Bounds", RectangleValue (Rectangle (-200, 200, -200, 200)));
+                             "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=30.0]"),
+                             "Bounds", RectangleValue (Rectangle (0, 200, 0, 200)));
   mobility.InstallAll ();
 /*
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
