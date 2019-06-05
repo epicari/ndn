@@ -44,7 +44,10 @@ main(int argc, char* argv[])
   nodes.Create (numberOfnodes);
 
   NodeContainer apNodes;
-  apNodes.Create (5);
+  apNodes.Create (1);
+  
+  NodeContainer router;
+  apNodes.Create (4);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
@@ -78,9 +81,9 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("wifi-default");
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
-/*
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  //NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+
   wifiMacHelper.SetType("ns3::StaWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
@@ -88,7 +91,7 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType("ns3::ApWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacHelper, apNodes);
-*/
+
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("400.0"),
@@ -104,10 +107,11 @@ main(int argc, char* argv[])
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   positionAlloc->Add (Vector (0, 200, 0));
   positionAlloc->Add (Vector (200, 0, 0));
-  positionAlloc->Add (Vector (200, 200, 0));
   positionAlloc->Add (Vector (200, 400, 0));
   positionAlloc->Add (Vector (400, 200, 0));
+  positionAlloc->Add (Vector (200, 200, 0));
   mobility.SetPositionAllocator (positionAlloc);
+  mobility.Install (router);
   mobility.Install (apNodes);
 
   string prefix = "/ucla/hello";
@@ -117,8 +121,8 @@ main(int argc, char* argv[])
   ndnGlobalRoutingHelper.InstallAll ();
   ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
 
-  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
-  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
+  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
+  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
   
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
