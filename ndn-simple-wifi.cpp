@@ -90,10 +90,14 @@ main(int argc, char* argv[])
   NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacHelper, apNodes);
 */
   MobilityHelper mobility;
-  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("400.0"),
-                                 "Y", StringValue ("0.0"));
-                                 //"Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+  Ptr<UniformRandomVariable> randomizer = CreateObject<UniformRandomVariable>();
+  randomizer->SetAttribute("Min", DoubleValue(5));
+  randomizer->SetAttribute("Max", DoubleValue(405));
+
+  mobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
+                                 "X", PointerValue(randomizer),
+                                 "Y", DoubleValue (0.0),
+                                 "Z", DoubleValue (0.0));
   mobility.InstallAll ();
 /*
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
