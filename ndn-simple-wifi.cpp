@@ -124,8 +124,8 @@ main(int argc, char* argv[])
   //ndnGlobalRoutingHelper.AddOrigins(prefix, apNodes);
 
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
-  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
-  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
+  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
   
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
@@ -141,7 +141,7 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
-  ndn::GlobalRoutingHelper::CalculateRoutes();
+  //ndn::GlobalRoutingHelper::CalculateRoutes();
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
   ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
