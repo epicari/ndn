@@ -73,7 +73,7 @@ main(int argc, char* argv[])
 
   positionAlloc->Add (Vector (250, 6, 0));
   mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (apNode);
+  mobility.Install (router);
 
   positionAlloc->Add (Vector (250, 20, 0));
   mobility.SetPositionAllocator (positionAlloc);
