@@ -66,13 +66,13 @@ main(int argc, char* argv[])
   NodeContainer nodes;
   nodes.Create (30);
 
-  NodeContainer apNode;
-  apNode.Create (1);
+  //NodeContainer apNode;
+  //apNode.Create (1);
 
   NodeContainer remoteHost;
   remoteHost.Create (1);
 
-  NodeContainer allNodes = NodeContainer (nodes, apNode, remoteHost);
+  NodeContainer allNodes = NodeContainer (nodes, remoteHost);
   //NodeContainer csmaNodes = NodeContainer (remoteHost, apNode);
 
   WifiHelper wifi;
@@ -141,11 +141,11 @@ for (uint16_t i = 0; i < apNode.GetN (); ++i)
   mobility.Install (nodes);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-
+/*
   positionAlloc->Add (Vector (250, 6, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (apNode);
-
+*/
   positionAlloc->Add (Vector (250, 20, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost);
