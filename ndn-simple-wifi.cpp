@@ -44,7 +44,7 @@ main(int argc, char* argv[])
   nodes.Create (numberOfnodes);
 
   NodeContainer apNodes;
-  apNodes.Create (1);
+  apNodes.Create (5);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
@@ -102,7 +102,11 @@ main(int argc, char* argv[])
   mobility.Install (nodes);
   
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+  positionAlloc->Add (Vector (0, 200, 0));
+  positionAlloc->Add (Vector (200, 0, 0));
   positionAlloc->Add (Vector (200, 200, 0));
+  positionAlloc->Add (Vector (200, 400, 0));
+  positionAlloc->Add (Vector (400, 200, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (apNodes);
 
