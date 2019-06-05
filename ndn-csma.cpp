@@ -86,14 +86,14 @@ main(int argc, char* argv[])
   // Consumer
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   // Consumer will request /prefix/0, /prefix/1, ...
-  consumerHelper.SetPrefix("/prefix");
+  consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("10")); // 10 interests a second
   consumerHelper.Install(nodes);
 
   // Producer
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   // Producer will reply to all requests starting with /prefix
-  producerHelper.SetPrefix("/prefix");
+  producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.Install(remoteHost);
 
