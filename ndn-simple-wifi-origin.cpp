@@ -166,10 +166,11 @@ for (uint16_t i = 0; i < apNode.GetN (); ++i)
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
   ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
+
+  string prefix = "/ucla/hello";
 /*
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll ();
-  string prefix = "/ucla/hello";
 
   ndnGlobalRoutingHelper.AddOrigins(prefix, nodes);
   ndnGlobalRoutingHelper.AddOrigins(prefix, apNode);
