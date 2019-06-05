@@ -80,6 +80,7 @@ main(int argc, char* argv[])
   mobility.Install (remoteHost);
 
   // Installing applications
+  string prefix = "/ucla/hello";
   ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/multicast");
 
   // Consumer
