@@ -31,9 +31,11 @@ NS_LOG_COMPONENT_DEFINE("ndn.WifiExample");
 int
 main(int argc, char* argv[])
 {
-  std::string phyMode = "VhtMcs9";
+  std::string phyMode("OfdmRate24Mbps");
   uint16_t numberOfnodes = 50;
   double simTime = 60.0;
+
+  Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue(phyMode));
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -46,15 +48,15 @@ main(int argc, char* argv[])
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes (true);
+  //ndnHelper.SetDefaultRoutes (true);
   //ndnHelper.Install (nodes);
   ndnHelper.InstallAll ();
 
   WifiHelper wifi;
-  wifi.SetStandard(WIFI_PHY_STANDARD_80211ac);
+  wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode", StringValue (phyMode), 
-                                "ControlMode", StringValue ("VhtMcs0"));
+                                "ControlMode", StringValue (phyMode));
   
   YansWifiChannelHelper wifiChannel;
   wifiChannel.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
@@ -105,10 +107,10 @@ main(int argc, char* argv[])
 */
   string prefix = "/ucla/hello";
 
-  //ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-  //ndnGlobalRoutingHelper.Install (nodes);
+  ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
+  ndnGlobalRoutingHelper.Install (nodes);
   //ndnGlobalRoutingHelper.InstallAll ();
-  //ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
+  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get (0));
 
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
   ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
