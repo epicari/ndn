@@ -41,18 +41,18 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
 
   NodeContainer nodes;
-  nodes.Create (1);
+  nodes.Create (numberOfnodes);
 
-  NodeContainer apNodes;
-  apNodes.Create (1);
+  //NodeContainer apNodes;
+  //apNodes.Create (1);
   
-  NodeContainer router;
-  apNodes.Create (numberOfnodes);
+  //NodeContainer router;
+  //apNodes.Create (numberOfnodes);
 
-  NodeContainer staNodes = NodeContainer (nodes, router);
+  //NodeContainer staNodes = NodeContainer (nodes, router);
 
   ndn::StackHelper ndnHelper;
-  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
+  //ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
   //ndnHelper.SetDefaultRoutes (true);
   //ndnHelper.Install (nodes);
   ndnHelper.InstallAll ();
@@ -104,24 +104,24 @@ main(int argc, char* argv[])
                              "Time", StringValue ("2s"),
                              "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=30.0]"),
                              "Bounds", StringValue ("0|800|0|800"));
-  mobility.Install (staNodes);
+  mobility.Install (nodes);
   
-  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+  //Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   //positionAlloc->Add (Vector (0, 200, 0));
   //positionAlloc->Add (Vector (200, 0, 0));
   //positionAlloc->Add (Vector (200, 400, 0));
   //positionAlloc->Add (Vector (400, 200, 0));
-  positionAlloc->Add (Vector (200, 200, 0));
-  mobility.SetPositionAllocator (positionAlloc);
+  //positionAlloc->Add (Vector (200, 200, 0));
+  //mobility.SetPositionAllocator (positionAlloc);
   //mobility.Install (route);
-  mobility.Install (apNodes);
+  //mobility.Install (apNodes);
 
   string prefix = "/ucla/hello";
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   //ndnGlobalRoutingHelper.Install (nodes);
   ndnGlobalRoutingHelper.InstallAll ();
-  ndnGlobalRoutingHelper.AddOrigins(prefix, apNodes);
+  //ndnGlobalRoutingHelper.AddOrigins(prefix, apNodes);
 
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
@@ -130,13 +130,13 @@ main(int argc, char* argv[])
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
-  producerHelper.SetAttribute("Freshness", TimeValue(Seconds(30.0))); 
-  producerHelper.Install (apNodes);
+  //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(30.0))); 
+  producerHelper.Install (nodes.Get (0));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  consumerHelper.Install (nodes);
+  consumerHelper.Install (nodes.Get (49));
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
