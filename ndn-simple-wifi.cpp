@@ -84,7 +84,7 @@ main(int argc, char* argv[])
 
   WifiMacHelper wifiMacHelper;
   wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, staNodes);
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
 /*
   wifiMacHelper.SetType("ns3::StaWifiMac",
                         "Ssid", SsidValue (ssid));
