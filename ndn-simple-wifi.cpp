@@ -39,14 +39,14 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
 
   NodeContainer nodes;
-  nodes.Create (2);
+  nodes.Create (numberOfnodes);
 
-  NodeContainer apNodes;
-  apNodes.Create (numberOfnodes);
+  //NodeContainer apNodes;
+  //apNodes.Create (numberOfnodes);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes (true);
+  //ndnHelper.SetDefaultRoutes (true);
   //ndnHelper.Install (nodes);
   ndnHelper.InstallAll ();
 
@@ -76,9 +76,9 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("wifi-default");
 
   WifiMacHelper wifiMacHelper;
-  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  //NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
-
+  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+/*
   wifiMacHelper.SetType("ns3::StaWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
@@ -86,30 +86,30 @@ main(int argc, char* argv[])
   wifiMacHelper.SetType("ns3::ApWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacHelper, apNodes);
-
+*/
   MobilityHelper mobility;
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("100.0"),
+                                 "X", StringValue ("500.0"),
                                  "Y", StringValue ("0.0"));
                                  //"Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
-  mobility.Install(apNodes);
-
+  mobility.Install(nodes);
+/*
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   positionAlloc->Add (Vector (0, 0, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (nodes.Get (0));
 
-  positionAlloc->Add (Vector (100, 0, 0));
+  positionAlloc->Add (Vector (500, 0, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (nodes.Get (1));
-
+*/
   string prefix = "/ucla/hello";
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   //ndnGlobalRoutingHelper.Install (nodes);
   ndnGlobalRoutingHelper.InstallAll ();
-  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes);
-  ndnGlobalRoutingHelper.AddOrigins(prefix, apNodes);
+  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get(0));
+  //ndnGlobalRoutingHelper.AddOrigins(prefix, apNodes);
 
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
   ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
