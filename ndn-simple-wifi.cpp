@@ -32,7 +32,7 @@ int
 main(int argc, char* argv[])
 {
   std::string phyMode("OfdmRate24Mbps");
-  uint16_t numberOfnodes = 50;
+  //uint16_t numberOfnodes = 50;
   double simTime = 60.0;
 
   Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue(phyMode));
@@ -41,10 +41,10 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
 
   NodeContainer nodes;
-  nodes.Create (2);
+  nodes.Create (10);
 
-  NodeContainer apNodes;
-  apNodes.Create (numberOfnodes);
+  //NodeContainer apNodes;
+  //apNodes.Create (numberOfnodes);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
