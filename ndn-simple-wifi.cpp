@@ -80,11 +80,7 @@ main(int argc, char* argv[])
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("500.0"),
                                  "Y", StringValue ("0.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
-  mobility.SetMobilityModel ("ns3::RandomWaypointMobilityModel",
-                                 "Pause", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                                 "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=30.0]"));
-
+                                 //"Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   mobility.Install(nodes);
 
   string prefix = "/ucla/hello";
