@@ -32,7 +32,7 @@ int
 main(int argc, char* argv[])
 {
   std::string phyMode("OfdmRate24Mbps");
-  //uint16_t numberOfnodes = 50;
+  uint16_t numberOfnodes = 50;
   double simTime = 60.0;
 
   Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue(phyMode));
@@ -41,10 +41,10 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
 
   NodeContainer nodes;
-  nodes.Create (10);
+  nodes.Create (numberOfnodes);
 
-  //NodeContainer apNodes;
-  //apNodes.Create (numberOfnodes);
+  NodeContainer apNodes;
+  apNodes.Create (1);
 
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
@@ -99,17 +99,13 @@ main(int argc, char* argv[])
                              "Time", StringValue ("2s"),
                              "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=30.0]"),
                              "Bounds", StringValue ("0|800|0|800"));
-  mobility.InstallAll ();
-/*
+  mobility.Install (nodes);
+  
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-  positionAlloc->Add (Vector (0, 0, 0));
+  positionAlloc->Add (Vector (200, 200, 0));
   mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (nodes.Get (0));
+  mobility.Install (apNodes);
 
-  positionAlloc->Add (Vector (500, 0, 0));
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (nodes.Get (1));
-*/
   string prefix = "/ucla/hello";
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
@@ -129,7 +125,7 @@ main(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  consumerHelper.Install (nodes.Get (1));
+  consumerHelper.Install (nodes.Get (49));
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
