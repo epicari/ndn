@@ -64,16 +64,19 @@ main(int argc, char* argv[])
   //////////////////////
   
   NodeContainer nodes;
-  nodes.Create (30);
+  nodes.Create (20);
 
-  //NodeContainer apNode;
-  //apNode.Create (1);
+  NodeContainer apNode;
+  apNode.Create (10);
+
+  NodeContainer router;
+  router.Create (2);
 
   NodeContainer remoteHost;
   remoteHost.Create (1);
 
-  NodeContainer allNodes = NodeContainer (nodes, remoteHost);
-  //NodeContainer csmaNodes = NodeContainer (remoteHost, apNode);
+  NodeContainer p2prouters = NodeContainer (router.Get(0), router.Get(1));
+  NodeContainer p2premote = NodeContainer (router.Get(1), remoteHost);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211ac);
@@ -84,85 +87,85 @@ main(int argc, char* argv[])
   YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
   wifiChannel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
   //wifiChannel.AddPropagationLoss("ns3::FriisPropagationLossModel", "Frequency", DoubleValue (5e9));
-  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-97));
+  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-77));
 
   YansWifiPhyHelper wifiPhyHelper = YansWifiPhyHelper::Default();
   wifiPhyHelper.SetChannel(wifiChannel.Create());
-  wifiPhyHelper.Set ("Antennas", UintegerValue (4));
-  wifiPhyHelper.Set ("MaxSupportedTxSpatialStreams", UintegerValue (2));
-  wifiPhyHelper.Set ("MaxSupportedRxSpatialStreams", UintegerValue (2));
+  //wifiPhyHelper.Set ("Antennas", UintegerValue (4));
+  //wifiPhyHelper.Set ("MaxSupportedTxSpatialStreams", UintegerValue (2));
+  //wifiPhyHelper.Set ("MaxSupportedRxSpatialStreams", UintegerValue (2));
   //wifiPhyHelper.Set ("TxPowerStart", DoubleValue(5));
   //wifiPhyHelper.Set ("TxPowerEnd", DoubleValue(5));
 
   Ssid ssid = Ssid ("wifi-default");
 
-  WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
-
-  //CsmaHelper csma;
-  //NetDeviceContainer csmaDevs = csma.Install (csmaNodes);
-
-  ////////////////
-  // 1. Install Wifi
-  NetDeviceContainer wifiNetDevices = wifi.Install(wifiPhyHelper, wifiMacHelper, allNodes);
-/*
-  wifiMacHelper.SetType("ns3::StaWifiMac",
-                         "Ssid", SsidValue (ssid));
-
-  NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
-  //NetDeviceContainer remoteDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, remoteHost);
-
-for (uint16_t i = 0; i < apNode.GetN (); ++i)
-  {
-      wifiMacHelper.SetType("ns3::ApWifiMac",
-                            "Ssid", SsidValue (ssid));
-      NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
-
-      BridgeHelper bridge;
-      NetDeviceContainer bridgeDev = bridge.Install (apNode.Get (i), NetDeviceContainer (apDevs, csmaDevs.Get (i)));
-  }  
-*/
-  // 2. Install Mobility model
-  
   MobilityHelper mobility;
 
-  mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
-                                 "X", StringValue ("500.0"),
-                                 "Y", StringValue ("0.0"),
-                                 "Rho", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
-/*
-  mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
-                                 "Mode", StringValue ("Time"),
-                                 "Time", StringValue ("2s"),
-                                 "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"),
-                                 "Bounds", StringValue ("0|200|0|200"));
-*/
+  WifiMacHelper wifiMacHelper;
+  wifiMacHelper.SetType("ns3::StaWifiMac",
+                         "Ssid", SsidValue (ssid),
+                         "ActiveProbing", BooleanValue (true),
+                         "ProbeRequestTimeout", TimeValue(Seconds(0.25)));
 
-  mobility.Install (nodes);
+  NetDeviceContainer staDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, nodes);
+
+  mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
+                            "MinX", DoubleValue (0.0),
+                            "MinY", DoubleValue (2.0),
+                            "DeltaX", DoubleValue (10.0),
+                            "DeltaY", DoubleValue (0.0),
+                            "GridWidth", UintegerValue (20),
+                            "LayoutType", StringValue ("RowFirst"));
+  mobility.Intall (nodes);
+
+  wifiMacHelper.SetType("ns3::ApWifiMac",
+                        "Ssid", SsidValue (ssid),
+                        "BeaconGeneration", BooleanValue(false));
+                        
+  NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
+
+  for (uint16_t i = 0; i < apNode.GetN (); ++i)
+    {
+      NodeContainer csmaNodes = NodeContainer (apNode.Get (i), router.Get(0));
+
+      CsmaHelper csma;
+      csma.SetChannelAttribute ("DataRate",
+                                DataRateValue (DataRate (5000000)));
+      csma.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (1)));
+      NetDeviceContainer csmaDevs = csma.Install (csmaNodes);
+    }
+
+  mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
+                            "MinX", DoubleValue (5.0),
+                            "MinY", DoubleValue (6.0),
+                            "DeltaX", DoubleValue (10.0),
+                            "DeltaY", DoubleValue (0.0),
+                            "GridWidth", UintegerValue (10),
+                            "LayoutType", StringValue ("RowFirst"));
+  mobility.Intall (apNode);
+
+  PointToPointHelper p2p;
+  p2p.SetDeviceAttribute ("DataRate", StringValue ("100Mbps"));
+  p2p.SetChannelAttribute ("Delay", StringValue ("1ms"));
+  p2p.Install (p2prouters);
+  p2p.Install (p2premote);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-/*
-  positionAlloc->Add (Vector (250, 6, 0));
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (apNode);
-*/
-  positionAlloc->Add (Vector (250, 20, 0));
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (remoteHost);
-/*
-  positionAlloc->Add (Vector (700, 6, 0));
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (apNode.Get (1));
 
-  positionAlloc->Add (Vector (700, 0, 0));
+  positionAlloc->Add (Vector (250, 10, 0));
+  mobility.SetPositionAllocator (positionAlloc);
+  mobility.Install (router.Get (0));
+
+  positionAlloc->Add (Vector (750, 10, 0));
+  mobility.SetPositionAllocator (positionAlloc);
+  mobility.Install (router.Get (1));
+
+  positionAlloc->Add (Vector (750, 0, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost);
-*/
-  // 3. Install NDN stack
+
   NS_LOG_INFO("Installing NDN stack");
   ndn::StackHelper ndnHelper;
-  // ndnHelper.AddNetDeviceFaceCreateCallback (WifiNetDevice::GetTypeId (), MakeCallback
-  // (MyNetDeviceFaceCallback));
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
   ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
@@ -176,46 +179,22 @@ for (uint16_t i = 0; i < apNode.GetN (); ++i)
   ndnGlobalRoutingHelper.AddOrigins(prefix, apNode);
   ndnGlobalRoutingHelper.AddOrigins(prefix, remoteHost);
 */
-  // Set BestRoute strategy
-  //ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/best-route");
-  ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/multicast");
+  ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/best-route");
+  //ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/multicast");
 
-  // 4. Set up applications
   NS_LOG_INFO("Installing Applications");
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
-  consumerHelper.SetAttribute("Frequency", DoubleValue(5.0));
-  auto counapp = consumerHelper.Install (nodes);
-  counapp.Start (Seconds (0.0));
-  counapp.Stop (Seconds (30.0));
-
-  counapp.Start (Seconds (31.0));
-  counapp.Stop (Seconds (61.0));
-/*
-  auto counappA = consumerHelper.Install(remoteHost.Get (0));
-  auto counappB = consumerHelper.Install(remoteHost.Get (1));
-
-  counappA.Start (Seconds (0.0));
-  counappA.Stop (Seconds (30.0));
-
-  counappB.Start (Seconds (31.0));
-  counappB.Stop (Seconds (61.0));
-*/
+  consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
+  consumerHelper.Install (nodes);
 
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1200"));
   producerHelper.SetAttribute("Freshness", TimeValue(Seconds(60.0))); 
-  //producerHelper.Install(nodes);
+  producerHelper.Install (remoteHost);
 
-  auto prodappA = producerHelper.Install (remoteHost);
-
-  //prodappA.Start (Seconds (0.0));
-  //prodappA.Stop (Seconds (30.0));
-
-  ////////////////
-  ndn::GlobalRoutingHelper::CalculateRoutes();
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
   ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
