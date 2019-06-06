@@ -63,19 +63,22 @@ main(int argc, char* argv[])
   //////////////////////
   
   NodeContainer nodes;
-  nodes.Create (20);
+  nodes.Create (6);
 
   NodeContainer apNode;
-  apNode.Create (10);
+  apNode.Create (3);
 
   NodeContainer router;
-  router.Create (2);
+  router.Create (5);
 
   NodeContainer remoteHost;
   remoteHost.Create (1);
 
-  NodeContainer p2prouters = NodeContainer (router.Get(0), router.Get(1));
-  NodeContainer p2premote = NodeContainer (router.Get(1), remoteHost);
+  NodeContainer p2prA = NodeContainer (router.Get(0), router.Get(3));
+  NodeContainer p2prB = NodeContainer (router.Get(1), router.Get(3));
+  NodeContainer p2prC = NodeContainer (router.Get(1), router.Get(4));
+  NodeContainer p2prD = NodeContainer (router.Get(2), router.Get(4));
+  NodeContainer p2premote = NodeContainer (router.Get(4), remoteHost);
 
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211ac);
@@ -111,9 +114,9 @@ main(int argc, char* argv[])
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
                             "MinX", DoubleValue (0.0),
                             "MinY", DoubleValue (2.0),
-                            "DeltaX", DoubleValue (10.0),
+                            "DeltaX", DoubleValue (50.0),
                             "DeltaY", DoubleValue (0.0),
-                            "GridWidth", UintegerValue (20),
+                            "GridWidth", UintegerValue (10),
                             "LayoutType", StringValue ("RowFirst"));
   mobility.Install (nodes);
 
@@ -123,9 +126,9 @@ main(int argc, char* argv[])
 
   NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
 
-  for (uint16_t i = 0; i < apNode.GetN (); ++i)
+  for (uint16_t i = 0; i < apNodes.GetN (); ++i)
     {
-      NodeContainer csmaNodes = NodeContainer (apNode.Get (i), router.Get(0));
+      NodeContainer csmaNodes = NodeContainer (apNode.Get (i), router.Get (i));
 
       CsmaHelper csma;
       csma.SetChannelAttribute ("DataRate",
@@ -135,9 +138,9 @@ main(int argc, char* argv[])
     }
 
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
-                            "MinX", DoubleValue (5.0),
+                            "MinX", DoubleValue (25.0),
                             "MinY", DoubleValue (6.0),
-                            "DeltaX", DoubleValue (10.0),
+                            "DeltaX", DoubleValue (100.0),
                             "DeltaY", DoubleValue (0.0),
                             "GridWidth", UintegerValue (10),
                             "LayoutType", StringValue ("RowFirst"));
@@ -150,31 +153,41 @@ main(int argc, char* argv[])
   p2p.Install (p2premote);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+  
+  
+  for (uint16_t i = 0; i < apNode.GetN (); ++i)
+    {
+      int Xpos = 0;
+      positionAlloc->Add (Vector (25 + Xpos, 10, 0));
+      mobility.SetPositionAllocator (positionAlloc);
+      mobility.Install (router.Get (i));
+      Xpos += 100;
+      if (3 <= i)
+        {
+          int Xpos = 0;
+          positionAlloc->Add (Vector (50 + Xpos, 20, 0));
+          mobility.SetPositionAllocator (positionAlloc);
+          mobility.Install (router.Get (i));
+          Xpos += 50;
+        }
+    }
 
-  positionAlloc->Add (Vector (250, 10, 0));
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (router.Get (0));
-
-  positionAlloc->Add (Vector (750, 10, 0));
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (router.Get (1));
-
-  positionAlloc->Add (Vector (750, 0, 0));
+  positionAlloc->Add (Vector (125, 30, 0));
   mobility.SetPositionAllocator (positionAlloc);
   mobility.Install (remoteHost);
 
   NS_LOG_INFO("Installing NDN stack");
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  //ndnHelper.SetDefaultRoutes(true);
+  ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
 
   string prefix = "/ucla/hello";
-
+/*
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll ();
   ndnGlobalRoutingHelper.AddOrigins(prefix, remoteHost);
-
+*/
   ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/best-route");
   //ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/multicast");
 
