@@ -89,7 +89,7 @@ namespace ns3 {
     
     ////// Reading file for topology setup
     AnnotatedTopologyReader topologyReader("", 1);
-    topologyReader.SetFileName("src/ndnSIM/examples/x-topo.txt");
+    topologyReader.SetFileName("src/ndnSIM/examples/topologies/x-topo.txt");
     topologyReader.Read();
 
     ////// Getting containers for the producer/wifi-ap
