@@ -49,7 +49,7 @@ main(int argc, char* argv[])
   apNodes.Create (numberOfnodes);
   
   NodeContainer producer;
-  apNodes.Create (1);
+  producer.Create (1);
 
   NodeContainer csmaDevs = NodeContainer (apNodes, producer);
 
