@@ -41,18 +41,24 @@ main(int argc, char* argv[])
   cmd.Parse(argc, argv);
 
   NodeContainer nodes;
-  nodes.Create (numberOfnodes);
+  nodes.Create (10);
 
-  //NodeContainer apNodes;
-  //apNodes.Create (1);
+  NodeContainer apNodes;
+  apNodes.Create (numberOfnodes);
   
-  //NodeContainer router;
-  //apNodes.Create (numberOfnodes);
+  NodeContainer producer;
+  apNodes.Create (1);
 
-  //NodeContainer staNodes = NodeContainer (nodes, router);
+  NodeContainer csmaDevs = NodeContainer (apNodes, producer);
+
+  CsmaHelper csma;
+  csma.SetChannelAttribute ("DataRate",
+                          DataRateValue (DataRate (5000000)));
+  csma.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
+  NetDeviceContainer csmaDevices = csma.Install (csmaDevs);
 
   ndn::StackHelper ndnHelper;
-  //ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
+  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
   //ndnHelper.SetDefaultRoutes (true);
   //ndnHelper.Install (nodes);
   ndnHelper.InstallAll ();
@@ -83,18 +89,15 @@ main(int argc, char* argv[])
   Ssid ssid = Ssid ("wifi-default");
 
   WifiMacHelper wifiMacHelper;
-  wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
-/*
+  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  //NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+  
   wifiMacHelper.SetType("ns3::StaWifiMac",
                         "Ssid", SsidValue (ssid));
   NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
 
-  wifiMacHelper.SetType("ns3::ApWifiMac",
-                        "Ssid", SsidValue (ssid));
-  NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacHelper, apNodes);
-*/
   MobilityHelper mobility;
+  
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
                                  "X", StringValue ("400.0"),
                                  "Y", StringValue ("400.0"),
@@ -104,24 +107,38 @@ main(int argc, char* argv[])
                              "Time", StringValue ("2s"),
                              "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=30.0]"),
                              "Bounds", StringValue ("0|800|0|800"));
-  mobility.Install (nodes);
   
-  //Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+  mobility.Install (nodes);
+
+  for(uint32_t i = 0; i < numberOfnodes; ++i)
+    {
+
+      wifiMacHelper.SetType("ns3::ApWifiMac",
+                            "Ssid", SsidValue (ssid));
+      NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacHelper, apNodes.Get (i));
+
+      BridgeHelper bridge;
+      NetDeviceContainer bridgeDevices = bridge.Install (apNodes.Get (i), NetDeviceContainer (apDev, csmaDevices.Get (i)));
+
+      mobility.Install (apNodes.Get (i));
+    }
+  
+  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   //positionAlloc->Add (Vector (0, 200, 0));
   //positionAlloc->Add (Vector (200, 0, 0));
   //positionAlloc->Add (Vector (200, 400, 0));
   //positionAlloc->Add (Vector (400, 200, 0));
-  //positionAlloc->Add (Vector (200, 200, 0));
-  //mobility.SetPositionAllocator (positionAlloc);
-  //mobility.Install (route);
+  positionAlloc->Add (Vector (200, 200, 0));
+  mobility.SetPositionAllocator (positionAlloc);
+  mobility.Install (producer);
   //mobility.Install (apNodes);
 
   string prefix = "/ucla/hello";
 
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-  ndnGlobalRoutingHelper.Install (nodes);
-  //ndnGlobalRoutingHelper.InstallAll ();
-  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get(0));
+  //ndnGlobalRoutingHelper.Install (nodes);
+  ndnGlobalRoutingHelper.InstallAll ();
+  ndnGlobalRoutingHelper.AddOrigins(prefix, producer);
 
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
   ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
@@ -131,12 +148,12 @@ main(int argc, char* argv[])
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(30.0))); 
-  producerHelper.Install (nodes.Get (0));
+  producerHelper.Install (producer);
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  consumerHelper.Install (nodes.Get (49));
+  consumerHelper.Install (nodes);
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
