@@ -139,7 +139,7 @@ main(int argc, char* argv[])
     
       mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
                                   "MinX", DoubleValue (20.0),
-                                  "MinY", DoubleValue (30.0),
+                                  "MinY", DoubleValue (0.0),
                                   "DeltaX", DoubleValue (50.0),
                                   "DeltaY", DoubleValue (0.0),
                                   "GridWidth", UintegerValue (5),
