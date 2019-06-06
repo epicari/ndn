@@ -105,7 +105,7 @@ main(int argc, char* argv[])
       
       Ssid ssid = Ssid ("wifi-default");
       
-      wifiMacHelper wifiMacInfra;
+      WifiMacHelper wifiMacInfra;
       wifiMacInfra.SetType("ns3::StaWifiMac",
                             "Ssid", SsidValue (ssid));
       NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacInfra, producer);
