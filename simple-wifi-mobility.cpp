@@ -149,7 +149,7 @@ namespace ns3 {
     // wifi.SetRemoteStationManager ("ns3::ArfWifiManager");
 
     ////// Add a non-QoS upper mac of STAs, and disable rate control
-    NqosWifiMacHelper wifiMacHelper = NqosWifiMacHelper::Default ();
+    WifiMacHelper wifiMacHelper;
     ////// Active associsation of STA to AP via probing.
     wifiMacHelper.SetType ("ns3::StaWifiMac", "Ssid", SsidValue (ssid),
                            "ActiveProbing", BooleanValue (true),
@@ -163,7 +163,6 @@ namespace ns3 {
     NetDeviceContainer devices = staDevice;
 
     ////// Setup AP.
-    NqosWifiMacHelper wifiMac = NqosWifiMacHelper::Default ();
     wifiMac.SetType ("ns3::ApWifiMac", "Ssid", SsidValue (ssid),
                      "BeaconGeneration", BooleanValue(false));
     for (int i = 0; i < bottomrow; i++)
