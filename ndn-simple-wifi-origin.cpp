@@ -126,7 +126,7 @@ main(int argc, char* argv[])
 
   NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
 
-  for (uint16_t i = 0; i < apNodes.GetN (); ++i)
+  for (uint16_t i = 0; i < apNode.GetN (); ++i)
     {
       NodeContainer csmaNodes = NodeContainer (apNode.Get (i), router.Get (i));
 
@@ -149,8 +149,11 @@ main(int argc, char* argv[])
   PointToPointHelper p2p;
   p2p.SetDeviceAttribute ("DataRate", StringValue ("100Mbps"));
   p2p.SetChannelAttribute ("Delay", StringValue ("1ms"));
-  p2p.Install (p2prouters);
   p2p.Install (p2premote);
+  p2p.Install (p2prA);
+  p2p.Install (p2prB);
+  p2p.Install (p2prC);
+  p2p.Install (p2prD);
 
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   
