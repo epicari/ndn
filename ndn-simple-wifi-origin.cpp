@@ -24,8 +24,7 @@
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/csma-helper.h"
-#include "ns3/bridge-helper.h"
-
+#include "ns3/point-to-point-module.h"
 #include "ns3/ndnSIM-module.h"
 
 using namespace std;
@@ -116,12 +115,12 @@ main(int argc, char* argv[])
                             "DeltaY", DoubleValue (0.0),
                             "GridWidth", UintegerValue (20),
                             "LayoutType", StringValue ("RowFirst"));
-  mobility.Intall (nodes);
+  mobility.Install (nodes);
 
   wifiMacHelper.SetType("ns3::ApWifiMac",
                         "Ssid", SsidValue (ssid),
                         "BeaconGeneration", BooleanValue(false));
-                        
+
   NetDeviceContainer apDevs = wifi.Install(wifiPhyHelper, wifiMacHelper, apNode);
 
   for (uint16_t i = 0; i < apNode.GetN (); ++i)
@@ -142,7 +141,7 @@ main(int argc, char* argv[])
                             "DeltaY", DoubleValue (0.0),
                             "GridWidth", UintegerValue (10),
                             "LayoutType", StringValue ("RowFirst"));
-  mobility.Intall (apNode);
+  mobility.Install (apNode);
 
   PointToPointHelper p2p;
   p2p.SetDeviceAttribute ("DataRate", StringValue ("100Mbps"));
