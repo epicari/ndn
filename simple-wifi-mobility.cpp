@@ -245,6 +245,9 @@ namespace ns3 {
 
     // Calculate and install FIBs
     ndn::GlobalRoutingHelper::CalculateRoutes();
+    ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
+    ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
+    ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
 
     // Tracing
     wifiPhy.EnablePcap ("simple-wifi-mobility", devices);
