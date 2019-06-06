@@ -102,10 +102,10 @@ main(int argc, char* argv[])
 
       WifiHelper wifiInfra;
       wifiInfra.SetRemoteStationManager ("ns3::ArfWifiManager");
-      wifiMacHelper wifiMacInfra;
       
       Ssid ssid = Ssid ("wifi-default");
-
+      
+      wifiMacHelper wifiMacInfra;
       wifiMacInfra.SetType("ns3::StaWifiMac",
                             "Ssid", SsidValue (ssid));
       NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacHelper, producer);
