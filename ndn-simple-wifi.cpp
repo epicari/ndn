@@ -55,7 +55,7 @@ main(int argc, char* argv[])
   router.Create (5);
   
   NodeContainer producer;
-  producer.Create (2);
+  producer.Create (1);
 
   // wifi Ad-hoc
   WifiHelper wifi;
@@ -187,9 +187,9 @@ main(int argc, char* argv[])
   ndnGlobalRoutingHelper.InstallAll ();
   ndnGlobalRoutingHelper.AddOrigins(prefix, producer);
 
-  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
+  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
-  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
+  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
   
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
