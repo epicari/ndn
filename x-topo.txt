@@ -1,0 +1,33 @@
+# x-topo.txt
+
+router
+
+#node	city	y	  x
+ap1	  NA	  0	    0
+ap2	  NA	  0	    50
+ap3	  NA	  0	    100
+ap4	  NA	  0	    150
+ap5   NA      0	    200
+ap6   NA      0	    250
+r1  	NA	  100	25
+r2  	NA	  100	125
+r3  	NA	  100	225
+r4  	NA	  300	75
+r5  	NA	  300	175
+root	NA	  400  300
+
+link
+
+# from	    to		capacity	metric	delay	  queue
+ap1	        r1  	100mbps		1	      2ms	    100
+ap2	        r1  	100mbps		1	      2ms	    100
+ap3	        r2  	100mbps		1	      2ms	    100
+ap4	        r2  	100mbps		1	      2ms	    100
+ap5	        r3  	100mbps		1	      2ms	    100
+ap6	        r3  	100mbps		1	      2ms	    100
+r1          r4      100mbps     1         2ms       100
+r2          r4      100mbps     1         2ms       100
+r2          r5      100mbps     1         2ms       100
+r3          r5      100mbps     1         2ms       100
+r4          root    100mbps     1         2ms       100
+r5          root    100mbps     1         2ms       100
