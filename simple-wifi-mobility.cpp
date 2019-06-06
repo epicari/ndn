@@ -163,11 +163,11 @@ namespace ns3 {
     NetDeviceContainer devices = staDevice;
 
     ////// Setup AP.
-    wifiMac.SetType ("ns3::ApWifiMac", "Ssid", SsidValue (ssid),
+    wifiMacHelper.SetType ("ns3::ApWifiMac", "Ssid", SsidValue (ssid),
                      "BeaconGeneration", BooleanValue(false));
     for (int i = 0; i < bottomrow; i++)
     {
-        NetDeviceContainer apDevice = wifi.Install (wifiPhy, wifiMac, wifiApNodes[i]);
+        NetDeviceContainer apDevice = wifi.Install (wifiPhy, wifiMacHelper, wifiApNodes[i]);
         devices.Add (apDevice);
     }
 
