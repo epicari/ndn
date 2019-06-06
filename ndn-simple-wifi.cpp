@@ -38,6 +38,8 @@ main(int argc, char* argv[])
   double simTime = 20.0;
 
   Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue(phyMode));
+  Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue("2200"));
+  Config::SetDefault ("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("2200"));
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -107,12 +109,13 @@ main(int argc, char* argv[])
       
       WifiMacHelper wifiMacInfra;
       wifiMacInfra.SetType("ns3::StaWifiMac",
-                            "Ssid", SsidValue (ssid));
+                            "Ssid", SsidValue (ssid),
+                            "ActiveProbing", BooleanValue (true));
       NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacInfra, producer);
 
       wifiMacInfra.SetType("ns3::ApWifiMac",
                             "Ssid", SsidValue (ssid),
-                            "BeaconInterval", TimeValue (Seconds (2.5)));
+                            "BeaconGeneration", BooleanValue(false));
       NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacInfra, nodes.Get (i));  
     }
 
@@ -153,22 +156,22 @@ main(int argc, char* argv[])
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   //ndnGlobalRoutingHelper.Install (nodes);
   ndnGlobalRoutingHelper.InstallAll ();
-  ndnGlobalRoutingHelper.AddOrigins(prefix, producer);
+  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes.Get(0));
 
-  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
-  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
+  ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/multicast");
+  //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/broadcast");
   //ndn::StrategyChoiceHelper::InstallAll(prefix, "/localhost/nfd/strategy/best-route");
   
   ndn::AppHelper producerHelper("ns3::ndn::Producer");
   producerHelper.SetPrefix(prefix);
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(30.0))); 
-  producerHelper.Install (producer);
+  producerHelper.Install (nodes.Get(0));
 
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   consumerHelper.SetPrefix(prefix);
   consumerHelper.SetAttribute("Frequency", StringValue("10"));
-  consumerHelper.Install (nodes);
+  consumerHelper.Install (producer);
 
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
