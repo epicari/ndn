@@ -162,7 +162,7 @@ main(int argc, char* argv[])
       mobility.SetPositionAllocator (positionAlloc);
       mobility.Install (router.Get (i));
       Xpos += 100;
-      if (3 <= i)
+      if (4 <= i)
         {
           int Xpos = 0;
           positionAlloc->Add (Vector (50 + Xpos, 20, 0));
