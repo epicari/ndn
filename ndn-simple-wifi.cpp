@@ -47,11 +47,14 @@ main(int argc, char* argv[])
 
   NodeContainer apNodes;
   apNodes.Create (numberOfnodes);
+
+  NodeContainer router;
+  router.Create (numberOfnodes);
   
   NodeContainer producer;
   producer.Create (1);
 
-  NodeContainer csmaDevs = NodeContainer (apNodes, producer);
+  NodeContainer csmaDevs = NodeContainer (apNodes, router, producer);
 
   CsmaHelper csma;
   csma.SetChannelAttribute ("DataRate",
@@ -123,6 +126,7 @@ main(int argc, char* argv[])
       NetDeviceContainer bridgeDevices = bridge.Install (apNodes.Get (i), NetDeviceContainer (apDev, csmaDevices.Get (i)));
 
       mobility.Install (apNodes.Get (i));
+      mobility.Install (router.Get (i));
     }
   
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
