@@ -34,53 +34,41 @@ int
 main(int argc, char* argv[])
 {
   std::string phyMode("OfdmRate24Mbps");
-  uint16_t numberOfnodes = 50;
+  uint16_t numberOfnodes = 20;
   double simTime = 20.0;
 
   Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue(phyMode));
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
-
+  
+  // Nodes
   NodeContainer nodes;
-  nodes.Create (10);
+  nodes.Create (numberOfnodes);
 
-  NodeContainer apNodes;
-  apNodes.Create (numberOfnodes);
+  //NodeContainer apNodes;
+  //apNodes.Create (numberOfnodes);
 
   NodeContainer router;
   router.Create (numberOfnodes);
   
   NodeContainer producer;
-  producer.Create (1);
+  producer.Create (numberOfnodes);
 
-  NodeContainer csmaDevs = NodeContainer (apNodes, router, producer);
-
-  CsmaHelper csma;
-  csma.SetChannelAttribute ("DataRate",
-                          DataRateValue (DataRate (5000000)));
-  csma.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
-  NetDeviceContainer csmaDevices = csma.Install (csmaDevs);
-
-  ndn::StackHelper ndnHelper;
-  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  //ndnHelper.SetDefaultRoutes (true);
-  //ndnHelper.Install (nodes);
-  ndnHelper.InstallAll ();
-
+  // wifi Ad-hoc
   WifiHelper wifi;
   wifi.SetStandard(WIFI_PHY_STANDARD_80211a);
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode", StringValue (phyMode), 
                                 "ControlMode", StringValue (phyMode));
-  
+
   YansWifiChannelHelper wifiChannel;
   wifiChannel.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
   wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel", "Rss", DoubleValue (-77));
 
   YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default();
   wifiPhy.SetChannel(wifiChannel.Create());
-/*
+  /*
   wifiPhy.Set ("TxPowerStart", DoubleValue (txPowerStart));
   wifiPhy.Set ("TxPowerEnd", DoubleValue (txPowerEnd));
   wifiPhy.Set ("TxPowerLevels", UintegerValue (14));
@@ -91,16 +79,51 @@ main(int argc, char* argv[])
   wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue (-79 + 3));
   wifiPhy.SetErrorRateModel ("ns3::YansErrorRateModel");
 */
-  Ssid ssid = Ssid ("wifi-default");
-
   WifiMacHelper wifiMacHelper;
-  //wifiMacHelper.SetType("ns3::AdhocWifiMac");
-  //NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
-  
-  wifiMacHelper.SetType("ns3::StaWifiMac",
-                        "Ssid", SsidValue (ssid));
-  NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
+  wifiMacHelper.SetType("ns3::AdhocWifiMac");
+  NetDeviceContainer wifiDev = wifi.Install (wifiPhy, wifiMacHelper, nodes);
 
+  // Router
+  for (uint32_t i = 0; i < numberOfnodes; ++i)
+    {
+      NodeContainer csmaDevs = NodeContainer (nodes.Get (i), router);
+
+      CsmaHelper csma;
+      csma.SetChannelAttribute ("DataRate",
+                              DataRateValue (DataRate (5000000)));
+      csma.SetChannelAttribute ("Delay", TimeValue (MilliSeconds (2)));
+      NetDeviceContainer csmaDevices = csma.Install (csmaDevs);
+    }
+
+  // Wifi AP-STA
+  for (uint32_t i = 0; i < numberOfnodes; ++i)
+    {
+      NodeContainer infra = NodeContainer (nodes, producer);
+
+      WifiHelper wifiInfra;
+      wifiInfra.SetRemoteStationManager ("ns3::ArfWifiManager");
+      wifiMacHelper wifiMacInfra;
+      
+      Ssid ssid = Ssid ("wifi-default");
+
+      wifiMacInfra.SetType("ns3::StaWifiMac",
+                            "Ssid", SsidValue (ssid));
+      NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacHelper, producer);
+
+      wifiMacInfra.SetType("ns3::ApWifiMac",
+                            "Ssid", SsidValue (ssid),
+                            "BeaconInterval", TimeValue (Seconds (2.5)));
+      NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacHelper, nodes.Get (i));  
+    }
+
+  // ndn Stack
+  ndn::StackHelper ndnHelper;
+  ndnHelper.SetOldContentStore ("ns3::ndn::cs::Lru", "MaxSize", "1000");
+  //ndnHelper.SetDefaultRoutes (true);
+  //ndnHelper.Install (nodes);
+  ndnHelper.InstallAll ();
+
+  // Mobility
   MobilityHelper mobility;
   
   mobility.SetPositionAllocator ("ns3::RandomDiscPositionAllocator",
@@ -113,30 +136,16 @@ main(int argc, char* argv[])
                              "Speed", StringValue ("ns3::ConstantRandomVariable[Constant=30.0]"),
                              "Bounds", StringValue ("0|800|0|800"));
   
-  mobility.Install (nodes);
+  mobility.InstallAll ();
 
-  for(uint32_t i = 0; i < numberOfnodes; ++i)
-    {
-
-      wifiMacHelper.SetType("ns3::ApWifiMac",
-                            "Ssid", SsidValue (ssid));
-      NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacHelper, apNodes.Get (i));
-
-      //BridgeHelper bridge;
-      //NetDeviceContainer bridgeDevices = bridge.Install (apNodes.Get (i), NetDeviceContainer (apDev, csmaDevices.Get (i)));
-
-      mobility.Install (apNodes.Get (i));
-      mobility.Install (router.Get (i));
-    }
-  
-  Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+  //Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   //positionAlloc->Add (Vector (0, 200, 0));
   //positionAlloc->Add (Vector (200, 0, 0));
   //positionAlloc->Add (Vector (200, 400, 0));
   //positionAlloc->Add (Vector (400, 200, 0));
-  positionAlloc->Add (Vector (200, 200, 0));
-  mobility.SetPositionAllocator (positionAlloc);
-  mobility.Install (producer);
+  //positionAlloc->Add (Vector (200, 200, 0));
+  //mobility.SetPositionAllocator (positionAlloc);
+  //mobility.Install (producer);
   //mobility.Install (apNodes);
 
   string prefix = "/ucla/hello";
@@ -164,7 +173,7 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(simTime));
   Simulator::Run();
   
-  //ndn::GlobalRoutingHelper::CalculateRoutes();
+  ndn::GlobalRoutingHelper::CalculateRoutes();
   ndn::L3RateTracer::InstallAll("rate-trace.txt", Seconds (1.0));
   ndn::CsTracer::InstallAll("cs-trace.txt", Seconds (1.0));
   ndn::AppDelayTracer::InstallAll("app-delay-tracer.txt");
