@@ -35,7 +35,7 @@ main(int argc, char* argv[])
 {
   std::string phyMode("OfdmRate24Mbps");
   uint16_t numberOfnodes = 50;
-  double simTime = 60.0;
+  double simTime = 20.0;
 
   Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue(phyMode));
 
