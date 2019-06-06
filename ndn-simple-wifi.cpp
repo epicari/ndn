@@ -68,7 +68,7 @@ main(int argc, char* argv[])
 
   YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default();
   wifiPhy.SetChannel(wifiChannel.Create());
-  /*
+/*
   wifiPhy.Set ("TxPowerStart", DoubleValue (txPowerStart));
   wifiPhy.Set ("TxPowerEnd", DoubleValue (txPowerEnd));
   wifiPhy.Set ("TxPowerLevels", UintegerValue (14));
@@ -108,12 +108,12 @@ main(int argc, char* argv[])
       wifiMacHelper wifiMacInfra;
       wifiMacInfra.SetType("ns3::StaWifiMac",
                             "Ssid", SsidValue (ssid));
-      NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacHelper, producer);
+      NetDeviceContainer staDev = wifi.Install (wifiPhy, wifiMacInfra, producer);
 
       wifiMacInfra.SetType("ns3::ApWifiMac",
                             "Ssid", SsidValue (ssid),
                             "BeaconInterval", TimeValue (Seconds (2.5)));
-      NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacHelper, nodes.Get (i));  
+      NetDeviceContainer apDev = wifi.Install (wifiPhy, wifiMacInfra, nodes.Get (i));  
     }
 
   // ndn Stack
