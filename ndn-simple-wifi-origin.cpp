@@ -166,18 +166,15 @@ main(int argc, char* argv[])
   NS_LOG_INFO("Installing NDN stack");
   ndn::StackHelper ndnHelper;
   ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
-  ndnHelper.SetDefaultRoutes(true);
+  //ndnHelper.SetDefaultRoutes(true);
   ndnHelper.InstallAll ();
 
   string prefix = "/ucla/hello";
-/*
+
   ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
   ndnGlobalRoutingHelper.InstallAll ();
-
-  ndnGlobalRoutingHelper.AddOrigins(prefix, nodes);
-  ndnGlobalRoutingHelper.AddOrigins(prefix, apNode);
   ndnGlobalRoutingHelper.AddOrigins(prefix, remoteHost);
-*/
+
   ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/best-route");
   //ndn::StrategyChoiceHelper::InstallAll (prefix, "/localhost/nfd/strategy/multicast");
 
