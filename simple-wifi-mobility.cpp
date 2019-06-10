@@ -73,7 +73,7 @@ namespace ns3 {
   int main (int argc, char *argv[])
   {
     std::string phyMode ("DsssRate1Mbps");
-    uint32_t wifiSta = 2;
+    uint32_t wifiSta = 3;
 
     int bottomrow = 6;            // number of AP nodes
     int spacing = 400;            // between bottom-row nodes
@@ -234,6 +234,7 @@ namespace ns3 {
     consumerHelper.SetAttribute("Frequency", DoubleValue(10.0));
     consumerHelper.Install(consumers.Get(0)).Start(Seconds(0.0));
     consumerHelper.Install(consumers.Get(1)).Start(Seconds(0.0));
+    consumerHelper.Install(consumers.Get(2)).Start(Seconds(0.0));
     // Producer Helpers
     ndn::AppHelper producerHelper("ns3::ndn::Producer");
     producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
