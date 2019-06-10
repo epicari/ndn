@@ -17,6 +17,9 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include "ns3/flow-monitor-helper.h"
+#include "ns3/ipv4-global-routing-helper.h"
+#include "ns3/aodv-module.h"
 
 
 NS_LOG_COMPONENT_DEFINE ("simple-wifi-mobility");
@@ -80,6 +83,7 @@ namespace ns3 {
     double endtime = 60.0;
     //double speed = (double)(bottomrow*spacing)/endtime; //setting speed to span full sim time 
     double speed = 30;
+    bool enableFlowMonitor = true;
 
     string animFile = "ap-mobility-animation.xml";
 
@@ -251,8 +255,20 @@ namespace ns3 {
       string str = "simple-wifi-trace" + std::to_string(i+1) + ".txt";
       ndn::L3RateTracer::Install(consumers.Get(i), str, Seconds(endtime-0.5));
     }
+
+    FlowMonitorHelper flowmonHelper;
+    if (enableFlowMonitor)
+      {
+        flowmonHelper.InstallAll ();
+      }      
     
     Simulator::Run ();
+
+    if (enableFlowMonitor)
+    {
+      flowmonHelper.SerializeToXmlFile ("simple-global-routing.flowmon", false, false);
+    }
+
     Simulator::Destroy ();
 
     return 0;
