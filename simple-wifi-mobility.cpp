@@ -76,7 +76,7 @@ namespace ns3 {
     uint32_t wifiSta = 2;
 
     int bottomrow = 6;            // number of AP nodes
-    int spacing = 50;            // between bottom-row nodes
+    int spacing = 400;            // between bottom-row nodes
     //int range = 110;
     double endtime = 60.0;
     //double speed = (double)(bottomrow*spacing)/endtime; //setting speed to span full sim time 

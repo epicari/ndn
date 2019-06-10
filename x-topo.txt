@@ -4,17 +4,17 @@ router
 
 #node	city	y	  x
 ap1	  NA	  0	    0
-ap2	  NA	  0	    50
-ap3	  NA	  0	    100
-ap4	  NA	  0	    150
-ap5   NA      0	    200
-ap6   NA      0	    250
-r1  	NA	  100	25
-r2  	NA	  100	125
-r3  	NA	  100	225
-r4  	NA	  300	75
-r5  	NA	  300	175
-root	NA	  400  300
+ap2	  NA	  0	    400
+ap3	  NA	  0	    800
+ap4	  NA	  0	    1200
+ap5   NA      0	    1600
+ap6   NA      0	    2000
+r1  	NA	  100	200
+r2  	NA	  100	1000
+r3  	NA	  100	1800
+r4  	NA	  300	600
+r5  	NA	  300	1400
+root	NA	  400  1000
 
 link
 
