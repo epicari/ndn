@@ -212,9 +212,9 @@ namespace ns3 {
     NS_LOG_INFO("Installing NDN stack");
     ndn::StackHelper ndnHelper;
     //ndnHelper.InstallAll();
-    ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
+    //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
     //ndnHelper.SetDefaultRoutes(true);
-    //ndnHelper.SetOldContentStore("ns3::ndn::cs::Nocache");
+    ndnHelper.SetOldContentStore("ns3::ndn::cs::Nocache");
     ndnHelper.InstallAll();
 
     // Choosing forwarding strategy
@@ -238,7 +238,7 @@ namespace ns3 {
     // Producer Helpers
     ndn::AppHelper producerHelper("ns3::ndn::Producer");
     producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
-    producerHelper.SetAttribute("Freshness", TimeValue(Seconds(60.0))); 
+    //producerHelper.SetAttribute("Freshness", TimeValue(Seconds(60.0))); 
     // Register /root prefix with global routing controller and
     // install producer that will satisfy Interests in /root namespace
     ndnGlobalRoutingHelper.AddOrigins("/root", producer);   
