@@ -73,7 +73,7 @@ namespace ns3 {
   int main (int argc, char *argv[])
   {
     std::string phyMode ("DsssRate1Mbps");
-    uint32_t wifiSta = 2;
+    uint32_t wifiSta = 3;
 
     int bottomrow = 6;            // number of AP nodes
     int spacing = 400;            // between bottom-row nodes
@@ -239,9 +239,11 @@ namespace ns3 {
     producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
     // Register /root prefix with global routing controller and
     // install producer that will satisfy Interests in /root namespace
-    ndnGlobalRoutingHelper.AddOrigins("/root", producer);    
+    //ndnGlobalRoutingHelper.AddOrigins("/root", producer);
+
+    ndnGlobalRoutingHelper.AddOrigins("/root", consumers.Get(2));    
     producerHelper.SetPrefix("/root");
-    producerHelper.Install(producer);
+    producerHelper.Install(consumers.Get(2));
 
     // Calculate and install FIBs
     ndn::GlobalRoutingHelper::CalculateRoutes();
