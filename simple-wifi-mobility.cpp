@@ -212,7 +212,7 @@ namespace ns3 {
     NS_LOG_INFO("Installing NDN stack");
     ndn::StackHelper ndnHelper;
     //ndnHelper.InstallAll();
-    ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
+    //ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "1000");
     //ndnHelper.SetDefaultRoutes(true);
     //ndnHelper.SetOldContentStore("ns3::ndn::cs::Nocache");
     ndnHelper.InstallAll();
