@@ -140,6 +140,9 @@ namespace ns3 {
     //                                "MaxRange", DoubleValue(range));
     wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-77));
     wifiPhy.SetChannel (wifiChannel.Create ());
+    wifiPhy.Set ("Antennas", UintegerValue (4));
+    wifiPhy.Set ("MaxSupportedTxSpatialStreams", UintegerValue (2));
+    wifiPhy.Set ("MaxSupportedRxSpatialStreams", UintegerValue (2));
     wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                   "DataMode", StringValue (phyMode),
                                   "ControlMode", StringValue (phyMode));
