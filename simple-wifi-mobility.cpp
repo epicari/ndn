@@ -73,12 +73,12 @@ namespace ns3 {
   int main (int argc, char *argv[])
   {
     std::string phyMode ("DsssRate1Mbps");
-    uint32_t wifiSta = 3;
+    uint32_t wifiSta = 5;
 
     int bottomrow = 6;            // number of AP nodes
     int spacing = 400;            // between bottom-row nodes
     //int range = 110;
-    double endtime = 60.0;
+    double endtime = 30.0;
     //double speed = (double)(bottomrow*spacing)/endtime; //setting speed to span full sim time 
     double speed = 30;
 
@@ -195,14 +195,14 @@ namespace ns3 {
     mobile.SetMobilityModel("ns3::ConstantVelocityMobilityModel");
     mobile.Install(consumers);
     ////// Setting each mobile consumer 100m apart from each other
-    int nxt = 0;
+    //int nxt = 0;
     for (uint32_t i=0; i<wifiSta ; i++) {
         Ptr<ConstantVelocityMobilityModel> cvmm = consumers.Get(i)->GetObject<ConstantVelocityMobilityModel> ();
-        Vector pos (0-nxt, 0, 0);
+        Vector pos (0, 0, 0);
         Vector vel (speed, 0, 0);
         cvmm->SetPosition(pos);
         cvmm->SetVelocity(vel);
-        nxt += 100;
+        //nxt += 100;
     }
     
     // std::cout << "position: " << cvmm->GetPosition() << " velocity: " << cvmm->GetVelocity() << std::endl;
