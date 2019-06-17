@@ -140,9 +140,9 @@ namespace ns3 {
     //                                "MaxRange", DoubleValue(range));
     wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel","Rss",DoubleValue (-77));
     wifiPhy.SetChannel (wifiChannel.Create ());
-    wifiPhy.Set ("Antennas", UintegerValue (4));
-    wifiPhy.Set ("MaxSupportedTxSpatialStreams", UintegerValue (2));
-    wifiPhy.Set ("MaxSupportedRxSpatialStreams", UintegerValue (2));
+    //wifiPhy.Set ("Antennas", UintegerValue (4));
+    //wifiPhy.Set ("MaxSupportedTxSpatialStreams", UintegerValue (2));
+    //wifiPhy.Set ("MaxSupportedRxSpatialStreams", UintegerValue (2));
     wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                   "DataMode", StringValue (phyMode),
                                   "ControlMode", StringValue (phyMode));
@@ -201,7 +201,7 @@ namespace ns3 {
     int nxt = 0;
     for (uint32_t i=0; i<wifiSta ; i++) {
         Ptr<ConstantVelocityMobilityModel> cvmm = consumers.Get(i)->GetObject<ConstantVelocityMobilityModel> ();
-        Vector pos (0, 0, 0);
+        Vector pos (0-nxt, 0, 0);
         Vector vel (speed, 0, 0);
         cvmm->SetPosition(pos);
         cvmm->SetVelocity(vel);
